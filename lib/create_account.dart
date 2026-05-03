@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/services/auth_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -9,7 +10,10 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();  
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   var _obscurePassword = true;
 
   int _passwordStrength(String password) {
@@ -23,9 +27,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
-    _passwordController.dispose();
-    super.dispose();
-  }
+  _emailController.dispose();
+  _nameController.dispose();
+  _passwordController.dispose();
+  _confirmPasswordController.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +46,29 @@ class _SignUpPageState extends State<SignUpPage> {
           padding: const EdgeInsets.all(24),
           children: [
             TextFormField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.emailAddress,
+            validator: (v) {
+            if (v == null || v.isEmpty) return 'Required';
+            if (!v.contains('@')) return 'Enter a valid email';
+            return null;
+          },
+          ),
+
+          const SizedBox(height: 16),
+
+
+            TextFormField(
+              controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Email',
+                labelText: 'Nome',
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (v) =>
-                  v?.isEmpty ?? true ? 'Required' : null,
+              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -82,18 +105,50 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _confirmPasswordController,
               decoration: const InputDecoration(
                 labelText: 'Confirmar Senha',
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
-              validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
+              validator: (v) {
+                if (v == null || v.isEmpty) return 'Required';
+                if (v != _passwordController.text) return 'Passwords do not match';
+                return null;
+              },
             ),
             const SizedBox(height: 24),
             FilledButton(
-              onPressed: () => _formKey.currentState?.validate(),
-              child: const Text('Criar Conta'),
-            ),
+            onPressed: () async {
+              
+              final isValid = _formKey.currentState!.validate();
+              if (!isValid) return;
+
+              try {
+                await AuthService.createAccount(
+                  email: _emailController.text,
+                  name: _nameController.text,
+                  password: _passwordController.text,
+                );
+
+                if (!mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Conta criada com sucesso')),
+                );
+
+              } catch (e, stackTrace) {
+                print('STACK: $stackTrace');
+                if (!mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
+              }
+            },
+            child: const Text('Criar Conta'),
+          ),
+
           ],
         ),
       ),
