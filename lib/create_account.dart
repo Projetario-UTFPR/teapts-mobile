@@ -53,8 +53,8 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             keyboardType: TextInputType.emailAddress,
             validator: (v) {
-            if (v == null || v.isEmpty) return 'Required';
-            if (!v.contains('@')) return 'Enter a valid email';
+            if (v == null || v.isEmpty) return 'Obrigatório';
+            if (!v.contains('@')) return 'Digite um email válido';
             return null;
           },
           ),
@@ -68,7 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 labelText: 'Nome',
                 border: OutlineInputBorder(),
               ),
-              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+              validator: (v) => v == null || v.isEmpty ? 'Obrigatório' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -86,7 +86,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               obscureText: _obscurePassword,
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Required';
+                if (v == null || v.isEmpty) return 'Obrigatório';
                 if (v.length < 8) return 'Min 8 characters';
                 return null;
               },
@@ -112,8 +112,8 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               obscureText: true,
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Required';
-                if (v != _passwordController.text) return 'Passwords do not match';
+                if (v == null || v.isEmpty) return 'Obrigatório';
+                if (v != _passwordController.text) return 'As senhas não coincidem';
                 return null;
               },
             ),
