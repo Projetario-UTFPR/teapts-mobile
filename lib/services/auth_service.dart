@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:front_pi/config/app_config.dart';
+
 
 class AuthService {
-  static const String baseUrl = 'http://127.0.0.1:3000';
+  static String get baseUrl => AppConfig.baseUrl;
 
   static Future<void> createAccount({
     required String email,
@@ -28,7 +30,9 @@ class AuthService {
     }
 
     if (response.statusCode == 409) {
-      throw Exception('Email already in use');
+      final body = jsonDecode(response.body);
+      throw Exception(body['message']);
+
     }
 
     if (response.statusCode == 422) {
@@ -41,6 +45,6 @@ class AuthService {
     }
 
 
-    throw Exception('Unexpected error: ${response.body}');
+    throw Exception('Erro inesperado: ${response.body}');
   }
 }
