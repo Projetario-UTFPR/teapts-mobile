@@ -119,8 +119,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       ),
                     ),
                     _gap(),
-
-                    // ── Identificação ──────────────────────────────
                     _sectionTitle('Identificação'),
                     DropdownButtonFormField<String>(
                       value: _status,
@@ -136,8 +134,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       onChanged: (v) => setState(() => _status = v!),
                     ),
                     _gap(),
-
-                    // ── Conteúdo clínico ───────────────────────────
                     _sectionTitle('Conteúdo Clínico'),
                     TextFormField(
                       controller: _situacaoController,
@@ -165,8 +161,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           v == null || v.isEmpty ? 'Obrigatório' : null,
                     ),
                     _gap(),
-
-                    // ── Vinculações ────────────────────────────────
                     _sectionTitle('Vinculações'),
                     DropdownButtonFormField<String>(
                       value: _idPaciente,
@@ -213,8 +207,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           v == null ? 'Selecione o técnico de referência' : null,
                     ),
                     _gap(),
-
-                    // ── Equipe ─────────────────────────────────────
                     _sectionTitle('Equipe envolvida (opcional)'),
                     ..._profissionais.map((p) => CheckboxListTile(
                           value: _equipeSelecionada.contains(p['id']),
@@ -234,8 +226,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           contentPadding: EdgeInsets.zero,
                         )),
                     _gap(),
-
-                    // ── Ações ──────────────────────────────────────
                     _sectionTitle('Ações iniciais (opcional)'),
                     ..._acoes.asMap().entries.map((entry) {
                       final i = entry.key;
@@ -293,8 +283,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       ),
                     ),
                     _gap(),
-
-                    // ── Botões ─────────────────────────────────────
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
