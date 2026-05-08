@@ -25,7 +25,7 @@ class MainApp extends StatelessWidget {
     foregroundColor: Colors.black, 
   ),
   ),
-  home: const SignUpPage(),
+  home: const Login(),
 );
   }
 }

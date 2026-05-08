@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/create_account.dart';
+import 'package:front_pi/services/auth_service.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -8,10 +10,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+  _emailController.dispose();
+  _passwordController.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -29,63 +42,65 @@ class _LoginState extends State<Login> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('imagens/infinito_laranja.png',width:100),
+                    Image.asset('imagens/infinito_laranja.png',width:100),    //imagem login
                     _gap(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        "como eu mudo",
+                        "Bem vindo de volta!",                                //texto login
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        "Enter your email and password to continue.",
+                        "Digite seu email e senha",
                         style: Theme.of(context).textTheme.bodySmall,
                         textAlign: TextAlign.center,
                       ),
                     ),
                     _gap(),
                     TextFormField(
+                      controller: _emailController,
                       validator: (value) {
                         // add email validation
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Por favor, digite seu Email ';
                         }
 
                         bool emailValid = RegExp(
                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
                         ).hasMatch(value);
                         if (!emailValid) {
-                          return 'Please enter a valid email';
+                          return 'Digite um email valido';
                         }
 
                         return null;
                       },
                       decoration: const InputDecoration(
                         labelText: 'Email',
-                        hintText: 'Enter your email',
+                        hintText: 'digite seu Email',
                         prefixIcon: Icon(Icons.email_outlined),
                         border: OutlineInputBorder(),
                       ),
                     ),
                     _gap(),
                     TextFormField(
+                      controller: _passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Por favor, digite sua senha.';
                         }
 
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return 'A senha deve conter mais de 6 caracteres';
                         }
                         return null;
                       },
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
+                        labelText: 'Senha',
+                        hintText: 'Digite sua senha',
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
@@ -111,10 +126,54 @@ class _LoginState extends State<Login> {
                           _rememberMe = value;
                         });
                       },
-                      title: const Text('Remember me'),
+                      title: const Text('Lembre-se de mim'),
                       controlAffinity: ListTileControlAffinity.leading,
                       dense: true,
                       contentPadding: const EdgeInsets.all(0),
+                    ),
+                    _gap(),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            'Fazer login',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        onPressed: () async{
+                          if (_formKey.currentState?.validate() ?? false) {
+                             try {
+                                  await AuthService.login(
+                                    email: _emailController.text, 
+                                    password: _passwordController.text,
+                                  );
+                                  if(!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("login feito"))
+                                  );
+                             }catch(e, stackTrace){
+                                  print('STACK: $stackTrace');
+                                  if(!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                  
+                             }
+                          }
+                        },
+                      ),
                     ),
                     _gap(),
                     SizedBox(
@@ -128,7 +187,7 @@ class _LoginState extends State<Login> {
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            'Sign in',
+                            'Não possui uma conta? Crie aqui!',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -136,12 +195,15 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            /// do something
-                          }
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        );
                         },
                       ),
-                    ),
+                    ), 
                   ],
                 ),
               ),
