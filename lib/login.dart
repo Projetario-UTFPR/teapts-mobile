@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/create_pts.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -154,14 +155,18 @@ class _LoginState extends State<Login> {
                           if (_formKey.currentState?.validate() ?? false) {
                              try {
                                   await AuthService.login(
-                                    email: _emailController.text, 
-                                    password: _passwordController.text,
-                                  );
-                                  if(!mounted) return;
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("login feito"))
-                                  );
+                                if (!mounted) return;
+
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => const CreatePtsPage(),
+                                  ),
+                                );
                              }catch(e, stackTrace){
                                   print('STACK: $stackTrace');
                                   if(!mounted) return;
