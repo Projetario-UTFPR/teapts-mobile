@@ -98,6 +98,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                               decoration: InputDecoration(
                                 labelText: 'Paciente',
                                 hintText: 'Digite para buscar',
+                                suffixIcon: const Icon(Icons.arrow_drop_down),
                                 prefixIcon: const Icon(Icons.person_outline),
                                 border: const OutlineInputBorder(),
                                 errorText: fieldState.errorText,
@@ -123,6 +124,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                         ],
                       ),
                     ),
+                    _gap(),
 
                     _sectionTitle('Equipe envolvida (opcional)'),
                     TypeAheadField<Map<String, String>>(
@@ -134,6 +136,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           labelText: 'Adicionar profissional',
                           hintText: 'Digite para buscar',
                           prefixIcon: Icon(Icons.group_outlined),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -184,10 +187,11 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       decoration: const InputDecoration(
                         labelText: 'Descrição do plano',
                         hintText: 'Descreva o plano terapêutico',
-                        prefixIcon: Icon(Icons.description_outlined),
+                        alignLabelWithHint: true,
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 4,
+                      textAlignVertical: TextAlignVertical.top,
                       validator: (v) =>
                           v == null || v.isEmpty ? 'Obrigatório' : null,
                     ),
