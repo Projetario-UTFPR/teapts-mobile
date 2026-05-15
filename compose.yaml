@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: teapts_backend_db
+    container_name: teapts_mobile_db
     image: postgres:18
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -14,7 +14,7 @@ services:
       - app
 
   server:
-    container_name: teapts_backend
+    container_name: teapts_server
     build:
       context: https://github.com/Projetario-UTFPR/teapts-backend.git#dev
     image: teapts-backend
