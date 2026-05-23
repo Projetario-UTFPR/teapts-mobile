@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/services/pts_service.dart';
 
 class CreatePtsPage extends StatefulWidget {
   const CreatePtsPage({super.key});
@@ -164,7 +165,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    // chips da equipe selecionada
                     if (_equipeSelecionada.isNotEmpty)
                       Wrap(
                         spacing: 8,
@@ -181,12 +181,12 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       ),
                     _gap(),
 
-                    _sectionTitle('Descrição'),
+                    _sectionTitle('Situação Social'),
                     TextFormField(
                       controller: _descricaoController,
                       decoration: const InputDecoration(
-                        labelText: 'Descrição do plano',
-                        hintText: 'Descreva o plano terapêutico',
+                        labelText: 'Situação Social',
+                        hintText: 'Descreva a situação social do paciente...',
                         alignLabelWithHint: true,
                         border: OutlineInputBorder(),
                       ),
@@ -206,9 +206,27 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           ),
                         ),
                         onPressed: () async {
-                          if (!(_formKey.currentState?.validate() ?? false))
-                            return;
-                          // TODO: chamar PtsService
+                          if (!(_formKey.currentState?.validate() ?? false)) return;
+                          try {
+                            await PtsService.createPts(
+                              professionalId: 'ID_DO_PROFISSIONAL_LOGADO', 
+                              patientId: _pacienteSelecionado!['id']!,
+                              socialSituation: _descricaoController.text,
+                              multidisciplinaryTeamIds:
+                                  _equipeSelecionada.map((p) => p['id']!).toList(),
+                            );
+
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('PTS criado com sucesso')),
+                            );
+                            Navigator.pop(context);
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
