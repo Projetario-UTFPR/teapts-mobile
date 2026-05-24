@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 
 class CreatePtsPage extends StatefulWidget {
@@ -19,18 +20,29 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
   Map<String, String>? _pacienteSelecionado;
   final List<Map<String, String>> _equipeSelecionada = [];
 
-  final List<Map<String, String>> _pacientes = [
-    {'id': '1', 'nome': 'João Silva'},
-    {'id': '2', 'nome': 'Maria Santos'},
-    {'id': '3', 'nome': 'Carlos Pereira'},
-  ];
+final List<Map<String, String>> _pacientes = [
+  {'id': '019e0600-0000-7000-8000-000000000001', 'nome': 'João Silva'},
+  {'id': '019e0600-0000-7000-8000-000000000002', 'nome': 'Maria Santos'},
+  {'id': '019e0600-0000-7000-8000-000000000003', 'nome': 'Carlos Pereira'},
+];
 
-  final List<Map<String, String>> _profissionais = [
-    {'id': '1', 'nome': 'Dr. Carlos', 'area': 'Medicina'},
-    {'id': '2', 'nome': 'Dra. Ana', 'area': 'Enfermagem'},
-    {'id': '3', 'nome': 'João Lima', 'area': 'Psicologia'},
-    {'id': '4', 'nome': 'Maria Costa', 'area': 'Serviço Social'},
-  ];
+  List<Map<String, String>> _profissionais = [];
+
+@override
+void initState() {
+  super.initState();
+  _carregarProfissionais();
+}
+
+Future<void> _carregarProfissionais() async {
+  try {
+    final lista = await PtsService.getProfissionais();
+    setState(() => _profissionais = lista);
+  } catch (e) {
+    // Trata o erro, mas não lança exceção
+  }
+}
+
 
   @override
   void dispose() {
@@ -209,7 +221,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           if (!(_formKey.currentState?.validate() ?? false)) return;
                           try {
                             await PtsService.createPts(
-                              professionalId: 'ID_DO_PROFISSIONAL_LOGADO', 
+                              professionalId: AuthService.professionalId!,
                               patientId: _pacienteSelecionado!['id']!,
                               socialSituation: _descricaoController.text,
                               multidisciplinaryTeamIds:
