@@ -6,6 +6,8 @@ import 'package:front_pi/config/app_config.dart';
 class AuthService {
   static String get baseUrl => AppConfig.baseUrl;
 
+  static String? accessToken;
+  static String? professionalId;
 
   static Future<void> login({
     required String email,
@@ -22,7 +24,18 @@ class AuthService {
       }),
     );
 
-    if (response.statusCode == 200) return;
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      accessToken = body['accessToken'];
+      // decodifica o JWT para pegar o ID
+      final parts = accessToken!.split('.');
+      final payload = jsonDecode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])))
+      );
+      professionalId = payload['sub'];
+      return;
+  }
+
 
     if (response.statusCode == 401) {
       final body = jsonDecode(response.body);
