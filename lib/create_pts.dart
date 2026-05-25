@@ -17,29 +17,29 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
   final _pacienteController = TextEditingController();
   final _equipeController = TextEditingController();
 
-  Map<String, String>? _pacienteSelecionado;
-  final List<Map<String, String>> _equipeSelecionada = [];
+  Map<String, String>? _selectedPatient;
+  final List<Map<String, String>> _selectedMultidisciplinaryTeam = [];
 
-final List<Map<String, String>> _pacientes = [
-  {'id': '019e0600-0000-7000-8000-000000000001', 'nome': 'João Silva'},
-  {'id': '019e0600-0000-7000-8000-000000000002', 'nome': 'Maria Santos'},
-  {'id': '019e0600-0000-7000-8000-000000000003', 'nome': 'Carlos Pereira'},
+final List<Map<String, String>> _patients = [
+  {'id': '019e0600-0000-7000-8000-000000000001', 'name': 'João Silva'},
+  {'id': '019e0600-0000-7000-8000-000000000002', 'name': 'Maria Santos'},
+  {'id': '019e0600-0000-7000-8000-000000000003', 'name': 'Carlos Pereira'},
 ];
 
-  List<Map<String, String>> _profissionais = [];
+  List<Map<String, String>> _professionals = [];
 
 @override
 void initState() {
   super.initState();
-  _carregarProfissionais();
+  loadProfessionals();
 }
 
-Future<void> _carregarProfissionais() async {
+Future<void> loadProfessionals() async {
   try {
-    final lista = await PtsService.getProfissionais();
-    setState(() => _profissionais = lista);
+    final list = await PtsService.getProfessionals();
+    setState(() => _professionals = list);
   } catch (e) {
-    // Trata o erro, mas não lança exceção
+
   }
 }
 
@@ -97,7 +97,7 @@ Future<void> _carregarProfissionais() async {
 
                     _sectionTitle('Paciente'),
                     FormField<Map<String, String>>(
-                      validator: (_) => _pacienteSelecionado == null
+                      validator: (_) => _selectedPatient == null
                           ? 'Selecione um paciente'
                           : null,
                       builder: (fieldState) => Column(
@@ -117,19 +117,19 @@ Future<void> _carregarProfissionais() async {
                                 errorText: fieldState.errorText,
                               ),
                             ),
-                            suggestionsCallback: (search) => _pacientes
-                                .where((p) => p['nome']!
+                            suggestionsCallback: (search) => _patients
+                                .where((p) => p['name']!
                                     .toLowerCase()
                                     .contains(search.toLowerCase()))
                                 .toList(),
                             itemBuilder: (context, p) => ListTile(
                               leading: const Icon(Icons.person_outline),
-                              title: Text(p['nome']!),
+                              title: Text(p['name']!),
                             ),
                             onSelected: (p) {
                               setState(() {
-                                _pacienteSelecionado = p;
-                                _pacienteController.text = p['nome']!;
+                                _selectedPatient = p;
+                                _pacienteController.text = p['name']!;
                               });
                               fieldState.didChange(p);
                             },
@@ -153,41 +153,41 @@ Future<void> _carregarProfissionais() async {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      suggestionsCallback: (search) => _profissionais
+                      suggestionsCallback: (search) => _professionals
                           .where((p) =>
-                              !_equipeSelecionada
+                              !_selectedMultidisciplinaryTeam
                                   .any((e) => e['id'] == p['id']) &&
-                              (p['nome']!
+                              (p['name']!
                                       .toLowerCase()
                                       .contains(search.toLowerCase()) ||
-                                  p['area']!
+                                  p['specialism']!
                                       .toLowerCase()
                                       .contains(search.toLowerCase())))
                           .toList(),
                       itemBuilder: (context, p) => ListTile(
                         leading: const Icon(Icons.badge_outlined),
-                        title: Text(p['nome']!),
-                        subtitle: Text(p['area']!),
+                        title: Text(p['name']!),
+                        subtitle: Text(p['specialism']!),
                       ),
                       onSelected: (p) {
                         setState(() {
-                          _equipeSelecionada.add(p);
+                          _selectedMultidisciplinaryTeam.add(p);
                           _equipeController.clear();
                         });
                       },
                     ),
                     const SizedBox(height: 8),
-                    if (_equipeSelecionada.isNotEmpty)
+                    if (_selectedMultidisciplinaryTeam.isNotEmpty)
                       Wrap(
                         spacing: 8,
                         runSpacing: 4,
-                        children: _equipeSelecionada
+                        children: _selectedMultidisciplinaryTeam
                             .map((p) => Chip(
                                   label: Text(
-                                      '${p['nome']} • ${p['area']}',
+                                      '${p['name']} • ${p['specialism']}',
                                       style: const TextStyle(fontSize: 12)),
                                   onDeleted: () => setState(
-                                      () => _equipeSelecionada.remove(p)),
+                                      () => _selectedMultidisciplinaryTeam.remove(p)),
                                 ))
                             .toList(),
                       ),
@@ -222,10 +222,10 @@ Future<void> _carregarProfissionais() async {
                           try {
                             await PtsService.createPts(
                               professionalId: AuthService.professionalId!,
-                              patientId: _pacienteSelecionado!['id']!,
+                              patientId: _selectedPatient!['id']!,
                               socialSituation: _descricaoController.text,
                               multidisciplinaryTeamIds:
-                                  _equipeSelecionada.map((p) => p['id']!).toList(),
+                                  _selectedMultidisciplinaryTeam.map((p) => p['id']!).toList(),
                             );
 
                             if (!mounted) return;
