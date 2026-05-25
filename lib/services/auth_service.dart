@@ -34,7 +34,7 @@ class AuthService {
 
       final authCollection = body['authCollection'];
       if (authCollection == null) {
-        throw Exception('authCollection ausente na resposta do login');
+        throw Exception('Houve um problema ao carregar sua conta. Faça login novamente.');
       }
 
       final account = authCollection['account'];
