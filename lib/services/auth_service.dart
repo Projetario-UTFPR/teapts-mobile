@@ -10,7 +10,7 @@ class AuthService {
   static String? accountId;
   static String? professionalId;
 
-  static List<Map<String, dynamic>> professionalProfiles = [];
+  static List<Map<String, dynamic>> professionalProfiles =  [];
 
   static Future<void> login({
     required String email,
