@@ -8,6 +8,8 @@ class AuthService {
 
   static String? accessToken;
   static String? professionalId;
+  static String? accountId;
+  static String? refreshToken;
 
   static Future<void> login({
     required String email,
@@ -26,13 +28,25 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
+
       accessToken = body['accessToken'];
-      // decodifica o JWT para pegar o ID
-      final parts = accessToken!.split('.');
-      final payload = jsonDecode(
-        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])))
-      );
-      professionalId = payload['sub'];
+      refreshToken = body['refreshToken'];
+
+      final authCollection = body['authCollection'];
+      if (authCollection == null) {
+        throw Exception('authCollection ausente na resposta do login');
+      }
+
+      final account = authCollection['account'];
+      final professionalProfiles =
+          (authCollection['professionalProfiles'] as List);
+
+      accountId = account['id'];
+
+      if (professionalProfiles.isNotEmpty) {
+        professionalId =
+            professionalProfiles.first['professionalId'];
+      }
       return;
   }
 
