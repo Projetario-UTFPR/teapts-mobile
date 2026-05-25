@@ -48,7 +48,7 @@ static Future<void> createPts({
     throw Exception('Erro inesperado: ${response.body}');
   }
 
-  static Future<List<Map<String, String>>> getProfissionais() async {
+  static Future<List<Map<String, String>>> getProfessionals() async {
   final url = Uri.parse('$baseUrl/v1/professionals');
 
   final response = await http.get(
@@ -64,8 +64,8 @@ static Future<void> createPts({
     final items = body['items'] as List;
     return items.map<Map<String, String>>((p) => {
       'id': p['professionalId'].toString(),
-      'nome': p['name'].toString(),
-      'area': (p['specialism'] ?? 'Não informado').toString(),
+      'name': p['name'].toString(),
+      'specialism': (p['specialism'] ?? 'Not informed').toString(),
     }).toList();
   }
 
