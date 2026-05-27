@@ -1,5 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/pts_service.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+
+const Map<String, String> specialtyLabels = {
+  'PSYCHOLOGIST': 'Psicólogo(a)',
+  'PSYCHIATRIST': 'Psiquiatra',
+  'SOCIAL_WORKER': 'Assistente Social',
+  'OCCUPATIONAL_THERAPIST': 'Terapeuta Ocupacional',
+  'NURSE': 'Enfermeiro(a)',
+  'DOCTOR': 'Médico(a)',
+  'PHYSIOTHERAPIST': 'Fisioterapeuta',
+  'SPEECH_THERAPIST': 'Fonoaudiólogo(a)',
+  'NUTRITIONIST': 'Nutricionista',
+  'PHARMACIST': 'Farmacêutico(a)',
+};
+
+String _translateSpecialism(String? raw) {
+  return specialtyLabels[raw?.toUpperCase()] ?? 'Outro';
+}
+
+
+
+const EdgeInsets _kContentPaddingWithIcon = EdgeInsets.only(left: 0, right: 16, top: 8, bottom: 8);
+const EdgeInsets _kContentPaddingNoIcon = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+
+OutlineInputBorder _inputBorder() => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+    );
+
+OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: Colors.black54),
+    );
+
+OutlineInputBorder _inputBorderError() => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: Colors.red),
+    );
+
+InputDecoration _inputDecoration({
+  String? hintText,
+  Widget? prefixIcon,
+  Widget? suffixIcon,
+  String? errorText,
+}) =>
+    InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      errorText: errorText,
+      border: _inputBorder(),
+      enabledBorder: _inputBorder(),
+      focusedBorder: _inputBorderFocused(),
+      errorBorder: _inputBorderError(),
+      focusedErrorBorder: _inputBorderError(),
+      contentPadding: prefixIcon != null ? _kContentPaddingWithIcon : _kContentPaddingNoIcon,
+    );
+
 
 class CreatePtsPage extends StatefulWidget {
   const CreatePtsPage({super.key});
@@ -11,235 +72,451 @@ class CreatePtsPage extends StatefulWidget {
 class _CreatePtsPageState extends State<CreatePtsPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _descricaoController = TextEditingController();
-  final _pacienteController = TextEditingController();
-  final _equipeController = TextEditingController();
+  final _socialSituationController = TextEditingController();
+  final _patientController = TextEditingController();
+  final _teamController = TextEditingController();
 
-  Map<String, String>? _pacienteSelecionado;
-  final List<Map<String, String>> _equipeSelecionada = [];
+  List<Map<String, dynamic>> _professionals = [];
 
-  final List<Map<String, String>> _pacientes = [
-    {'id': '1', 'nome': 'João Silva'},
-    {'id': '2', 'nome': 'Maria Santos'},
-    {'id': '3', 'nome': 'Carlos Pereira'},
+  Map<String, String>? _selectedPatient;
+
+  final List<Map<String, dynamic>> _selectedMultidisciplinaryTeam = [];
+
+  final List<Map<String, String>> _patients = [
+    {'id': '019e0600-0000-7000-8000-000000000001', 'name': 'João Silva'},
+    {'id': '019e0600-0000-7000-8000-000000000002', 'name': 'Maria Santos'},
+    {'id': '019e0600-0000-7000-8000-000000000003', 'name': 'Carlos Pereira'},
   ];
 
-  final List<Map<String, String>> _profissionais = [
-    {'id': '1', 'nome': 'Dr. Carlos', 'area': 'Medicina'},
-    {'id': '2', 'nome': 'Dra. Ana', 'area': 'Enfermagem'},
-    {'id': '3', 'nome': 'João Lima', 'area': 'Psicologia'},
-    {'id': '4', 'nome': 'Maria Costa', 'area': 'Serviço Social'},
-  ];
+  List<Map<String, dynamic>> get _professionalProfiles =>
+      AuthService.professionalProfiles;
+
+  String? _selectedProfessionalId;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    final profiles = _professionalProfiles;
+
+    if (profiles.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sem perfil profissional ativo')),
+        );
+        Navigator.pop(context);
+      });
+      return;
+    }
+
+    if (profiles.length == 1) {
+      _selectedProfessionalId = profiles.first['professionalId'] as String;
+    }
+
+    await loadProfessionals();
+
+    if (mounted) setState(() {});
+  }
+
+  Future<void> loadProfessionals() async {
+    try {
+      final list = await PtsService.getProfessionals();
+      setState(() {
+        _professionals = list;
+      });
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
-    _descricaoController.dispose();
-    _pacienteController.dispose();
-    _equipeController.dispose();
+    _socialSituationController.dispose();
+    _patientController.dispose();
+    _teamController.dispose();
     super.dispose();
   }
 
-  Widget _gap() => const SizedBox(height: 16);
+  Widget _gap([double height = 24]) => SizedBox(height: height);
 
   Widget _sectionTitle(String title) => Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Color(0xFF000000),
+          ),
+        ),
       );
+
+  Widget _helperText(String text) => Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 12, color: Color(0xFF000000)),
+        ),
+      );
+
+  Widget _prefixIcon(Widget icon) => Padding(
+      padding: const EdgeInsets.only(left: 12.0, right: 6.0),
+      child: icon,
+    );
+
+InputDecoration _inputDecoration({
+  String? hintText,
+  Widget? prefixIcon,
+  Widget? suffixIcon,
+  String? errorText,
+}) =>
+    InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+      prefixIcon: prefixIcon,
+      // CRUCIAL: Remove os paddings internos gigantescos padrão do Flutter
+      prefixIconConstraints: const BoxConstraints(
+        minWidth: 0,
+        minHeight: 0,
+      ),
+      suffixIcon: suffixIcon,
+      suffixIconConstraints: const BoxConstraints(
+        minWidth: 0,
+        minHeight: 0,
+      ),
+      errorText: errorText,
+      border: _inputBorder(),
+      enabledBorder: _inputBorder(),
+      focusedBorder: _inputBorderFocused(),
+      errorBorder: _inputBorderError(),
+      focusedErrorBorder: _inputBorderError(),
+      // Como o prefixIcon já resolve o espaçamento interno usando o BoxConstraints, 
+      // podemos usar um padding simétrico padrão para o resto do input.
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    );
+
 
   @override
   Widget build(BuildContext context) {
+    final profiles = _professionalProfiles;
+
     return Scaffold(
-      body: Center(
-        child: Card(
-          elevation: 8,
-          child: Container(
-            padding: const EdgeInsets.all(32.0),
-            constraints: const BoxConstraints(maxWidth: 350),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Image.asset('imagens/infinito_laranja.png',
-                          width: 100),
-                    ),
-                    _gap(),
-                    Center(
-                      child: Text('Novo PTS',
-                          style: Theme.of(context).textTheme.titleMedium),
-                    ),
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text('Preencha os dados do plano',
-                            style: Theme.of(context).textTheme.bodySmall,
-                            textAlign: TextAlign.center),
-                      ),
-                    ),
-                    _gap(),
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: AppBar(
+        title: const Text('PTS :: criar'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Criar Plano Terapêutico Singular',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              _gap(),
 
-                    _sectionTitle('Paciente'),
-                    FormField<Map<String, String>>(
-                      validator: (_) => _pacienteSelecionado == null
-                          ? 'Selecione um paciente'
-                          : null,
-                      builder: (fieldState) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TypeAheadField<Map<String, String>>(
-                            controller: _pacienteController,
-                            builder: (context, controller, focusNode) => TextField(
-                              controller: controller,
-                              focusNode: focusNode,
-                              decoration: InputDecoration(
-                                labelText: 'Paciente',
-                                hintText: 'Digite para buscar',
-                                suffixIcon: const Icon(Icons.arrow_drop_down),
-                                prefixIcon: const Icon(Icons.person_outline),
-                                border: const OutlineInputBorder(),
-                                errorText: fieldState.errorText,
-                              ),
-                            ),
-                            suggestionsCallback: (search) => _pacientes
-                                .where((p) => p['nome']!
-                                    .toLowerCase()
-                                    .contains(search.toLowerCase()))
-                                .toList(),
-                            itemBuilder: (context, p) => ListTile(
-                              leading: const Icon(Icons.person_outline),
-                              title: Text(p['nome']!),
-                            ),
-                            onSelected: (p) {
-                              setState(() {
-                                _pacienteSelecionado = p;
-                                _pacienteController.text = p['nome']!;
-                              });
-                              fieldState.didChange(p);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    _gap(),
+              _sectionTitle('Seu perfil profissional'),
 
-                    _sectionTitle('Equipe envolvida (opcional)'),
-                    TypeAheadField<Map<String, String>>(
-                      controller: _equipeController,
-                      builder: (context, controller, focusNode) => TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        decoration: const InputDecoration(
-                          labelText: 'Adicionar profissional',
-                          hintText: 'Digite para buscar',
-                          prefixIcon: Icon(Icons.group_outlined),
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          border: OutlineInputBorder(),
+              if (profiles.isEmpty)
+                const Text('Nenhum perfil profissional encontrado.')
+              else if (profiles.length == 1)
+                Container(
+                  height: 48,
+                  // Ajustado para alinhar com o padrão do InputDecoration
+                  padding: const EdgeInsets.only(right: 16), 
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black.withOpacity(0.10),
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.black.withOpacity(0.08),
+                  ),
+                  child: Row(
+                    children: [
+                      // Usando o _prefixIcon padrão para garantir o mesmo espaçamento
+                      _prefixIcon(PhosphorIcon(
+                        PhosphorIconsRegular.userList,
+                        size: 20,
+                        color: const Color(0xFF555555),
+                      )),
+                      // Removido o SizedBox extra para não empurrar o texto
+                      Text(
+                        _translateSpecialism(
+                          profiles.first['specialism'] ?? '',
+                        ),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                DropdownButtonFormField<String>(
+                value: _selectedProfessionalId,
+                decoration: InputDecoration(
+                  hintText: 'Selecione um perfil profissional',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), 
+                  prefixIcon: _prefixIcon(const Icon(
+                    Icons.manage_accounts_outlined,
+                    color: Color(0xFF555555),
+                    size: 20, 
+                  )),
+                  prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: PhosphorIcon(
+                      PhosphorIconsRegular.caretDown,
+                      size: 16, 
+                      color: const Color(0xFF999999),
+                    ),
+                  ),
+                  suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorderFocused(),
+                ),
+                items: profiles
+                    .map(
+                      (p) => DropdownMenuItem(
+                        value: p['professionalId'] as String,
+                        child: Text(
+                          _translateSpecialism(p['specialism'] ?? ''),
                         ),
                       ),
-                      suggestionsCallback: (search) => _profissionais
-                          .where((p) =>
-                              !_equipeSelecionada
-                                  .any((e) => e['id'] == p['id']) &&
-                              (p['nome']!
-                                      .toLowerCase()
-                                      .contains(search.toLowerCase()) ||
-                                  p['area']!
-                                      .toLowerCase()
-                                      .contains(search.toLowerCase())))
-                          .toList(),
-                      itemBuilder: (context, p) => ListTile(
-                        leading: const Icon(Icons.badge_outlined),
-                        title: Text(p['nome']!),
-                        subtitle: Text(p['area']!),
-                      ),
-                      onSelected: (p) {
-                        setState(() {
-                          _equipeSelecionada.add(p);
-                          _equipeController.clear();
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    // chips da equipe selecionada
-                    if (_equipeSelecionada.isNotEmpty)
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: _equipeSelecionada
-                            .map((p) => Chip(
-                                  label: Text(
-                                      '${p['nome']} • ${p['area']}',
-                                      style: const TextStyle(fontSize: 12)),
-                                  onDeleted: () => setState(
-                                      () => _equipeSelecionada.remove(p)),
-                                ))
-                            .toList(),
-                      ),
-                    _gap(),
+                    )
+                    .toList(),
+                onChanged: (v) => setState(() => _selectedProfessionalId = v),
+                validator: (v) => v == null ? 'Selecione um perfil' : null,
+              ),
+              _helperText(
+                profiles.length > 1
+                    ? 'Você possui múltiplos perfis profissionais. Selecione um deles para ser assinalado como o responsável por esse PTS.'
+                    : 'Perfil profissional definido automaticamente.',
+              ),
 
-                    _sectionTitle('Descrição'),
-                    TextFormField(
-                      controller: _descricaoController,
-                      decoration: const InputDecoration(
-                        labelText: 'Descrição do plano',
-                        hintText: 'Descreva o plano terapêutico',
-                        alignLabelWithHint: true,
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 4,
-                      textAlignVertical: TextAlignVertical.top,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? 'Obrigatório' : null,
-                    ),
-                    _gap(),
+              _gap(),
 
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: () async {
-                          if (!(_formKey.currentState?.validate() ?? false))
-                            return;
-                          // TODO: chamar PtsService
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text('Criar PTS',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                    ),
-                    _gap(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text('Cancelar',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                _sectionTitle('Paciente'),
+              FormField<Map<String, String>>(
+                validator: (_) =>
+                    _selectedPatient == null ? 'Selecione um paciente' : null,
+                builder: (fieldState) => TypeAheadField<Map<String, String>>(
+                  controller: _patientController,
+                  builder: (context, controller, focusNode) => TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      fillColor: const Color(0xFFFFFFFF),
+                      filled: true,
+                      hintText: 'Selecione o paciente',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      
+                      prefixIcon: _prefixIcon(const PhosphorIcon(
+                        PhosphorIconsRegular.personSimpleCircle,
+                        size: 20,
+                        color: Color(0xFF555555),
+                      )),
+                      prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                      
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: PhosphorIcon(
+                          PhosphorIconsRegular.caretDown,
+                          size: 16,
+                          color: const Color(0xFF999999),
                         ),
                       ),
+                      suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                      errorText: fieldState.errorText,
+                      border: _inputBorder(),
+                      enabledBorder: _inputBorder(),
+                      focusedBorder: _inputBorderFocused(),
                     ),
-                  ],
+                  ),
+                  suggestionsCallback: (search) => _patients
+                      .where((p) => p['name']!
+                          .toLowerCase()
+                          .contains(search.toLowerCase()))
+                      .toList(),
+                  itemBuilder: (context, p) => ListTile(
+                    title: Text(p['name']!),
+                  ),
+                  onSelected: (p) {
+                    setState(() {
+                      _selectedPatient = p;
+                      _patientController.text = p['name']!;
+                    });
+                    fieldState.didChange(p);
+                  },
                 ),
               ),
-            ),
+
+              _gap(),
+
+              _sectionTitle('Equipe multidisciplinar (opcional)'),
+
+              TypeAheadField<Map<String, dynamic>>(
+                controller: _teamController,
+                builder: (context, controller, focusNode) => TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    fillColor: const Color(0xFFFFFFFF),
+                    filled: true,
+                    hintText: 'Selecione os profissionais',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    prefixIcon: _prefixIcon(PhosphorIcon(
+                      PhosphorIconsRegular.usersFour,
+                      size: 20,
+                      color: const Color(0xFF555555),
+                    )),
+                    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: PhosphorIcon(
+                        PhosphorIconsRegular.caretDown,
+                        size: 16,
+                        color: const Color(0xFF999999),
+                      ),
+                    ),
+                    suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                    border: _inputBorder(),
+                    enabledBorder: _inputBorder(),
+                    focusedBorder: _inputBorderFocused(),
+                  ),
+                ),
+                suggestionsCallback: (search) => _professionals
+                    .where((p) =>
+                        !_selectedMultidisciplinaryTeam
+                            .any((e) => e['id'] == p['id']) &&
+                        ((p['name'] ?? '')
+                                .toLowerCase()
+                                .contains(search.toLowerCase()) ||
+                            (p['specialism'] ?? '')
+                                .toLowerCase()
+                                .contains(search.toLowerCase())))
+                    .toList(),
+                itemBuilder: (context, p) => ListTile(
+                  title: Text(p['name'] ?? ''),
+                  subtitle: Text(_translateSpecialism(p['specialism'])),
+                ),
+                onSelected: (p) {
+                  setState(() {
+                    _selectedMultidisciplinaryTeam.add(p);
+                    _teamController.clear();
+                  });
+                },
+              ),
+              _helperText(
+                'Você poderá adicionar ou remover os profissionais da equipe multidisciplinar posteriormente.',
+              ),
+
+              if (_selectedMultidisciplinaryTeam.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _selectedMultidisciplinaryTeam.map((p) {
+                    return Chip(
+                      label: Text(
+                        '${p['name']} • ${_translateSpecialism(p['specialism'])}',
+                      ),
+                      onDeleted: () => setState(() {
+                        _selectedMultidisciplinaryTeam.remove(p);
+                      }),
+                    );
+                  }).toList(),
+                ),
+              ],
+              _gap(),
+
+              _sectionTitle('Situação social'),
+              TextFormField(
+                controller: _socialSituationController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  fillColor: const Color(0xFFFFFFFF),
+                  filled: true,
+                  hintText: 'Descreva detalhes da situação social do paciente.',
+                  hintStyle: const TextStyle(
+                    color: Color(0xFF000000),
+                    fontSize: 14,
+                  ),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorderFocused(),
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Obrigatório' : null,
+              ),
+
+              _helperText(
+                'Você poderá alterar essa descrição a qualquer momento.',
+              ),
+
+              _gap(32),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFC200),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () async {
+                    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+                    await PtsService.createPts(
+                      professionalId: _selectedProfessionalId!,
+                      patientId: _selectedPatient!['id']!,
+                      socialSituation: _socialSituationController.text,
+                      multidisciplinaryTeamIds: _selectedMultidisciplinaryTeam
+                          .map((e) => e['id'] as String)
+                          .toList(),
+                    );
+
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                  },
+                  icon: PhosphorIcon(
+                    PhosphorIconsBold.plus,
+                    size: 18,
+                    color: Colors.black,
+                  ),
+                  label: const Text('Criar proposta de plano'),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    side: BorderSide(color: Colors.black.withOpacity(0.10)),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),
