@@ -14,8 +14,6 @@ dependencies:
   flutter_typeahead: ^5.2.0
   phosphor_flutter: ^2.1.0
 
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -23,6 +21,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/static/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto/static/Roboto-Bold.ttf
+          weight: 700
+
   assets:
-    - imagens/infinito_laranja.png
+    - /home/azure/Projetos/teapts-mobile/assets/imagens/infinito_laranja.png
     - .env
