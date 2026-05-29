@@ -41,7 +41,7 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('imagens/infinito_laranja.png', width: 100),
+                    Image.asset('assets/imagens/infinito_laranja.png', width: 100),
 
                     const SizedBox(height: 16),
 

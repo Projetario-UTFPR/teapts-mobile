@@ -21,13 +21,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/imagens/infinito_laranja.png
+    - .env
   fonts:
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto/static/Roboto-Regular.ttf
         - asset: assets/fonts/Roboto/static/Roboto-Bold.ttf
           weight: 700
-
-  assets:
-    - /home/azure/Projetos/teapts-mobile/assets/imagens/infinito_laranja.png
-    - .env
