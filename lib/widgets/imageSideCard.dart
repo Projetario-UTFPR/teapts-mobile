@@ -23,9 +23,10 @@ class CustomRowItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    Widget content = Row(
 
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildImage(),
 
@@ -64,24 +65,42 @@ class CustomRowItem extends StatelessWidget {
         ),
       ],
     );
+  if (!isCircularImage) {
+      return Container(
+        padding: const EdgeInsets.all(16), 
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: content,
+      );
+    }
+    return content;
   }
-
   Widget _buildImage() {
     if (isCircularImage) {
       return CircleAvatar(
         radius: 24,
-        backgroundColor: Colors.grey[200],
-        child: Icon(placeholderIcon, size: 28, color: Colors.grey[600]),
+        backgroundColor: Colors.grey,
+        child: Icon(placeholderIcon, size: 28, color: Styles.widgetWhite),
       );
     } else {
       return Container(
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Styles.widgetWhite,
+          color: Colors.grey,
           borderRadius: BorderRadius.circular(12),
+          
         ),
-        child: Icon(placeholderIcon, size: 28, color: Colors.grey[600]),
+        child: Icon(placeholderIcon, size: 28, color: Styles.widgetWhite),
       );
     }
   }

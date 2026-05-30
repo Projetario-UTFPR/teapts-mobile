@@ -9,10 +9,11 @@ class ExpandableEquipeMultidiciplinar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.transparent,
+      shadowColor: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: ExpansionTile(
         title: const Text('Equipe Multidisciplinar', style: Styles.h2),
@@ -20,24 +21,23 @@ class ExpandableEquipeMultidiciplinar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
 
           children: [
-            IconButton(
-              icon: Icon(PhosphorIcons.caretDown()),
-              onPressed: () {
-              },
-            ),
+            Icon(PhosphorIcons.caretDown()), 
 
+            const SizedBox(width: 12),
+            
             IconButton(
               icon: Icon(PhosphorIcons.pencilSimpleLine()),
               onPressed: () {
               },
+              style: IconButton.styleFrom(
+                backgroundColor: Styles.widgetYellow,
+                padding: const EdgeInsets.all(8),
+              ),
             ),
           ],
         ),
         shape: const Border(),
         children: [
-          const Divider(
-            height: 1,
-          ), 
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(

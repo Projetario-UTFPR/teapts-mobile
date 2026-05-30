@@ -8,10 +8,11 @@ class ExpandableAtividades extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.transparent,
+      shadowColor: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: ExpansionTile(
         title: const Text(
@@ -21,7 +22,6 @@ class ExpandableAtividades extends StatelessWidget {
 
         shape: const Border(), 
         children: [
-          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -35,7 +35,7 @@ class ExpandableAtividades extends StatelessWidget {
                   onLinkTap: () => print('Tapped Alpha'),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 
                 CustomRowItem(
                   title: 'Acompanhamento com psicólogo',
@@ -46,12 +46,14 @@ class ExpandableAtividades extends StatelessWidget {
                   onLinkTap: () => print('Tapped Alpha'),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
                     onPressed: () {},
+                    style: Styles.buttonYellow,
+                    iconAlignment: IconAlignment.end,
                     icon: const Icon(Icons.add),
                     label: const Text('adicionar nova atividade'),
                   ),

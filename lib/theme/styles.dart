@@ -17,19 +17,30 @@ class Styles {
     fontFamily: 'Roboto',
   );
 
-  static BoxDecoration buttonYellow = BoxDecoration(
-    color: widgetYellow,
-    borderRadius: BorderRadius.circular(12),
-    boxShadow: [
-      BoxShadow(
-        color: widgetBlack,
-        blurRadius: 4,
-        offset: Offset.fromDirection(0,0.4)
-      )
-    ]
+  static final ButtonStyle buttonYellow = FilledButton.styleFrom(
+    backgroundColor: widgetYellow,
+    foregroundColor: widgetBlack,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    shape:RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    shadowColor: widgetBlack40,
+    elevation: 4,
   );
 
-  static BoxDecoration buttonWhite = BoxDecoration(
+  static final ButtonStyle buttonWhite = FilledButton.styleFrom(
+    backgroundColor: widgetWhite,
+    foregroundColor: widgetBlack,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    shape:RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    shadowColor: widgetBlack40,
+    elevation: 4,
+  );
+
+
+  static BoxDecoration boxWhite = BoxDecoration(
     color: widgetWhite,
     borderRadius: BorderRadius.circular(12),
     boxShadow: [

@@ -21,46 +21,42 @@ class _expandableTextfieldState extends State<expandableTextfield> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.transparent,
+      shadowColor: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: ExpansionTile(
-        title: const Text(
-          'Situação social',
-          style: Styles.h2,
-        ),
+        title: const Text('Situação social', style: Styles.h2),
         shape: const Border(),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
 
           children: [
-            IconButton(
-              icon: Icon(PhosphorIcons.caretDown()),
-              onPressed: () {
-              },
-            ),
+            Icon(PhosphorIcons.caretDown()), 
 
+            const SizedBox(width: 12),
+            
             IconButton(
               icon: Icon(PhosphorIcons.pencilSimpleLine()),
-              onPressed: () {
-              },
+              onPressed: () {},
+              style: IconButton.styleFrom(
+                backgroundColor: Styles.widgetYellow,
+                padding: const EdgeInsets.all(8),
+              ),
             ),
           ],
         ),
         children: [
-          const Divider(height: 1),
-          
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end, 
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                
                 TextField(
                   controller: _noteController,
-                  maxLines: 5, 
+                  maxLines: 5,
                   decoration: InputDecoration(
                     hintText: 'Type your notes or updates here...',
                     filled: true,
@@ -69,32 +65,33 @@ class _expandableTextfieldState extends State<expandableTextfield> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
-                    
+
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                  onPressed: () {
-                    final String typedText = _noteController.text;
-                    print('User saved this note: $typedText');
-                  },
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  child: FilledButton(
+                    style: Styles.buttonWhite,
+                    onPressed: () {
+                      final String typedText = _noteController.text;
+                      print('User saved this note: $typedText');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Ver mais'),
+                        Icon(PhosphorIcons.arrowRight()),
+                      ],
                     ),
-                  ),   
-                  label: const Text('Ver mais'),   
-                  icon: Icon(PhosphorIcons.plus())
-                 ),
+                  ),
                 ),
-             ],
+              ],
             ),
           ),
         ],

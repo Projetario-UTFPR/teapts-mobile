@@ -25,19 +25,19 @@ class ViewPtsPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                
               ),
               child: const CustomRowItem(
                 title: 'John Doe',
                 isCircularImage: true,
               ),
             ),
+
+            Divider(
+              color: Styles.widgetBlack40,
+              thickness: 1,
+            ),
+
             const expandableTextfield(),
 
             const SizedBox(height: 24),
@@ -52,10 +52,18 @@ class ViewPtsPage extends StatelessWidget {
 
             SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () {},
-                    label: const Text('Prontuario'),
-                    icon: Icon(PhosphorIcons.arrowRight())
+                  child: FilledButton(
+                    onPressed: (
+                      //TODO: fazer o navigator para pagina de
+                    ) {},
+                    style: Styles.buttonWhite,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Prontuario'),
+                        Icon(PhosphorIcons.arrowRight()),
+                      ],
+                    ),
                   ),
                 ),
           ],
