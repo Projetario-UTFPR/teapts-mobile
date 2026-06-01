@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/theme/styles.dart';
 
 class CustomRowItem extends StatelessWidget {
-
   final String title;
   final bool isCircularImage;
+  final bool isProfileImage;
 
-  final String? subtitle; 
-  final String? linkText; 
+  final String? subtitle;
+  final String? linkText;
   final VoidCallback? onLinkTap;
   final IconData placeholderIcon;
 
@@ -15,6 +15,7 @@ class CustomRowItem extends StatelessWidget {
     super.key,
     required this.title,
     this.isCircularImage = true,
+    this.isProfileImage = false,
     this.subtitle,
     this.linkText,
     this.onLinkTap,
@@ -24,8 +25,7 @@ class CustomRowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content = Row(
-
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildImage(),
@@ -35,29 +35,23 @@ class CustomRowItem extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title, style: Styles.h2),
-
+              if(isCircularImage && isProfileImage)...[
+               Text(title, style: Styles.titlesBold),
+              ],
+              if(!isCircularImage || !isProfileImage)...[
+               Text(title, style: Styles.normalTextBold),
+              ],
               if (subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  subtitle!,
-                  style: Styles.textFieldRegular,
-                ),
+                Text(subtitle!, style: Styles.normalText),
               ],
 
               if (linkText != null && onLinkTap != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 2),
                 GestureDetector(
                   onTap: onLinkTap,
-                  child: Text(
-                    linkText!,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.orangeAccent,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: Text(linkText!, style: Styles.linkBold),
                 ),
               ],
             ],
@@ -65,42 +59,49 @@ class CustomRowItem extends StatelessWidget {
         ),
       ],
     );
-  if (!isCircularImage) {
+    if (!isCircularImage || !isProfileImage) {
       return Container(
-        padding: const EdgeInsets.all(16), 
+        height: 112,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Styles.widgetWhite,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: Styles.widgetBlack40, width: 1,)
+
         ),
         child: content,
       );
     }
     return content;
   }
+
   Widget _buildImage() {
     if (isCircularImage) {
       return CircleAvatar(
         radius: 24,
         backgroundColor: Colors.grey,
-        child: Icon(placeholderIcon, size: 28, color: Styles.widgetWhite),
+        child: Icon(placeholderIcon, size: 36, color: Styles.widgetWhite),
       );
-    } else {
+    } else if(isCircularImage && !isProfileImage){
       return Container(
-        width: 48,
-        height: 48,
+        width: 64,
+        height: 72,
         decoration: BoxDecoration(
           color: Colors.grey,
           borderRadius: BorderRadius.circular(12),
-          
         ),
-        child: Icon(placeholderIcon, size: 28, color: Styles.widgetWhite),
+        child: Icon(placeholderIcon, size: 36, color: Styles.widgetWhite),
+      );
+
+    } else{
+      return Container(
+        width: 64,
+        height: 72,
+        decoration: BoxDecoration(
+          color: Styles.IconLightGray,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(placeholderIcon, size: 48, color: Styles.IconDarkGray),
       );
     }
   }

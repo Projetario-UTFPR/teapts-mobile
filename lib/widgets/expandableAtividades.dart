@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart'; 
 import 'imageSideCard.dart'; 
 
@@ -17,8 +18,9 @@ class ExpandableAtividades extends StatelessWidget {
       child: ExpansionTile(
         title: const Text(
           'Atividades',
-          style: Styles.h2,
+          style: Styles.titlesBold,
         ),
+      trailing: Icon(PhosphorIcons.caretDown(PhosphorIconsStyle.bold), size: 24,color: Styles.widgetBlackCarret),
 
         shape: const Border(), 
         children: [
@@ -30,7 +32,7 @@ class ExpandableAtividades extends StatelessWidget {
                   title: 'Acompanhamento com psicólogo',
                   subtitle: '1 vez a cada semana',
                   isCircularImage: false,
-                  placeholderIcon: Icons.folder,
+                  placeholderIcon: PhosphorIcons.videoConference(PhosphorIconsStyle.fill),
                   linkText: 'Ver mais detalhes',
                   onLinkTap: () => print('Tapped Alpha'),
                 ),
@@ -41,21 +43,20 @@ class ExpandableAtividades extends StatelessWidget {
                   title: 'Acompanhamento com psicólogo',
                   subtitle: '1 vez a cada semana',
                   isCircularImage: false,
-                  placeholderIcon: Icons.folder,
+                  placeholderIcon: PhosphorIcons.videoConference(PhosphorIconsStyle.fill),
                   linkText: 'Ver mais detalhes',
                   onLinkTap: () => print('Tapped Alpha'),
                 ),
                 
-                const SizedBox(height: 8),
+                const SizedBox(height: 24),
                 
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
                     onPressed: () {},
                     style: Styles.buttonYellow,
-                    iconAlignment: IconAlignment.end,
-                    icon: const Icon(Icons.add),
-                    label: const Text('adicionar nova atividade'),
+                    icon: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold),size: 24,),
+                    label: const Text('Adicionar nova atividade'),
                   ),
                 ),
               ],

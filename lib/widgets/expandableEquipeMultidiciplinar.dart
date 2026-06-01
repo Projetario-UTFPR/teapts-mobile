@@ -16,22 +16,23 @@ class ExpandableEquipeMultidiciplinar extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: ExpansionTile(
-        title: const Text('Equipe Multidisciplinar', style: Styles.h2),
+        title: const Text('Equipe Multidisciplinar', style: Styles.titlesBold),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
 
           children: [
-            Icon(PhosphorIcons.caretDown()), 
+            Icon(PhosphorIcons.caretDown(PhosphorIconsStyle.bold), size: 24,color: Styles.widgetBlackCarret), 
 
-            const SizedBox(width: 12),
-            
+            const SizedBox(width: 24),
             IconButton(
-              icon: Icon(PhosphorIcons.pencilSimpleLine()),
+              icon: Icon(PhosphorIcons.pencilSimpleLine(PhosphorIconsStyle.bold),size: 24,color: Styles.widgetBlack),
               onPressed: () {
+                //TODO: mandar para pagina para editar o conteudo de situação social
               },
               style: IconButton.styleFrom(
                 backgroundColor: Styles.widgetYellow,
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(0),
+                shape: CircleBorder()
               ),
             ),
           ],
@@ -50,7 +51,7 @@ class ExpandableEquipeMultidiciplinar extends StatelessWidget {
                   onLinkTap: () => print('Tapped Beta'),
                 ),
 
-                const SizedBox(height: 16), 
+                const SizedBox(height: 8), 
 
                 CustomRowItem(
                   title: 'Jhon Doe',
@@ -60,7 +61,7 @@ class ExpandableEquipeMultidiciplinar extends StatelessWidget {
                   onLinkTap: () => print('Tapped Beta'),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
               ],
             ),
           ),

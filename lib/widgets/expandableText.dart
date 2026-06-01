@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class expandableTextfield extends StatefulWidget {
-  const expandableTextfield({super.key});
+// Renamed slightly to reflect its new purpose!
+class ExpandableTextDisplay extends StatefulWidget {
+  const ExpandableTextDisplay({super.key});
 
   @override
-  State<expandableTextfield> createState() => _expandableTextfieldState();
+  State<ExpandableTextDisplay> createState() => _ExpandableTextDisplayState();
 }
 
-class _expandableTextfieldState extends State<expandableTextfield> {
-  final TextEditingController _noteController = TextEditingController();
-
-  @override
-  void dispose() {
-    _noteController.dispose();
-    super.dispose();
-  }
+class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
+  
+  String _displayText = "Texto de exemplo sobre o que vai ter nesse campo. Aqui deve ser puxado do backend as informações sobre o paciente deste Pts";
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +24,22 @@ class _expandableTextfieldState extends State<expandableTextfield> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: ExpansionTile(
-        title: const Text('Situação social', style: Styles.h2),
+        title: const Text('Situação social', style: Styles.titlesBold),
         shape: const Border(),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
-
           children: [
-            Icon(PhosphorIcons.caretDown()), 
-
-            const SizedBox(width: 12),
-            
+            Icon(PhosphorIcons.caretDown(PhosphorIconsStyle.bold), size: 24,color: Styles.widgetBlackCarret), 
+            const SizedBox(width: 24),
             IconButton(
-              icon: Icon(PhosphorIcons.pencilSimpleLine()),
-              onPressed: () {},
+              icon: Icon(PhosphorIcons.pencilSimpleLine(PhosphorIconsStyle.bold),size: 24,color: Styles.widgetBlack),
+              onPressed: () {
+                //TODO: mandar para pagina para editar o conteudo de situação social
+              },
               style: IconButton.styleFrom(
                 backgroundColor: Styles.widgetYellow,
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(0),
+                shape: CircleBorder()
               ),
             ),
           ],
@@ -54,42 +50,42 @@ class _expandableTextfieldState extends State<expandableTextfield> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                TextField(
-                  controller: _noteController,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: 'Type your notes or updates here...',
-                    filled: true,
-                    fillColor: Colors.grey.shade50,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    
+                  ),
+                  child: Text(
+                    _displayText, // Uses your variable here
+                    style: Styles.normalText,
                   ),
                 ),
 
                 const SizedBox(height: 12),
 
+                // 3. YOUR EXISTING BUTTON
                 SizedBox(
                   width: double.infinity,
+                  height: 48,
                   child: FilledButton(
-                    style: Styles.buttonWhite,
+                    style: Styles.buttonWhite.copyWith(textStyle: WidgetStateProperty.all(Styles.midSizeBold)),
                     onPressed: () {
-                      final String typedText = _noteController.text;
-                      print('User saved this note: $typedText');
+                      print('Viewing more details for: $_displayText');
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Ver mais'),
-                        Icon(PhosphorIcons.arrowRight()),
-                      ],
-                    ),
+                    child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Ver mais'),
+                          Icon(PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),size: 24,),
+                        ],
+                      ),
                   ),
+                ),
                 ),
               ],
             ),
