@@ -13,8 +13,7 @@ dependencies:
   http: ^1.2.0
   flutter_typeahead: ^5.2.0
   phosphor_flutter: ^2.1.0
-
-
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -24,5 +23,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - imagens/infinito_laranja.png
+    - assets/imagens/infinito_laranja.png
     - .env
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/static/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto/static/Roboto-Bold.ttf
+          weight: 700

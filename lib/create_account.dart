@@ -52,7 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('imagens/infinito_laranja.png', width: 100),
+                    Image.asset('assets/imagens/infinito_laranja.png', width: 100),
                     _gap(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
