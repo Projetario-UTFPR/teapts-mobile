@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:front_pi/login.dart';
 import 'view_pts.dart';
+import 'widgets/upload_file.dart';
 
 void main() async{
   await dotenv.load(fileName: '.env');
@@ -24,7 +26,7 @@ class MainApp extends StatelessWidget {
     foregroundColor: Colors.black, 
   ),
   ),
-  home: ViewPtsPage(),
+  home: const Login(), 
 );
   }
 }
