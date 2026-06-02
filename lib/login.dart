@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/create_pts.dart';
+import 'widgets/upload_file.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -166,7 +167,7 @@ class _LoginState extends State<Login> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const CreatePtsPage(),
+                                builder: (_) => const UploadDocPage(patientId: 'mock-patient-001'),
                               ),
                             );
                           } catch (e, stackTrace) {
