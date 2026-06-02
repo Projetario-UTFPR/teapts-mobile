@@ -3,6 +3,7 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/expandableEquipeMultidiciplinar.dart';
 import 'package:front_pi/widgets/expandableText.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:gap/gap.dart';
 
 import 'widgets/imageSideCard.dart';
 import 'widgets/expandableAtividades.dart';
@@ -17,16 +18,13 @@ class ViewPtsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Styles.bgColor,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 48.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 24,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: const CustomRowItem(
                 title: 'John Doe',
                 isCircularImage: true,
@@ -34,47 +32,43 @@ class ViewPtsPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
-            
             Divider(
               color: Styles.widgetBlack40,
               thickness: 1,
+              endIndent: 16,
+              indent: 16,
             ),
-
-            const SizedBox(height: 24),
 
             const ExpandableTextDisplay(),
 
-            const SizedBox(height: 24),
-            
             const ExpandableAtividades(),
 
-            const SizedBox(height: 24),
-            
             const ExpandableEquipeMultidiciplinar(),
-
-            const SizedBox(height: 24),
 
             SizedBox(
               width: double.infinity,
-                  height: 48,
-                  child: FilledButton(
-                    onPressed: (
+              height: 48,
+              child: FilledButton(
+                onPressed:
+                    (
                       //TODO: fazer o navigator para pagina de
                     ) {},
-                    style: Styles.buttonWhite,
-                    child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Prontuario'),
-                          Icon(PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),size: 24,),
-                        ],
+                style: Styles.buttonWhite,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Prontuario'),
+                      Icon(
+                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
+                        size: 24,
                       ),
-                  ),
+                    ],
                   ),
                 ),
+              ),
+            ),
           ],
         ),
       ),

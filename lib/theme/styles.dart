@@ -8,6 +8,7 @@ class Styles {
   static const Color widgetBlackCarret = Color(0XFF555555); 
   static const Color IconLightGray =  Color(0X11000000); 
   static const Color IconDarkGray = Color(0XFF999999);
+  static const Color linkOrange = Color.fromARGB(255, 210, 145, 4);
 
   static const TextStyle titles = TextStyle(
     fontSize: 24,
@@ -36,7 +37,7 @@ class Styles {
     fontSize: 18,
     fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
-    color: widgetYellow
+    color: linkOrange,
   ); 
 
   static const TextStyle normalText = TextStyle(

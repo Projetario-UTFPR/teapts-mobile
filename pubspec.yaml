@@ -13,6 +13,7 @@ dependencies:
   http: ^1.2.0
   flutter_typeahead: ^5.2.0
   phosphor_flutter: ^2.1.0
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
