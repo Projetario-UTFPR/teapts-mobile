@@ -53,7 +53,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('assets/imagens/infinito_laranja.png', width: 100),
+                    Image.asset(
+                      'assets/imagens/infinito_laranja.png',
+                      width: 100,
+                    ),
                     _gap(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -113,7 +116,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                 : Icons.visibility_off,
                           ),
                           onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                       obscureText: _obscurePassword,
@@ -149,9 +153,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
-                          onPressed: () => setState(() =>
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword),
+                          onPressed: () => setState(
+                            () => _obscureConfirmPassword =
+                                !_obscureConfirmPassword,
+                          ),
                         ),
                       ),
                       obscureText: _obscureConfirmPassword,
@@ -185,7 +190,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             if (!mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Conta criada com sucesso')),
+                                content: Text('Conta criada com sucesso'),
+                              ),
                             );
                             context.go('/login');
                           } catch (e, stackTrace) {
@@ -217,7 +223,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        onPressed: () async {context.go('/login'); print('object');},
+                        onPressed: () async {
+                          context.go('/login');
+                        },
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
