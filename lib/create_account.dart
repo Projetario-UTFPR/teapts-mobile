@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -186,7 +187,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               const SnackBar(
                                   content: Text('Conta criada com sucesso')),
                             );
-                            Navigator.pop(context);
+                            context.go('/login');
                           } catch (e, stackTrace) {
                             print('STACK: $stackTrace');
                             if (!mounted) return;
@@ -216,7 +217,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () async {context.go('/login'); print('object');},
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(

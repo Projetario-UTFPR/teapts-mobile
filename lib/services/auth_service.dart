@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:front_pi/config/app_config.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   static String get baseUrl => AppConfig.baseUrl;
@@ -11,6 +12,8 @@ class AuthService {
   static String? professionalId;
 
   static List<Map<String, dynamic>> professionalProfiles =  [];
+
+  static final ValueNotifier<bool> authNotifier = ValueNotifier(false);
 
   static Future<void> login({
     required String email,
@@ -54,6 +57,7 @@ class AuthService {
         professionalId = null;
       }
 
+      authNotifier.value = true;
       return;
     }
 
@@ -70,6 +74,15 @@ class AuthService {
     }
 
     throw Exception('Erro inesperado: ${response.body}');
+  }
+
+  static void logout() {
+    accessToken = null;
+    refreshToken = null;
+    accountId = null;
+    professionalId = null;
+    professionalProfiles = [];
+    authNotifier.value = false;
   }
 
   static Future<void> createAccount({

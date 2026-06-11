@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const Map<String, String> specialtyLabels = {
@@ -21,46 +22,52 @@ String _translateSpecialism(String? raw) {
   return specialtyLabels[raw?.toUpperCase()] ?? 'Outro';
 }
 
-
-
-const EdgeInsets _kContentPaddingWithIcon = EdgeInsets.only(left: 0, right: 16, top: 8, bottom: 8);
-const EdgeInsets _kContentPaddingNoIcon = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+const EdgeInsets _kContentPaddingWithIcon = EdgeInsets.only(
+  left: 0,
+  right: 16,
+  top: 8,
+  bottom: 8,
+);
+const EdgeInsets _kContentPaddingNoIcon = EdgeInsets.symmetric(
+  horizontal: 12,
+  vertical: 8,
+);
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+);
 
 OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.black54),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: const BorderSide(color: Colors.black54),
+);
 
 OutlineInputBorder _inputBorderError() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.red),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: const BorderSide(color: Colors.red),
+);
 
 InputDecoration _inputDecoration({
   String? hintText,
   Widget? prefixIcon,
   Widget? suffixIcon,
   String? errorText,
-}) =>
-    InputDecoration(
-      hintText: hintText,
-      hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
-      prefixIcon: prefixIcon,
-      suffixIcon: suffixIcon,
-      errorText: errorText,
-      border: _inputBorder(),
-      enabledBorder: _inputBorder(),
-      focusedBorder: _inputBorderFocused(),
-      errorBorder: _inputBorderError(),
-      focusedErrorBorder: _inputBorderError(),
-      contentPadding: prefixIcon != null ? _kContentPaddingWithIcon : _kContentPaddingNoIcon,
-    );
-
+}) => InputDecoration(
+  hintText: hintText,
+  hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+  prefixIcon: prefixIcon,
+  suffixIcon: suffixIcon,
+  errorText: errorText,
+  border: _inputBorder(),
+  enabledBorder: _inputBorder(),
+  focusedBorder: _inputBorderFocused(),
+  errorBorder: _inputBorderError(),
+  focusedErrorBorder: _inputBorderError(),
+  contentPadding: prefixIcon != null
+      ? _kContentPaddingWithIcon
+      : _kContentPaddingNoIcon,
+);
 
 class CreatePtsPage extends StatefulWidget {
   const CreatePtsPage({super.key});
@@ -107,7 +114,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sem perfil profissional ativo')),
         );
-        Navigator.pop(context);
+          context.go('/debug_page');
       });
       return;
     }
@@ -141,61 +148,53 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
   Widget _gap([double height = 24]) => SizedBox(height: height);
 
   Widget _sectionTitle(String title) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            color: Color(0xFF000000),
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      title,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
+        color: Color(0xFF000000),
+      ),
+    ),
+  );
 
   Widget _helperText(String text) => Padding(
-        padding: const EdgeInsets.only(top: 6),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 12, color: Color(0xFF000000)),
-        ),
-      );
+    padding: const EdgeInsets.only(top: 6),
+    child: Text(
+      text,
+      style: const TextStyle(fontSize: 12, color: Color(0xFF000000)),
+    ),
+  );
 
   Widget _prefixIcon(Widget icon) => Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 6.0),
-      child: icon,
-    );
+    padding: const EdgeInsets.only(left: 12.0, right: 6.0),
+    child: icon,
+  );
 
-InputDecoration _inputDecoration({
-  String? hintText,
-  Widget? prefixIcon,
-  Widget? suffixIcon,
-  String? errorText,
-}) =>
-    InputDecoration(
-      hintText: hintText,
-      hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
-      prefixIcon: prefixIcon,
-      // CRUCIAL: Remove os paddings internos gigantescos padrão do Flutter
-      prefixIconConstraints: const BoxConstraints(
-        minWidth: 0,
-        minHeight: 0,
-      ),
-      suffixIcon: suffixIcon,
-      suffixIconConstraints: const BoxConstraints(
-        minWidth: 0,
-        minHeight: 0,
-      ),
-      errorText: errorText,
-      border: _inputBorder(),
-      enabledBorder: _inputBorder(),
-      focusedBorder: _inputBorderFocused(),
-      errorBorder: _inputBorderError(),
-      focusedErrorBorder: _inputBorderError(),
-      // Como o prefixIcon já resolve o espaçamento interno usando o BoxConstraints, 
-      // podemos usar um padding simétrico padrão para o resto do input.
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-    );
-
+  InputDecoration _inputDecoration({
+    String? hintText,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+    String? errorText,
+  }) => InputDecoration(
+    hintText: hintText,
+    hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+    prefixIcon: prefixIcon,
+    // CRUCIAL: Remove os paddings internos gigantescos padrão do Flutter
+    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+    suffixIcon: suffixIcon,
+    suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+    errorText: errorText,
+    border: _inputBorder(),
+    enabledBorder: _inputBorder(),
+    focusedBorder: _inputBorderFocused(),
+    errorBorder: _inputBorderError(),
+    focusedErrorBorder: _inputBorderError(),
+    // Como o prefixIcon já resolve o espaçamento interno usando o BoxConstraints,
+    // podemos usar um padding simétrico padrão para o resto do input.
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +202,7 @@ InputDecoration _inputDecoration({
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: AppBar(
-        title: const Text('PTS :: criar'),
-      ),
+      appBar: AppBar(title: const Text('PTS :: criar')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -227,22 +224,22 @@ InputDecoration _inputDecoration({
                 Container(
                   height: 48,
                   // Ajustado para alinhar com o padrão do InputDecoration
-                  padding: const EdgeInsets.only(right: 16), 
+                  padding: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black.withOpacity(0.10),
-                    ),
+                    border: Border.all(color: Colors.black.withOpacity(0.10)),
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.black.withOpacity(0.08),
                   ),
                   child: Row(
                     children: [
                       // Usando o _prefixIcon padrão para garantir o mesmo espaçamento
-                      _prefixIcon(PhosphorIcon(
-                        PhosphorIconsRegular.userList,
-                        size: 20,
-                        color: const Color(0xFF555555),
-                      )),
+                      _prefixIcon(
+                        PhosphorIcon(
+                          PhosphorIconsRegular.userList,
+                          size: 20,
+                          color: const Color(0xFF555555),
+                        ),
+                      ),
                       // Removido o SizedBox extra para não empurrar o texto
                       Text(
                         _translateSpecialism(
@@ -255,42 +252,53 @@ InputDecoration _inputDecoration({
                 )
               else
                 DropdownButtonFormField<String>(
-                value: _selectedProfessionalId,
-                decoration: InputDecoration(
-                  hintText: 'Selecione um perfil profissional',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), 
-                  prefixIcon: _prefixIcon(const Icon(
-                    Icons.manage_accounts_outlined,
-                    color: Color(0xFF555555),
-                    size: 20, 
-                  )),
-                  prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: PhosphorIcon(
-                      PhosphorIconsRegular.caretDown,
-                      size: 16, 
-                      color: const Color(0xFF999999),
+                  value: _selectedProfessionalId,
+                  decoration: InputDecoration(
+                    hintText: 'Selecione um perfil profissional',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
                     ),
-                  ),
-                  suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
-                items: profiles
-                    .map(
-                      (p) => DropdownMenuItem(
-                        value: p['professionalId'] as String,
-                        child: Text(
-                          _translateSpecialism(p['specialism'] ?? ''),
-                        ),
+                    prefixIcon: _prefixIcon(
+                      const Icon(
+                        Icons.manage_accounts_outlined,
+                        color: Color(0xFF555555),
+                        size: 20,
                       ),
-                    )
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedProfessionalId = v),
-                validator: (v) => v == null ? 'Selecione um perfil' : null,
-              ),
+                    ),
+                    prefixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: PhosphorIcon(
+                        PhosphorIconsRegular.caretDown,
+                        size: 16,
+                        color: const Color(0xFF999999),
+                      ),
+                    ),
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
+                    border: _inputBorder(),
+                    enabledBorder: _inputBorder(),
+                    focusedBorder: _inputBorderFocused(),
+                  ),
+                  items: profiles
+                      .map(
+                        (p) => DropdownMenuItem(
+                          value: p['professionalId'] as String,
+                          child: Text(
+                            _translateSpecialism(p['specialism'] ?? ''),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedProfessionalId = v),
+                  validator: (v) => v == null ? 'Selecione um perfil' : null,
+                ),
               _helperText(
                 profiles.length > 1
                     ? 'Você possui múltiplos perfis profissionais. Selecione um deles para ser assinalado como o responsável por esse PTS.'
@@ -299,7 +307,7 @@ InputDecoration _inputDecoration({
 
               _gap(),
 
-                _sectionTitle('Paciente'),
+              _sectionTitle('Paciente'),
               FormField<Map<String, String>>(
                 validator: (_) =>
                     _selectedPatient == null ? 'Selecione um paciente' : null,
@@ -312,15 +320,23 @@ InputDecoration _inputDecoration({
                       fillColor: const Color(0xFFFFFFFF),
                       filled: true,
                       hintText: 'Selecione o paciente',
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      
-                      prefixIcon: _prefixIcon(const PhosphorIcon(
-                        PhosphorIconsRegular.personSimpleCircle,
-                        size: 20,
-                        color: Color(0xFF555555),
-                      )),
-                      prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                      
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+
+                      prefixIcon: _prefixIcon(
+                        const PhosphorIcon(
+                          PhosphorIconsRegular.personSimpleCircle,
+                          size: 20,
+                          color: Color(0xFF555555),
+                        ),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
+                      ),
+
                       suffixIcon: Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: PhosphorIcon(
@@ -329,7 +345,10 @@ InputDecoration _inputDecoration({
                           color: const Color(0xFF999999),
                         ),
                       ),
-                      suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                      suffixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
+                      ),
                       errorText: fieldState.errorText,
                       border: _inputBorder(),
                       enabledBorder: _inputBorder(),
@@ -337,13 +356,14 @@ InputDecoration _inputDecoration({
                     ),
                   ),
                   suggestionsCallback: (search) => _patients
-                      .where((p) => p['name']!
-                          .toLowerCase()
-                          .contains(search.toLowerCase()))
+                      .where(
+                        (p) => p['name']!.toLowerCase().contains(
+                          search.toLowerCase(),
+                        ),
+                      )
                       .toList(),
-                  itemBuilder: (context, p) => ListTile(
-                    title: Text(p['name']!),
-                  ),
+                  itemBuilder: (context, p) =>
+                      ListTile(title: Text(p['name']!)),
                   onSelected: (p) {
                     setState(() {
                       _selectedPatient = p;
@@ -367,13 +387,21 @@ InputDecoration _inputDecoration({
                     fillColor: const Color(0xFFFFFFFF),
                     filled: true,
                     hintText: 'Selecione os profissionais',
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    prefixIcon: _prefixIcon(PhosphorIcon(
-                      PhosphorIconsRegular.usersFour,
-                      size: 20,
-                      color: const Color(0xFF555555),
-                    )),
-                    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    prefixIcon: _prefixIcon(
+                      PhosphorIcon(
+                        PhosphorIconsRegular.usersFour,
+                        size: 20,
+                        color: const Color(0xFF555555),
+                      ),
+                    ),
+                    prefixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 12.0),
                       child: PhosphorIcon(
@@ -382,22 +410,28 @@ InputDecoration _inputDecoration({
                         color: const Color(0xFF999999),
                       ),
                     ),
-                    suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     border: _inputBorder(),
                     enabledBorder: _inputBorder(),
                     focusedBorder: _inputBorderFocused(),
                   ),
                 ),
                 suggestionsCallback: (search) => _professionals
-                    .where((p) =>
-                        !_selectedMultidisciplinaryTeam
-                            .any((e) => e['id'] == p['id']) &&
-                        ((p['name'] ?? '')
-                                .toLowerCase()
-                                .contains(search.toLowerCase()) ||
-                            (p['specialism'] ?? '')
-                                .toLowerCase()
-                                .contains(search.toLowerCase())))
+                    .where(
+                      (p) =>
+                          !_selectedMultidisciplinaryTeam.any(
+                            (e) => e['id'] == p['id'],
+                          ) &&
+                          ((p['name'] ?? '').toLowerCase().contains(
+                                search.toLowerCase(),
+                              ) ||
+                              (p['specialism'] ?? '').toLowerCase().contains(
+                                search.toLowerCase(),
+                              )),
+                    )
                     .toList(),
                 itemBuilder: (context, p) => ListTile(
                   title: Text(p['name'] ?? ''),
@@ -450,8 +484,7 @@ InputDecoration _inputDecoration({
                   focusedBorder: _inputBorderFocused(),
                   contentPadding: const EdgeInsets.all(16),
                 ),
-                validator: (v) =>
-                    v == null || v.isEmpty ? 'Obrigatório' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Obrigatório' : null,
               ),
 
               _helperText(
@@ -485,7 +518,7 @@ InputDecoration _inputDecoration({
                     );
 
                     if (!mounted) return;
-                    Navigator.pop(context);
+                      context.go('/debug-page');
                   },
                   icon: PhosphorIcon(
                     PhosphorIconsBold.plus,
@@ -510,7 +543,9 @@ InputDecoration _inputDecoration({
                     side: BorderSide(color: Colors.black.withOpacity(0.10)),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                      context.go('/debug-page');
+                  },
                   child: const Text('Cancelar'),
                 ),
               ),
