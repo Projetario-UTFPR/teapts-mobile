@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/create_pts.dart';
+import 'package:go_router/go_router.dart';
 import 'widgets/upload_file.dart';
 
 class Login extends StatefulWidget {
@@ -208,14 +209,7 @@ class _LoginState extends State<Login> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpPage(),
-                            ),
-                          );
-                        },
+                        onPressed: () => context.go('/create-account'),
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
