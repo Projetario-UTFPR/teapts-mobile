@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 class ApiService {
-  // Toggle para alternar entre mock e real
   static bool useMock = true;
 
   static Future<Map<String, dynamic>> post(
@@ -9,7 +8,6 @@ class ApiService {
     Map<String, dynamic> body,
   ) async {
     if (useMock) return _mockPost(path, body);
-    // TODO: implementação real com http/dio
     throw UnimplementedError('Backend não configurado');
   }
 
@@ -22,27 +20,24 @@ class ApiService {
     throw UnimplementedError('Backend não configurado');
   }
 
-  // ── Mocks ──────────────────────────────────────────────────────────────────
-
   static Future<Map<String, dynamic>> _mockPost(
     String path,
     Map<String, dynamic> body,
   ) async {
-    await Future.delayed(const Duration(milliseconds: 800)); // simula latência
+    await Future.delayed(const Duration(milliseconds: 800));
 
-    switch (path) {
-      case '/documents/signed-url':
-        return {
-          'uploadUrl': 'https://mock-s3.example.com/upload/fake-key-123',
-          'fileKey': 'documents/${body['patientId']}/fake-key-123.${_ext(body['documentFileName'])}',
-        };
-
-      case '/documents':
-        return {'id': 'doc_mock_${DateTime.now().millisecondsSinceEpoch}'};
-
-      default:
-        throw Exception('Mock: rota não mapeada — $path');
+    if (path.startsWith('/v1/patient/') && path.endsWith('/prontuario/document/upload/initiate')) {
+      return {
+        'uploadUrl': 'https://mock-s3.example.com/upload/fake-key-123',
+        'fileKey': 'fake-key-123.${_ext(body['fileName'])}',
+      };
     }
+
+    if (path.startsWith('/v1/patient/') && path.endsWith('/prontuario/document/upload')) {
+      return {};
+    }
+
+    throw Exception('Mock: rota não mapeada — $path');
   }
 
   static Future<void> _mockPutRaw(
@@ -51,8 +46,6 @@ class ApiService {
     String contentType,
   ) async {
     await Future.delayed(const Duration(milliseconds: 600));
-    // Só loga — não faz upload de verdade
-    // ignore: avoid_print
     print('[MockApiService] PUT $url | ${bytes.length} bytes | $contentType');
   }
 
