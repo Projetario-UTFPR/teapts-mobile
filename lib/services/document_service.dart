@@ -1,8 +1,20 @@
 import 'dart:typed_data';
-import 'package:front_pi/services/api_service.dart'; // ou o que você usa pra fazer http
+import 'package:front_pi/services/api_service.dart'; 
 
 class DocumentService {
-  static Future<void> uploadDocument({
+  static String _getMimeType(String ext) {
+    switch (ext.toLowerCase()) {
+      case 'pdf':  return 'application/pdf';
+      case 'png':  return 'image/png';
+      case 'jpg':
+      case 'jpeg': return 'image/jpeg';
+      case 'doc':  return 'application/msword';
+      case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      default:     return 'application/octet-stream';
+    }
+  }
+
+static Future<void> uploadDocument({
     required String patientId,
     required String assigneeProfessionalId,
     required String documentTitle,
@@ -11,34 +23,38 @@ class DocumentService {
     required String documentFileType,
     required String documentFileName,
   }) async {
+    final mimeType = _getMimeType(documentFileType); 
     
-    final signedResponse = await ApiService.post('/documents/signed-url', {
-      'patientId': patientId,
-      'assigneeProfessionalId': assigneeProfessionalId,
-      'documentTitle': documentTitle,
-      if (documentDescription != null)
-        'documentDescription': documentDescription,
-      'documentFileName': documentFileName,
-      'documentFileType': documentFileType,
+    final signedResponse = await ApiService.post(
+      '/v1/patient/$patientId/prontuario/document/upload/initiate', 
+    {
+      'fileName': documentFileName,
+      'fileType': mimeType,
+      'fileSize': documentContent.length,
     });
 
-    final uploadUrl = signedResponse['uploadUrl'] as String;
-    final fileKey = signedResponse['fileKey'] as String;
+    final uploadUrl = signedResponse['uploadUrl'];
+    final fileKey = signedResponse['fileKey'];
+    if (uploadUrl == null || fileKey == null) {
+      throw Exception('Resposta inválida do servidor ao iniciar upload');
+    }
 
 
-    await ApiService.putRaw(
-      url: uploadUrl,
+    await ApiService.putRaw( 
+      url: uploadUrl as String,
       bytes: documentContent,
-      contentType: documentFileType,
+      contentType: mimeType,
     );
 
-    await ApiService.post('/documents', {
-      'patientId': patientId,
-      'assigneeProfessionalId': assigneeProfessionalId,
-      'documentFileKey': fileKey,
-      'documentTitle': documentTitle,
-      if (documentDescription != null)
-        'documentDescription': documentDescription,
-    });
+    await ApiService.post(
+      '/v1/patient/$patientId/prontuario/document/upload',
+      {
+        'assigneeProfessionalId': assigneeProfessionalId,
+        'documentFileKey': fileKey as String,
+        'documentTitle': documentTitle,
+        if (documentDescription != null)
+          'documentDescription': documentDescription,
+      },
+    );
   }
 }
