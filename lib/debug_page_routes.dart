@@ -93,8 +93,8 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  // for testing you need a patientId
-                  context.go('/upload-doc/123');
+                  // TODO: Link with real patient ID after creating a PTS
+                  context.go('/upload-doc/75135705-75a7-46ce-93e9-00b3f5622131');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(
