@@ -1,57 +1,56 @@
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
+import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/auth_service.dart';
 
 class ApiService {
-  static bool useMock = true;
+  static const String _baseUrl = 'http://localhost:3000'; 
 
   static Future<Map<String, dynamic>> post(
     String path,
     Map<String, dynamic> body,
   ) async {
-    if (useMock) return _mockPost(path, body);
-    throw UnimplementedError('Backend não configurado');
+    final token = AuthService.accessToken; 
+    final response = await http.post(
+      Uri.parse('$_baseUrl$path'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 204) return {};
+
+    final decoded = jsonDecode(response.body);
+
+    if (response.statusCode >= 400) {
+      final msg = decoded['message'] ?? decoded['errors']?.toString() ?? 'Erro desconhecido';
+      throw Exception(msg);
+    }
+
+    return decoded as Map<String, dynamic>;
   }
 
   static Future<void> putRaw({
     required String url,
     required Uint8List bytes,
     required String contentType,
-  }) async {
-    if (useMock) return _mockPutRaw(url, bytes, contentType);
-    throw UnimplementedError('Backend não configurado');
-  }
+    required String fileName,
+}) async {
+  final response = await http.put(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': contentType,
+      'Content-Disposition': 'inline',
+      'Content-Length': bytes.length.toString(),
+    },
+    body: bytes,
+  );
 
-  static Future<Map<String, dynamic>> _mockPost(
-    String path,
-    Map<String, dynamic> body,
-  ) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    if (path.startsWith('/v1/patient/') && path.endsWith('/prontuario/document/upload/initiate')) {
-      return {
-        'uploadUrl': 'https://mock-s3.example.com/upload/fake-key-123',
-        'fileKey': 'fake-key-123.${_ext(body['fileName'])}',
-      };
+      if (response.statusCode != 200 && response.statusCode != 204) {
+         throw Exception('Falha no upload do arquivo: ${response.statusCode}');
     }
-
-    if (path.startsWith('/v1/patient/') && path.endsWith('/prontuario/document/upload')) {
-      return {};
-    }
-
-    throw Exception('Mock: rota não mapeada — $path');
-  }
-
-  static Future<void> _mockPutRaw(
-    String url,
-    Uint8List bytes,
-    String contentType,
-  ) async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    print('[MockApiService] PUT $url | ${bytes.length} bytes | $contentType');
-  }
-
-  static String _ext(dynamic fileName) {
-    if (fileName is! String) return 'bin';
-    final parts = fileName.split('.');
-    return parts.length > 1 ? parts.last : 'bin';
   }
 }
