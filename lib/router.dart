@@ -6,35 +6,31 @@ import 'package:front_pi/view_pts.dart';
 import 'package:front_pi/create_account.dart';
 import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/widgets/upload_file.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/debug-page', 
+  initialLocation: '/debug-page',
 
   refreshListenable: AuthService.authNotifier,
 
   redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = AuthService.accessToken != null; //esta logado?
+    final loggedIn = AuthService.accessToken != null;
 
-    final List<String> publicRoutes = ['/login', '/create-account', '/debug-page', '/create-pts', '/view-pts']; //rotas públicas
-    
-    final bool isGoingToPublicRoute = publicRoutes.contains(state.matchedLocation);
+    final publicRoutes = ['/login', '/create-account'];
+    final isPublic = publicRoutes.contains(state.matchedLocation);
 
-    if (!loggedIn && !isGoingToPublicRoute) {// não está logado em uma página q não é pública
-      return '/login'; 
+    if (!loggedIn && !isPublic) {
+      return '/login';
     }
 
-    if (loggedIn && isGoingToPublicRoute) { //logado tentando acessar uma página pública
-      return '/debug-page'; 
+    if (loggedIn && isPublic) {
+      return '/debug-page';
     }
+
     return null;
   },
 
   routes: [
-    /*
-     GoRoute(
-      path: '/',
-      builder: (context, state) => const Home(),
-    ),*/
     GoRoute(
       path: '/login',
       builder: (context, state) => const Login(),
@@ -53,7 +49,14 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/debug-page',
-      builder: (context, state) =>  DebugPage(),
+      builder: (context, state) => DebugPage(),
+    ),
+    GoRoute(
+      path: '/upload-doc/:patientId',
+      builder: (context, state) {
+        final patientId = state.pathParameters['patientId']!;
+        return UploadDocPage(patientId: patientId);
+      },
     ),
   ],
 );

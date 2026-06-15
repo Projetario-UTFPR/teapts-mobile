@@ -93,6 +93,30 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
+                  // TODO: Link with real patient ID after creating a PTS
+                  context.go('/upload-doc/75135705-75a7-46ce-93e9-00b3f5622131');
+                },
+                style: Styles.buttonWhite,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Upload Document'),
+                      Icon(
+                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
+                        size: 24,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: FilledButton(
+                onPressed: () {
                   context.go('/login');
                 },
                 style: Styles.buttonWhite,

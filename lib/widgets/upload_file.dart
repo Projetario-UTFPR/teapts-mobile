@@ -5,6 +5,7 @@ import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 
 const Map<String, String> specialtyLabels = {
@@ -135,18 +136,18 @@ Future<void> _init() async {
       );
 
       if (!mounted) return;
-      Navigator.pop(context);
+        context.go('/debug-page');
+
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao enviar documento: $e')),
       );
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) 
+      setState(() => _isLoading = false);
     }
   }
-
-  // ── helpers visuais ────────────────────────────────────────────────────────
 
   Widget _gap([double height = 24]) => SizedBox(height: height);
 
@@ -223,7 +224,7 @@ Future<void> _init() async {
   Align(
     alignment: Alignment.centerLeft,
     child: IconButton(
-      onPressed: _isLoading ? null : () => Navigator.pop(context),
+      onPressed: _isLoading ? null : () => context.go('/debug-page'),
       style: IconButton.styleFrom(
         backgroundColor: Styles.widgetYellow,
         padding: const EdgeInsets.all(0),
@@ -493,7 +494,7 @@ Future<void> _init() async {
                     side: BorderSide(color: Colors.black.withOpacity(0.10)),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: _isLoading ? null : () => Navigator.pop(context),
+                  onPressed: _isLoading ? null : () => context.go('/debug-page'),
                   child: const Text('Cancelar'),
                 ),
               ),
