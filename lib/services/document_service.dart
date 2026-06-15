@@ -35,6 +35,7 @@ static Future<void> uploadDocument({
 
     final uploadUrl = signedResponse['uploadUrl'];
     final fileKey = signedResponse['fileKey'];
+
     if (uploadUrl == null || fileKey == null) {
       throw Exception('Resposta inválida do servidor ao iniciar upload');
     }
@@ -44,6 +45,7 @@ static Future<void> uploadDocument({
       url: uploadUrl as String,
       bytes: documentContent,
       contentType: mimeType,
+      fileName: documentFileName,
     );
 
     await ApiService.post(
@@ -54,7 +56,7 @@ static Future<void> uploadDocument({
         'documentTitle': documentTitle,
         if (documentDescription != null)
           'documentDescription': documentDescription,
-      },
-    );
-  }
+    },
+  );
+  } 
 }
