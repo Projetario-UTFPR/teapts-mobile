@@ -136,9 +136,7 @@ Future<void> _init() async {
       );
 
       if (!mounted) return;
-      if (Navigator.canPop(context)) {
         context.go('/debug-page');
-      }
 
     } catch (e) {
       if (!mounted) return;
@@ -150,8 +148,6 @@ Future<void> _init() async {
       setState(() => _isLoading = false);
     }
   }
-
-  // ── helpers visuais ────────────────────────────────────────────────────────
 
   Widget _gap([double height = 24]) => SizedBox(height: height);
 
@@ -228,7 +224,7 @@ Future<void> _init() async {
   Align(
     alignment: Alignment.centerLeft,
     child: IconButton(
-      onPressed: _isLoading ? null : () => Navigator.pop(context),
+      onPressed: _isLoading ? null : () => context.go('/debug-page'),
       style: IconButton.styleFrom(
         backgroundColor: Styles.widgetYellow,
         padding: const EdgeInsets.all(0),
@@ -498,7 +494,7 @@ Future<void> _init() async {
                     side: BorderSide(color: Colors.black.withOpacity(0.10)),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: _isLoading ? null : () => Navigator.pop(context),
+                  onPressed: _isLoading ? null : () => context.go('/debug-page'),
                   child: const Text('Cancelar'),
                 ),
               ),
