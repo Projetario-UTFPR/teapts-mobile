@@ -7,11 +7,15 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     ports:
-      - ${DB_PORT}:5432
+      - "${DB_PORT}:5432"
     volumes:
       - tea_pts_db:/var/lib/postgresql
-    networks:
-      - app
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -c 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    network_mode: "host"
 
   server:
     container_name: teapts_server
@@ -22,21 +26,40 @@ services:
       - .env
     environment:
       - PORT=3000
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
     ports:
       - 3000:3000
     depends_on:
       - db
-    networks:
-      - app
+      - blob  
+    network_mode: "host"
+    
+  blob:
+    container_name: teapts_backend_blob_storage
+    image: rustfs/rustfs:latest
+    user: "10001:10001"
+    ports:
+      - "${BLOB_STORAGE_PORT}:9000"
+      - "9001:9001"
+    volumes:
+      - tea_pts_blob_storage:/data
+    environment:
+      - RUSTFS_ACCESS_KEY=${BLOB_STORAGE_ACCESS_KEY}
+      - RUSTFS_SECRET_KEY=${BLOB_STORAGE_SECRET_KEY}
+      - RUSTFS_CONSOLE_ENABLE=${BLOB_STORAGE_CONSOLE_ENABLE}
+      - RUSTFS_SERVER_DOMAINS=${BLOB_STORAGE_SERVER_DOMAINS}
+      - RUSTFS_ADDRESS=:${BLOB_STORAGE_PORT}
     healthcheck:
-      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -c 'SELECT 1'"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+    command: /data
+    network_mode: "host"
+
 
 volumes:
   tea_pts_db:
+  tea_pts_blob_storage:
 
 networks:
   app:
