@@ -24,7 +24,7 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  context.go('/view-pts');
+                  context.go('/debug-page/view-pts');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(
@@ -47,7 +47,7 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  context.go('/create-pts');
+                  context.go('/debug-page/create-pts');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(
