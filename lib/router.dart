@@ -41,14 +41,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SignUpPage(),
     ),
 
-    GoRoute(
-      path: '/upload-doc/:patientId',
-      builder: (context, state) {
-        final patientId = state.pathParameters['patientId']!;
-        return UploadDocPage(patientId: patientId);
-      },
-    ),
-
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),
@@ -69,20 +61,31 @@ final GoRouter appRouter = GoRouter(
               path: '/create-pts',
               builder: (context, state) => const CreatePtsPage(),
             ),
+            GoRoute(
+              path: '/upload-doc/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return UploadDocPage(patientId: patientId);
+              },
+            ),
           ],
         ),
-         StatefulShellBranch(
+        StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/debug-page',
               builder: (context, state) => DebugPage(),
-            ),]),
-                   StatefulShellBranch(
+            ),
+          ],
+        ),
+        StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/debug-page',
               builder: (context, state) => DebugPage(),
-            ),]),
+            ),
+          ],
+        ),
       ],
     ),
   ],
