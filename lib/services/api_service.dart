@@ -1,64 +1,56 @@
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
+import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/auth_service.dart';
 
 class ApiService {
-  // Toggle para alternar entre mock e real
-  static bool useMock = true;
+  static const String _baseUrl = 'http://localhost:3000'; 
 
   static Future<Map<String, dynamic>> post(
     String path,
     Map<String, dynamic> body,
   ) async {
-    if (useMock) return _mockPost(path, body);
-    // TODO: implementação real com http/dio
-    throw UnimplementedError('Backend não configurado');
+    final token = AuthService.accessToken; 
+    final response = await http.post(
+      Uri.parse('$_baseUrl$path'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 204) return {};
+
+    final decoded = jsonDecode(response.body);
+
+    if (response.statusCode >= 400) {
+      final msg = decoded['message'] ?? decoded['errors']?.toString() ?? 'Erro desconhecido';
+      throw Exception(msg);
+    }
+
+    return decoded as Map<String, dynamic>;
   }
 
   static Future<void> putRaw({
     required String url,
     required Uint8List bytes,
     required String contentType,
-  }) async {
-    if (useMock) return _mockPutRaw(url, bytes, contentType);
-    throw UnimplementedError('Backend não configurado');
-  }
+    required String fileName,
+}) async {
+  final response = await http.put(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': contentType,
+      'Content-Disposition': 'inline',
+      'Content-Length': bytes.length.toString(),
+    },
+    body: bytes,
+  );
 
-  // ── Mocks ──────────────────────────────────────────────────────────────────
-
-  static Future<Map<String, dynamic>> _mockPost(
-    String path,
-    Map<String, dynamic> body,
-  ) async {
-    await Future.delayed(const Duration(milliseconds: 800)); // simula latência
-
-    switch (path) {
-      case '/documents/signed-url':
-        return {
-          'uploadUrl': 'https://mock-s3.example.com/upload/fake-key-123',
-          'fileKey': 'documents/${body['patientId']}/fake-key-123.${_ext(body['documentFileName'])}',
-        };
-
-      case '/documents':
-        return {'id': 'doc_mock_${DateTime.now().millisecondsSinceEpoch}'};
-
-      default:
-        throw Exception('Mock: rota não mapeada — $path');
+      if (response.statusCode != 200 && response.statusCode != 204) {
+         throw Exception('Falha no upload do arquivo: ${response.statusCode}');
     }
-  }
-
-  static Future<void> _mockPutRaw(
-    String url,
-    Uint8List bytes,
-    String contentType,
-  ) async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    // Só loga — não faz upload de verdade
-    // ignore: avoid_print
-    print('[MockApiService] PUT $url | ${bytes.length} bytes | $contentType');
-  }
-
-  static String _ext(dynamic fileName) {
-    if (fileName is! String) return 'bin';
-    final parts = fileName.split('.');
-    return parts.length > 1 ? parts.last : 'bin';
   }
 }

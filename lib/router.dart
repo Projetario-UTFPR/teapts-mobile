@@ -15,27 +15,27 @@ final GoRouter appRouter = GoRouter(
   refreshListenable: AuthService.authNotifier,
 
   redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = AuthService.accessToken != null;
+    final loggedIn = AuthService.accessToken != null;
 
-    final List<String> publicRoutes = ['/login', '/create-account'];
+    final publicRoutes = ['/login', '/create-account'];
+    final isPublic = publicRoutes.contains(state.matchedLocation);
 
-    final bool isGoingToPublicRoute = publicRoutes.contains(
-      state.matchedLocation,
-    );
-
-    if (!loggedIn && !isGoingToPublicRoute) {
+    if (!loggedIn && !isPublic) {
       return '/login';
     }
 
-    if (loggedIn && isGoingToPublicRoute) {
+    if (loggedIn && isPublic) {
       return '/debug-page';
     }
+
     return null;
   },
 
   routes: [
-    GoRoute(path: '/login', builder: (context, state) => const Login()),
-
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const Login(),
+    ),
     GoRoute(
       path: '/create-account',
       builder: (context, state) => const SignUpPage(),
