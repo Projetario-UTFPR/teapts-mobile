@@ -47,6 +47,3 @@ app.*.map.json
 .env
 private.pem
 public.pem
-.env.sample
-.gitignore
-.env.sample
