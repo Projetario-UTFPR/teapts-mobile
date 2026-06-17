@@ -19,12 +19,10 @@ class MainLayout extends StatelessWidget {
 
         automaticallyImplyLeading: false,
         titleSpacing: 0,
-
-        //shadowColor: Styles.widgetBlack.withOpacity(0.25),
         shape: Border(
           bottom: BorderSide(
             color: Styles.widgetBlack.withOpacity(0.25),
-            width: .5,
+            width: 1,
           ),
         ),
 
@@ -40,11 +38,10 @@ class MainLayout extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  shape: BoxShape
-                      .circle, // Forces the border to be perfectly round
+                  shape: BoxShape.circle,
                   border: Border.all(
-                    color: Styles.widgetBlack, // Your border color
-                    width: 0.5, // Exact thickness of the border
+                    color: Styles.widgetBlack.withAlpha(80),
+                    width: 1,
                   ),
                 ),
 

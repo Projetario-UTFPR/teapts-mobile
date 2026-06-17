@@ -114,7 +114,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sem perfil profissional ativo')),
         );
-          context.go('/debug_page');
+          context.go('/debug-page');
       });
       return;
     }

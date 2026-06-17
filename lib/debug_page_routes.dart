@@ -24,7 +24,7 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  context.go('/debug-page/view-pts');
+                  context.go('/view-pts');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(
@@ -47,7 +47,7 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  context.go('/debug-page/create-pts');
+                  context.go('/create-pts');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(
@@ -56,52 +56,6 @@ class DebugPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Create PTS'),
-                      Icon(
-                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 24,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: () {
-                  context.go('/create-account');
-                },
-                style: Styles.buttonWhite,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Create Account'),
-                      Icon(
-                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 24,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: () {
-                  context.go('/login');
-                },
-                style: Styles.buttonWhite,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Login'),
                       Icon(
                         PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
                         size: 24,

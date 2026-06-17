@@ -7,6 +7,7 @@ import 'package:front_pi/create_account.dart';
 import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
+import 'package:front_pi/widgets/upload_file.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/debug-page',
@@ -14,27 +15,19 @@ final GoRouter appRouter = GoRouter(
   refreshListenable: AuthService.authNotifier,
 
   redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = AuthService.accessToken != null; //esta logado?
+    final bool loggedIn = AuthService.accessToken != null;
 
-    final List<String> publicRoutes = [
-      '/login',
-      '/create-account',
-      '/debug-page',
-      '/debug-page/create-pts',
-      '/debug-page/view-pts',
-    ]; //rotas públicas
+    final List<String> publicRoutes = ['/login', '/create-account'];
 
     final bool isGoingToPublicRoute = publicRoutes.contains(
       state.matchedLocation,
     );
 
     if (!loggedIn && !isGoingToPublicRoute) {
-      // não está logado em uma página q não é pública
       return '/login';
     }
 
     if (loggedIn && isGoingToPublicRoute) {
-      //logado tentando acessar uma página pública
       return '/debug-page';
     }
     return null;
@@ -48,6 +41,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SignUpPage(),
     ),
 
+    GoRoute(
+      path: '/upload-doc/:patientId',
+      builder: (context, state) {
+        final patientId = state.pathParameters['patientId']!;
+        return UploadDocPage(patientId: patientId);
+      },
+    ),
+
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),
@@ -58,20 +59,30 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/debug-page',
               builder: (context, state) => DebugPage(),
-              routes: [
-                GoRoute(
-                  path: 'view-pts',
-                  builder: (context, state) => ViewPtsPage(),
-                ),
+            ),
+            GoRoute(
+              path: '/view-pts',
+              builder: (context, state) => ViewPtsPage(),
+            ),
 
-                GoRoute(
-                  path: 'create-pts',
-                  builder: (context, state) => const CreatePtsPage(),
-                ),
-              ],
+            GoRoute(
+              path: '/create-pts',
+              builder: (context, state) => const CreatePtsPage(),
             ),
           ],
         ),
+         StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/debug-page',
+              builder: (context, state) => DebugPage(),
+            ),]),
+                   StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/debug-page',
+              builder: (context, state) => DebugPage(),
+            ),]),
       ],
     ),
   ],
