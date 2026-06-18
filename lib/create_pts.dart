@@ -114,7 +114,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sem perfil profissional ativo')),
         );
-          context.go('/debug_page');
+        //context.go('/debug-page');
       });
       return;
     }
@@ -202,7 +202,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: AppBar(title: const Text('PTS :: criar')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -518,7 +517,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     );
 
                     if (!mounted) return;
-                      context.go('/debug-page');
+                    context.go('/debug-page');
                   },
                   icon: PhosphorIcon(
                     PhosphorIconsBold.plus,
@@ -544,7 +543,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
-                      context.go('/debug-page');
+                    context.go('/debug-page');
                   },
                   child: const Text('Cancelar'),
                 ),

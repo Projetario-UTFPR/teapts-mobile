@@ -6,6 +6,7 @@ import 'package:front_pi/view_pts.dart';
 import 'package:front_pi/create_account.dart';
 import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -39,24 +40,53 @@ final GoRouter appRouter = GoRouter(
       path: '/create-account',
       builder: (context, state) => const SignUpPage(),
     ),
-    GoRoute(
-      path: '/view-pts',
-      builder: (context, state) => ViewPtsPage(),
-    ),
-    GoRoute(
-      path: '/create-pts',
-      builder: (context, state) => const CreatePtsPage(),
-    ),
-    GoRoute(
-      path: '/debug-page',
-      builder: (context, state) => DebugPage(),
-    ),
-    GoRoute(
-      path: '/upload-doc/:patientId',
-      builder: (context, state) {
-        final patientId = state.pathParameters['patientId']!;
-        return UploadDocPage(patientId: patientId);
-      },
+
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) =>
+          MainLayout(navigationShell: navigationShell),
+
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/debug-page',
+              builder: (context, state) => DebugPage(),
+            ),
+            GoRoute(
+              path: '/view-pts',
+              builder: (context, state) => ViewPtsPage(),
+            ),
+
+            GoRoute(
+              path: '/create-pts',
+              builder: (context, state) => const CreatePtsPage(),
+            ),
+            GoRoute(
+              path: '/upload-doc/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return UploadDocPage(patientId: patientId);
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/debug-page',
+              builder: (context, state) => DebugPage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/debug-page',
+              builder: (context, state) => DebugPage(),
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );
