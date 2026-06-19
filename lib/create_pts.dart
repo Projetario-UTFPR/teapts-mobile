@@ -114,7 +114,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sem perfil profissional ativo')),
         );
-        //context.go('/debug-page');
       });
       return;
     }
@@ -201,8 +200,32 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
     final profiles = _professionalProfiles;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(
+  backgroundColor: const Color(0xFFFFFFFF),
+  appBar: AppBar(
+    backgroundColor: const Color(0xFFFFFFFF),
+    elevation: 0,
+    leading: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () => context.go('/home'),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+            color: Color(0xFFFFC200),
+            shape: BoxShape.circle,
+          ),
+          child: PhosphorIcon(
+            PhosphorIconsBold.arrowLeft,
+            size: 20,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    ),
+  ),
+  body: SingleChildScrollView(
+
         padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
@@ -517,7 +540,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     );
 
                     if (!mounted) return;
-                    context.go('/debug-page');
+                    context.go('/home');
                   },
                   icon: PhosphorIcon(
                     PhosphorIconsBold.plus,
@@ -543,7 +566,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
-                    context.go('/debug-page');
+                    context.go('/home');
                   },
                   child: const Text('Cancelar'),
                 ),
