@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/home.dart';
 import 'package:front_pi/create_pts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:front_pi/login.dart';
@@ -8,9 +9,10 @@ import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
+import 'package:front_pi/home.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/debug-page',
+  initialLocation: '/home',
 
   refreshListenable: AuthService.authNotifier,
 
@@ -20,47 +22,27 @@ final GoRouter appRouter = GoRouter(
     final publicRoutes = ['/login', '/create-account'];
     final isPublic = publicRoutes.contains(state.matchedLocation);
 
-    if (!loggedIn && !isPublic) {
-      return '/login';
-    }
-
-    if (loggedIn && isPublic) {
-      return '/debug-page';
-    }
+    if (!loggedIn && !isPublic) return '/login';
+    if (loggedIn && isPublic) return '/home';
 
     return null;
   },
 
   routes: [
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const Login(),
-    ),
-    GoRoute(
-      path: '/create-account',
-      builder: (context, state) => const SignUpPage(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const Login()),
+    GoRoute(path: '/create-account', builder: (context, state) => const SignUpPage()),
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),
 
       branches: [
+        // Branch 0 — aba "casa"
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: '/debug-page',
-              builder: (context, state) => DebugPage(),
-            ),
-            GoRoute(
-              path: '/view-pts',
-              builder: (context, state) => ViewPtsPage(),
-            ),
-
-            GoRoute(
-              path: '/create-pts',
-              builder: (context, state) => const CreatePtsPage(),
-            ),
+            GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+            GoRoute(path: '/view-pts', builder: (context, state) => ViewPtsPage()),
+            GoRoute(path: '/create-pts', builder: (context, state) => const CreatePtsPage()),
             GoRoute(
               path: '/upload-doc/:patientId',
               builder: (context, state) {
@@ -70,20 +52,18 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
+
+        // Branch 1 — aba "usuários"
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: '/debug-page',
-              builder: (context, state) => DebugPage(),
-            ),
+            GoRoute(path: '/debug-page', builder: (context, state) => DebugPage()),
           ],
         ),
+
+        // Branch 2 — aba "lista"
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: '/debug-page',
-              builder: (context, state) => DebugPage(),
-            ),
+            GoRoute(path: '/debug-page-2', builder: (context, state) => DebugPage()),
           ],
         ),
       ],
