@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/imagens/infinito_laranja.png
     - assets/imagens/dog.png
+    - assets/imagens/docinho.jpg
     - .env
   fonts:
     - family: Roboto
