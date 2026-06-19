@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/services/add_activities.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart';
 import 'imageSideCard.dart';
@@ -58,7 +59,9 @@ class ExpandableAtividades extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                addActivityPanel(context);
+              },
               style: Styles.buttonYellow,
               icon: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold), size: 24),
               label: const Text('Adicionar nova atividade'),
