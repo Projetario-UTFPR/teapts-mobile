@@ -84,7 +84,7 @@ class MainLayout extends StatelessWidget {
               label: 'pagina 1',
             ),
             BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsFill.usersThree, size: 32),
+              icon: Icon(PhosphorIconsFill.path, size: 32),
               label: 'pagina 2',
             ),
             BottomNavigationBarItem(
