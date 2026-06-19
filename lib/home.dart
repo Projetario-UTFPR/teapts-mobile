@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
             isProfileImage: false,
             subtitle: 'Situação PTS',
             tag: SpecialismChip(label: patient.specialism),
-            placeholderImage: 'assets/imagens/docinho.jpg',
+            placeholderImage: 'assets/imagens/florzinha.png',
             buttonText: 'Visualizar PTS',
             onButtonTap: () {
               Navigator.push(
