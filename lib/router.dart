@@ -9,7 +9,7 @@ import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
-import 'package:front_pi/home.dart';
+import 'package:front_pi/screens/create_pts/index.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -53,10 +53,9 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
 
-        // Branch 1 — aba "usuários"
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/debug-page', builder: (context, state) => DebugPage()),
+            GoRoute(path: '/timeline', builder: (context, state) => const TimelinePage()),
           ],
         ),
 
