@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:front_pi/login.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'router.dart';
-import 'widgets/upload_file.dart';
-import 'package:go_router/go_router.dart';
 
 
 void main() async{
   await dotenv.load(fileName: '.env');
+
+  await initializeDateFormatting("pt_BR", null);
+  Intl.defaultLocale = "pt_BR";
+
   runApp(const MainApp());
 }
 
