@@ -5,7 +5,7 @@ import 'package:front_pi/services/pts_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-const Map<String, String> specialtyLabels = {
+const Map<String, String> specialityLabels = {
   'PSYCHOLOGIST': 'Psicólogo(a)',
   'PSYCHIATRIST': 'Psiquiatra',
   'SOCIAL_WORKER': 'Assistente Social',
@@ -19,7 +19,7 @@ const Map<String, String> specialtyLabels = {
 };
 
 String _translateSpecialism(String? raw) {
-  return specialtyLabels[raw?.toUpperCase()] ?? 'Outro';
+  return specialityLabels[raw?.toUpperCase()] ?? 'Outro';
 }
 
 const EdgeInsets _kContentPaddingWithIcon = EdgeInsets.only(
