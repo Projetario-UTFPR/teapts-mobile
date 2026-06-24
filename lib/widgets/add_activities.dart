@@ -1,35 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:gap/gap.dart';
+import 'package:front_pi/services/activity_service.dart';
 
-// --- CLASSE DE DADOS (MOCK) ---
 class MockDocument {
   final String title;
   final String content;
   MockDocument({required this.title, required this.content});
 }
 
-void addActivityPanel(BuildContext context) {
-  showModalBottomSheet(
+Future<bool?> addActivityPanel(BuildContext context, String ptsId) {
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Styles.bgColor,
-    shape: RoundedRectangleBorder(
+    shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-
     builder: (context) => Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: const SuggestActivityForm(),
+      child: SuggestActivityForm(ptsId: ptsId),
     ),
   );
 }
 
-// --- O FORMULÁRIO (ESTADO) ---
 class SuggestActivityForm extends StatefulWidget {
-  const SuggestActivityForm({super.key});
+  final String ptsId;
+
+  const SuggestActivityForm({super.key, required this.ptsId});
+
   @override
   State<SuggestActivityForm> createState() => _SuggestActivityFormState();
 }
@@ -46,14 +48,114 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
   ];
   final List<MockDocument> _draftedDocuments = [];
 
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
   }
 
-  void _submitActivity() {
-    Navigator.pop(context);
+  FrequencyDto _mapFrequencyToDto(String freq) {
+    switch (freq) {
+      case 'Diária':
+        return FrequencyDto(
+          times: 1,
+          interval: 'day',
+          durationValue: 1,
+          durationUnit: 'month',
+        );
+      case 'Semanal':
+        return FrequencyDto(
+          times: 1,
+          interval: 'week',
+          durationValue: 1,
+          durationUnit: 'month',
+        );
+      case 'Quinzenal':
+        return FrequencyDto(
+          times: 1,
+          interval: 'week',
+          durationValue: 2,
+          durationUnit: 'month',
+        );
+      case 'Mensal':
+        return FrequencyDto(
+          times: 1,
+          interval: 'month',
+          durationValue: 3,
+          durationUnit: 'month',
+        );
+      case 'Contínua':
+        return FrequencyDto(
+          times: 1,
+          interval: 'day',
+          durationValue: 12,
+          durationUnit: 'month',
+        );
+      default:
+        return FrequencyDto(
+          times: 1,
+          interval: 'week',
+          durationValue: 1,
+          durationUnit: 'month',
+        );
+    }
+  }
+
+  void _submitActivity() async {
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, insira um título.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final idProfissional = AuthService.professionalId;
+
+    if (idProfissional == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Erro: Profissional não identificado. Faça login novamente.',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final dto = CreateActivityDto(
+      title: _titleController.text.trim(),
+      professionalId: idProfissional,
+      documentsIds: [],
+      frequency: _mapFrequencyToDto(_selectedFrequency),
+    );
+
+    final service = ActivityService();
+    final errorMessage = await service.createActivity(widget.ptsId, dto);
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (errorMessage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Atividade salva com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+      );
+    }
   }
 
   void _openDocumentCreator() async {
@@ -118,16 +220,13 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
             TextButton(
               style: Styles.buttonYellow,
               onPressed: _openDocumentCreator,
-              // Botão sem ícone, apenas texto direto
               child: const Text('adicionar', style: Styles.midSize),
             ),
           ],
         ),
-        Gap(8),
-        const Divider(
-          height: 1,
-        ), // Linha simples para separar o cabeçalho da lista
-        Gap(8),
+        const Gap(8),
+        const Divider(height: 1),
+        const Gap(8),
 
         if (_draftedDocuments.isEmpty)
           const Padding(
@@ -168,9 +267,18 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _submitActivity,
+        onPressed: _isLoading ? null : _submitActivity,
         style: Styles.buttonYellow,
-        child: const Text('Salvar', style: Styles.midSizeBold),
+        child: _isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : const Text('Salvar', style: Styles.midSizeBold),
       ),
     );
   }

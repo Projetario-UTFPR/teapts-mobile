@@ -30,7 +30,10 @@ final GoRouter appRouter = GoRouter(
 
   routes: [
     GoRoute(path: '/login', builder: (context, state) => const Login()),
-    GoRoute(path: '/create-account', builder: (context, state) => const SignUpPage()),
+    GoRoute(
+      path: '/create-account',
+      builder: (context, state) => const SignUpPage(),
+    ),
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
@@ -40,9 +43,25 @@ final GoRouter appRouter = GoRouter(
         // Branch 0 — aba "casa"
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/home', builder: (context, state) => const HomePage()),
-            GoRoute(path: '/view-pts', builder: (context, state) => ViewPtsPage()),
-            GoRoute(path: '/create-pts', builder: (context, state) => const CreatePtsPage()),
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => const HomePage(),
+            ),
+            GoRoute(
+              path: '/view-pts/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                final patientName = (state.extra as String?) ?? 'Paciente';
+                return ViewPtsPage(
+                  patientId: patientId,
+                  patientName: patientName,
+                );
+              },
+            ),
+            GoRoute(
+              path: '/create-pts',
+              builder: (context, state) => const CreatePtsPage(),
+            ),
             GoRoute(
               path: '/upload-doc/:patientId',
               builder: (context, state) {
@@ -55,14 +74,20 @@ final GoRouter appRouter = GoRouter(
 
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/timeline', builder: (context, state) => const TimelinePage()),
+            GoRoute(
+              path: '/timeline',
+              builder: (context, state) => const TimelinePage(),
+            ),
           ],
         ),
 
         // Branch 2 — aba "lista"
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/debug-page-2', builder: (context, state) => DebugPage()),
+            GoRoute(
+              path: '/debug-page-2',
+              builder: (context, state) => DebugPage(),
+            ),
           ],
         ),
       ],

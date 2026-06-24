@@ -33,43 +33,47 @@ class _HomePageState extends State<HomePage> {
   // TODO: substituir por chamada real ao endpoint de listagem quando existir
   final List<Patient> _allPatients = [
     Patient(
-        accountId: '1',
-        name: 'Ana Souza',
-        ptsId: '143bc4a6-85d8-43d0-b6dd-8cf64d4ac04b',
-        status: 'running',
-        specialism: 'Psicólogo'),
+      accountId: '1',
+      name: 'Ana Souza',
+      ptsId: '143bc4a6-85d8-43d0-b6dd-8cf64d4ac04b',
+      status: 'running',
+      specialism: 'Psicólogo',
+    ),
     Patient(
-        accountId: '2',
-        name: 'Bruno Lima',
-        ptsId: '737f559f-7071-4418-98aa-619604fc138d',
-        status: 'running',
-        specialism: 'Psiquiatra'),
+      accountId: '2',
+      name: 'Bruno Lima',
+      ptsId: '737f559f-7071-4418-98aa-619604fc138d',
+      status: 'running',
+      specialism: 'Psiquiatra',
+    ),
     Patient(
-        accountId: '3',
-        name: 'Carla Mendes',
-        ptsId: 'c1fe3c90-1169-4471-a32d-57d551f7a032',
-        status: 'running',
-        specialism: 'Fisioterapeuta'),
+      accountId: '3',
+      name: 'Carla Mendes',
+      ptsId: 'c1fe3c90-1169-4471-a32d-57d551f7a032',
+      status: 'running',
+      specialism: 'Fisioterapeuta',
+    ),
     Patient(
-        accountId: '4',
-        name: 'Diego Alves',
-        ptsId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
-        status: 'running',
-        specialism: 'Psicólogo'),
+      accountId: '4',
+      name: 'Diego Alves',
+      ptsId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
+      status: 'running',
+      specialism: 'Psicólogo',
+    ),
     Patient(
-        accountId: '5',
-        name: 'Fernanda Rocha',
-        ptsId: '2c21aad4-ade0-4831-8043-3bad0672cb4b',
-        status: 'running',
-        specialism: 'Psiquiatra'),
+      accountId: '5',
+      name: 'Fernanda Rocha',
+      ptsId: '2c21aad4-ade0-4831-8043-3bad0672cb4b',
+      status: 'running',
+      specialism: 'Psiquiatra',
+    ),
   ];
 
   int _visibleCount = _pageSize;
 
   void _loadMore() {
     setState(() {
-      _visibleCount =
-          (_visibleCount + _pageSize).clamp(0, _allPatients.length);
+      _visibleCount = (_visibleCount + _pageSize).clamp(0, _allPatients.length);
     });
   }
 
@@ -85,30 +89,29 @@ class _HomePageState extends State<HomePage> {
         centerTitle: false,
         backgroundColor: Colors.white,
         actions: [
-  Container(
-    margin: const EdgeInsets.only(right: 8),
-    decoration: const BoxDecoration(
-      color: Color(0xFFFFC200),
-      shape: BoxShape.circle,
-    ),
-    child: IconButton(
-      icon: const Icon(Icons.add, color: Colors.black),
-      onPressed: () => context.go('/create-pts'),
-    ),
-  ),
-  Container(
-    margin: const EdgeInsets.only(right: 16),
-    decoration: const BoxDecoration(
-      color: Color(0xFFFFC200),
-      shape: BoxShape.circle,
-    ),
-    child: IconButton(
-      icon: const Icon(Icons.search, color: Colors.black),
-      onPressed: () {},
-    ),
-  ),
-],
-
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFC200),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add, color: Colors.black),
+              onPressed: () => context.go('/create-pts'),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFC200),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.search, color: Colors.black),
+              onPressed: () {},
+            ),
+          ),
+        ],
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -128,9 +131,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 onPressed: _loadMore,
-                child: const Text('Carregar mais',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+                child: const Text(
+                  'Carregar mais',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
             );
           }
@@ -145,11 +149,9 @@ class _HomePageState extends State<HomePage> {
             placeholderImage: 'assets/imagens/florzinha.png',
             buttonText: 'Visualizar PTS',
             onButtonTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewPtsPage(),
-                ),
+              context.push(
+                '/view-pts/${patient.accountId}',
+                extra: patient.name,
               );
             },
           );

@@ -9,7 +9,10 @@ import 'widgets/imageSideCard.dart';
 import 'widgets/expandableAtividades.dart';
 
 class ViewPtsPage extends StatelessWidget {
-  ViewPtsPage({super.key});
+  final String patientId;
+  final String patientName;
+
+  ViewPtsPage({super.key, required this.patientId, required this.patientName});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -17,29 +20,29 @@ class ViewPtsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.bgColor,
-    appBar: AppBar(
-  backgroundColor: Styles.bgColor,
-  elevation: 0,
-  leading: Padding(
-  padding: const EdgeInsets.all(8.0),
-  child: GestureDetector(
-    onTap: () => context.pop(),
-    child: Container(
-      width: 40,
-      height: 40,
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFC200),
-        shape: BoxShape.circle,
-      ),
-      child: PhosphorIcon(
-  PhosphorIconsBold.arrowLeft,
-  size: 20,
-  color: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Styles.bgColor,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFC200),
+                shape: BoxShape.circle,
+              ),
+              child: PhosphorIcon(
+                PhosphorIconsBold.arrowLeft,
+                size: 20,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ),
       ),
-    ),
-  ),
-),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 48.0),
         child: Column(
@@ -48,8 +51,8 @@ class ViewPtsPage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const CustomRowItem(
-                title: 'John Doe',
+              child: CustomRowItem(
+                title: patientName,
                 isCircularImage: true,
                 isProfileImage: true,
               ),
@@ -63,8 +66,7 @@ class ViewPtsPage extends StatelessWidget {
             ),
 
             const ExpandableTextDisplay(),
-
-            const ExpandableAtividades(),
+            ExpandableAtividades(patientId: patientId),
 
             const ExpandableEquipeMultidiciplinar(),
 
@@ -72,10 +74,7 @@ class ViewPtsPage extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: FilledButton(
-                onPressed:
-                    (
-                      //TODO: fazer o navigator para pagina de
-                    ) {},
+                onPressed: () {},
                 style: Styles.buttonWhite,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
