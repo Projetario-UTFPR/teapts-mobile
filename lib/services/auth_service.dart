@@ -11,7 +11,7 @@ class AuthService {
   static String? accountId;
   static String? professionalId;
 
-  static List<Map<String, dynamic>> professionalProfiles =  [];
+  static List<Map<String, dynamic>> professionalProfiles = [];
 
   static final ValueNotifier<bool> authNotifier = ValueNotifier(false);
 
@@ -24,10 +24,7 @@ class AuthService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
+      body: jsonEncode({'email': email, 'password': password}),
     );
 
     if (response.statusCode == 200) {
@@ -35,7 +32,6 @@ class AuthService {
 
       accessToken = body['accessToken'];
       refreshToken = body['refreshToken'];
-
       final authCollection = body['authCollection'];
 
       if (authCollection == null) {
@@ -46,10 +42,9 @@ class AuthService {
 
       accountId = authCollection['account']['id'];
 
-      professionalProfiles =
-          List<Map<String, dynamic>>.from(
-            authCollection['professionalProfiles'] ?? [],
-          );
+      professionalProfiles = List<Map<String, dynamic>>.from(
+        authCollection['professionalProfiles'] ?? [],
+      );
 
       if (professionalProfiles.length == 1) {
         professionalId = professionalProfiles.first['professionalId'];
@@ -86,39 +81,34 @@ class AuthService {
   }
 
   static Future<void> createAccount({
-  required String email,
-  required String name,
-  required String password,
-}) async {
-  final url = Uri.parse('$baseUrl/v1/identities/create-account');
+    required String email,
+    required String name,
+    required String password,
+  }) async {
+    final url = Uri.parse('$baseUrl/v1/identities/create-account');
 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email': email,
-      'name': name,
-      'password': password,
-    }),
-  );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'name': name, 'password': password}),
+    );
 
-  if (response.statusCode == 204) {
-    return;
+    if (response.statusCode == 204) {
+      return;
+    }
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 409) {
+      throw Exception(body['message'] ?? 'Conta já existe');
+    }
+
+    if (response.statusCode == 422) {
+      final errors = body['errors'] as Map<String, dynamic>;
+      final messages = errors.values.expand((e) => e as List).join('\n');
+      throw Exception(messages);
+    }
+
+    throw Exception('Erro inesperado: ${response.body}');
   }
-
-  final body = jsonDecode(response.body);
-
-  if (response.statusCode == 409) {
-    throw Exception(body['message'] ?? 'Conta já existe');
-  }
-
-  if (response.statusCode == 422) {
-    final errors = body['errors'] as Map<String, dynamic>;
-    final messages = errors.values.expand((e) => e as List).join('\n');
-    throw Exception(messages);
-  }
-
-  throw Exception('Erro inesperado: ${response.body}');
-}
-
 }

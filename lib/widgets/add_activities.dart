@@ -10,7 +10,7 @@ class MockDocument {
   MockDocument({required this.title, required this.content});
 }
 
-Future<bool?> addActivityPanel(BuildContext context, String ptsId) {
+Future<bool?> addActivityPanel(BuildContext context, String patientId) {
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
@@ -22,15 +22,15 @@ Future<bool?> addActivityPanel(BuildContext context, String ptsId) {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: SuggestActivityForm(ptsId: ptsId),
+      child: SuggestActivityForm(patientId: patientId),
     ),
   );
 }
 
 class SuggestActivityForm extends StatefulWidget {
-  final String ptsId;
+  final String patientId;
 
-  const SuggestActivityForm({super.key, required this.ptsId});
+  const SuggestActivityForm({super.key, required this.patientId});
 
   @override
   State<SuggestActivityForm> createState() => _SuggestActivityFormState();
@@ -138,7 +138,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     );
 
     final service = ActivityService();
-    final errorMessage = await service.createActivity(widget.ptsId, dto);
+    final errorMessage = await service.createActivity(widget.patientId, dto);
 
     if (!mounted) return;
     setState(() => _isLoading = false);

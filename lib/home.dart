@@ -54,9 +54,9 @@ class _HomePageState extends State<HomePage> {
       specialism: 'Fisioterapeuta',
     ),
     Patient(
-      accountId: '4',
+      accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
       name: 'Diego Alves',
-      ptsId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
+      ptsId: '99999999-8888-7777-6666-555555555555',
       status: 'running',
       specialism: 'Psicólogo',
     ),
