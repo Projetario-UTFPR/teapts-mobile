@@ -9,7 +9,8 @@ import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
-import 'package:front_pi/screens/create_pts/index.dart';
+import 'package:front_pi/screens/timeline/index.dart';
+import 'package:front_pi/prontuario.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -58,6 +59,7 @@ final GoRouter appRouter = GoRouter(
                 );
               },
             ),
+
             GoRoute(
               path: '/create-pts',
               builder: (context, state) => const CreatePtsPage(),
@@ -67,6 +69,13 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
                 return UploadDocPage(patientId: patientId);
+              },
+            ),
+            GoRoute(
+              path: '/prontuario/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return ProntuarioPage(patientId: patientId);
               },
             ),
           ],

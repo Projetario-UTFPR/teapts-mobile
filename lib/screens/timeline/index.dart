@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front_pi/screens/create_pts/timeline_item.dart';
+import 'package:front_pi/screens/timeline/timeline_item.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -72,15 +73,12 @@ class _TimelinePageState extends State<TimelinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: MainAppBar(title: "Timeline"),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.only(left: 24, right: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Timeline',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 8),
             const Text(
               'Confira os registros dos acontecimentos mais recentes no seu Plano Terapêutico Singular (PTS).',

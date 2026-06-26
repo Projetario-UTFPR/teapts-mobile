@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -22,17 +23,6 @@ String _translateSpecialism(String? raw) {
   return specialityLabels[raw?.toUpperCase()] ?? 'Outro';
 }
 
-const EdgeInsets _kContentPaddingWithIcon = EdgeInsets.only(
-  left: 0,
-  right: 16,
-  top: 8,
-  bottom: 8,
-);
-const EdgeInsets _kContentPaddingNoIcon = EdgeInsets.symmetric(
-  horizontal: 12,
-  vertical: 8,
-);
-
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
   borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
@@ -41,32 +31,6 @@ OutlineInputBorder _inputBorder() => OutlineInputBorder(
 OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
   borderSide: const BorderSide(color: Colors.black54),
-);
-
-OutlineInputBorder _inputBorderError() => OutlineInputBorder(
-  borderRadius: BorderRadius.circular(8),
-  borderSide: const BorderSide(color: Colors.red),
-);
-
-InputDecoration _inputDecoration({
-  String? hintText,
-  Widget? prefixIcon,
-  Widget? suffixIcon,
-  String? errorText,
-}) => InputDecoration(
-  hintText: hintText,
-  hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
-  prefixIcon: prefixIcon,
-  suffixIcon: suffixIcon,
-  errorText: errorText,
-  border: _inputBorder(),
-  enabledBorder: _inputBorder(),
-  focusedBorder: _inputBorderFocused(),
-  errorBorder: _inputBorderError(),
-  focusedErrorBorder: _inputBorderError(),
-  contentPadding: prefixIcon != null
-      ? _kContentPaddingWithIcon
-      : _kContentPaddingNoIcon,
 );
 
 class CreatePtsPage extends StatefulWidget {
@@ -171,73 +135,23 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
     child: icon,
   );
 
-  InputDecoration _inputDecoration({
-    String? hintText,
-    Widget? prefixIcon,
-    Widget? suffixIcon,
-    String? errorText,
-  }) => InputDecoration(
-    hintText: hintText,
-    hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
-    prefixIcon: prefixIcon,
-    // CRUCIAL: Remove os paddings internos gigantescos padrão do Flutter
-    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-    suffixIcon: suffixIcon,
-    suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-    errorText: errorText,
-    border: _inputBorder(),
-    enabledBorder: _inputBorder(),
-    focusedBorder: _inputBorderFocused(),
-    errorBorder: _inputBorderError(),
-    focusedErrorBorder: _inputBorderError(),
-    // Como o prefixIcon já resolve o espaçamento interno usando o BoxConstraints,
-    // podemos usar um padding simétrico padrão para o resto do input.
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-  );
-
   @override
   Widget build(BuildContext context) {
     final profiles = _professionalProfiles;
 
     return Scaffold(
-  backgroundColor: const Color(0xFFFFFFFF),
-  appBar: AppBar(
-    backgroundColor: const Color(0xFFFFFFFF),
-    elevation: 0,
-    leading: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () => context.go('/home'),
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: const BoxDecoration(
-            color: Color(0xFFFFC200),
-            shape: BoxShape.circle,
-          ),
-          child: PhosphorIcon(
-            PhosphorIconsBold.arrowLeft,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: MainAppBar(
+        title: 'Criar Plano Terapêutico Singular',
+        showBackButton: true,
       ),
-    ),
-  ),
-  body: SingleChildScrollView(
-
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Criar Plano Terapêutico Singular',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              _gap(),
-
               _sectionTitle('Seu perfil profissional'),
 
               if (profiles.isEmpty)

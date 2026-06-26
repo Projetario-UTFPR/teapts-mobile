@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:gap/gap.dart';
 
 class DebugPage extends StatelessWidget {
-  DebugPage({super.key});
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  const DebugPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +21,7 @@ class DebugPage extends StatelessWidget {
               height: 48,
               child: FilledButton(
                 onPressed: () {
-                  context.go('/view-pts');
-                },
-                style: Styles.buttonWhite,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('View PTS'),
-                      Icon(
-                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 24,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: () {
-                  context.go('/create-pts');
+                  context.push('/create-pts');
                 },
                 style: Styles.buttonWhite,
                 child: Padding(

@@ -3,7 +3,6 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/expandableEquipeMultidiciplinar.dart';
 import 'package:front_pi/widgets/expandableText.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/imageSideCard.dart';
 import 'widgets/expandableActivities.dart';
@@ -12,9 +11,11 @@ class ViewPtsPage extends StatelessWidget {
   final String patientId;
   final String patientName;
 
-  ViewPtsPage({super.key, required this.patientId, required this.patientName});
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  const ViewPtsPage({
+    super.key,
+    required this.patientId,
+    required this.patientName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +67,7 @@ class ViewPtsPage extends StatelessWidget {
             ),
 
             const ExpandableTextDisplay(),
+
             ExpandableActivities(patientId: patientId),
 
             const ExpandableEquipeMultidiciplinar(),
@@ -74,7 +76,7 @@ class ViewPtsPage extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: FilledButton(
-                onPressed: () {},
+                onPressed: () => context.push('/prontuario/$patientId'),
                 style: Styles.buttonWhite,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
