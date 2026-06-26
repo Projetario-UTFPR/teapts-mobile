@@ -2,52 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/expandableEquipeMultidiciplinar.dart';
 import 'package:front_pi/widgets/expandableText.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/imageSideCard.dart';
-import 'widgets/expandableAtividades.dart';
+import 'widgets/expandableActivities.dart';
 
 class ViewPtsPage extends StatelessWidget {
   final String patientId;
   final String patientName;
 
-  ViewPtsPage({super.key, required this.patientId, required this.patientName});
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  const ViewPtsPage({
+    super.key,
+    required this.patientId,
+    required this.patientName,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.bgColor,
-      appBar: AppBar(
-        backgroundColor: Styles.bgColor,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () => context.pop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFC200),
-                shape: BoxShape.circle,
-              ),
-              child: PhosphorIcon(
-                PhosphorIconsBold.arrowLeft,
-                size: 20,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
+      appBar: MainAppBar(
+        title: 'Visualizar PTS',
+        showBackButton: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 48.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          spacing: 24,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 16,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -61,12 +44,11 @@ class ViewPtsPage extends StatelessWidget {
             Divider(
               color: Styles.widgetBlack40,
               thickness: 1,
-              endIndent: 16,
-              indent: 16,
             ),
 
             const ExpandableTextDisplay(),
-            ExpandableAtividades(patientId: patientId),
+
+            ExpandableActivities(patientId: patientId),
 
             const ExpandableEquipeMultidiciplinar(),
 
@@ -74,17 +56,17 @@ class ViewPtsPage extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: FilledButton(
-                onPressed: () {},
+                onPressed: () => context.push('/prontuario/$patientId'),
                 style: Styles.buttonWhite,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Prontuario'),
+                      const Text('Prontuario', style: Styles.midSizeBold),
                       Icon(
                         PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 24,
+                        size: 18,
                       ),
                     ],
                   ),

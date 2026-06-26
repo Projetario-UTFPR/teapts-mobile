@@ -69,8 +69,7 @@ class DocumentService {
       'assigneeProfessionalId': assigneeProfessionalId,
       'documentFileKey': fileKey as String,
       'documentTitle': documentTitle,
-      if (documentDescription != null)
-        'documentDescription': documentDescription,
+      'documentDescription': ?documentDescription,
     });
   }
 }

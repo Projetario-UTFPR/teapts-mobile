@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/widgets/imageSideCard.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:front_pi/widgets/specialism_chip.dart';
-import 'package:front_pi/view_pts.dart';
 import 'package:go_router/go_router.dart';
 
 class Patient {
@@ -33,27 +33,6 @@ class _HomePageState extends State<HomePage> {
   // TODO: substituir por chamada real ao endpoint de listagem quando existir
   final List<Patient> _allPatients = [
     Patient(
-      accountId: '1',
-      name: 'Ana Souza',
-      ptsId: '143bc4a6-85d8-43d0-b6dd-8cf64d4ac04b',
-      status: 'running',
-      specialism: 'Psicólogo',
-    ),
-    Patient(
-      accountId: '2',
-      name: 'Bruno Lima',
-      ptsId: '737f559f-7071-4418-98aa-619604fc138d',
-      status: 'running',
-      specialism: 'Psiquiatra',
-    ),
-    Patient(
-      accountId: '3',
-      name: 'Carla Mendes',
-      ptsId: 'c1fe3c90-1169-4471-a32d-57d551f7a032',
-      status: 'running',
-      specialism: 'Fisioterapeuta',
-    ),
-    Patient(
       accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
       name: 'Diego Alves',
       ptsId: '99999999-8888-7777-6666-555555555555',
@@ -61,11 +40,25 @@ class _HomePageState extends State<HomePage> {
       specialism: 'Psicólogo',
     ),
     Patient(
-      accountId: '5',
+      accountId: '24561f7f-470d-4f1c-9831-6df403c3ce16',
+      name: 'Bruno Lima',
+      ptsId: '737f559f-7071-4418-98aa-619604fc138d',
+      status: 'running',
+      specialism: 'Psiquiatra',
+    ),
+    Patient(
+      accountId: '771ca8b8-f81f-43d8-8450-4558f0d8de21',
+      name: 'Carla Mendes',
+      ptsId: 'c1fe3c90-1169-4471-a32d-57d551f7a032',
+      status: 'running',
+      specialism: 'Fisioterapeuta',
+    ),
+    Patient(
+      accountId: 'c9bea01a-4fe4-4822-b0f5-ca0ca49d214d',
       name: 'Fernanda Rocha',
       ptsId: '2c21aad4-ade0-4831-8043-3bad0672cb4b',
       status: 'running',
-      specialism: 'Psiquiatra',
+      specialism: 'Psicólogo',
     ),
   ];
 
@@ -84,10 +77,8 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Pacientes'),
-        centerTitle: false,
-        backgroundColor: Colors.white,
+      appBar: MainAppBar(
+        title: 'Pacientes',
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 8),
@@ -97,7 +88,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: IconButton(
               icon: const Icon(Icons.add, color: Colors.black),
-              onPressed: () => context.go('/create-pts'),
+              onPressed: () => context.push('/create-pts'),
             ),
           ),
           Container(
@@ -114,9 +105,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         itemCount: visiblePatients.length + (hasMore ? 1 : 0),
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           if (index == visiblePatients.length) {
             return SizedBox(
@@ -140,6 +131,7 @@ class _HomePageState extends State<HomePage> {
           }
 
           final patient = visiblePatients[index];
+
           return CustomRowItem(
             title: patient.name,
             isCircularImage: false,

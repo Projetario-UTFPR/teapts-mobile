@@ -11,7 +11,7 @@ services:
     volumes:
       - tea_pts_db:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -c 'SELECT 1'"]
+      test: [ "CMD-SHELL", "psql -U ${DB_USER} -d ${DB_NAME} -c 'SELECT 1'" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,16 +30,13 @@ services:
       - 3000:3000
     depends_on:
       - db
-      - blob  
+      - blob
     network_mode: "host"
-    
+
   blob:
-    container_name: teapts_backend_blob_storage
+    container_name: teapts_mobile_blob_storage
     image: rustfs/rustfs:latest
     user: "10001:10001"
-    ports:
-      - "${BLOB_STORAGE_PORT}:9000"
-      - "9001:9001"
     volumes:
       - tea_pts_blob_storage:/data
     environment:
@@ -49,13 +46,12 @@ services:
       - RUSTFS_SERVER_DOMAINS=${BLOB_STORAGE_SERVER_DOMAINS}
       - RUSTFS_ADDRESS=:${BLOB_STORAGE_PORT}
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/ || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:9000/ || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
     command: /data
     network_mode: "host"
-
 
 volumes:
   tea_pts_db:

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:front_pi/config/app_config.dart';
 import 'package:http/http.dart' as http;
-import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/auth_service.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:3000';
+  static String get baseUrl => AppConfig.baseUrl;
 
   static Future<Map<String, dynamic>> post(
     String path,
@@ -13,7 +13,7 @@ class ApiService {
   ) async {
     final token = AuthService.accessToken;
     final response = await http.post(
-      Uri.parse('$_baseUrl$path'),
+      Uri.parse('$baseUrl$path'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
@@ -40,7 +40,7 @@ class ApiService {
     final token = AuthService.accessToken;
 
     final response = await http.get(
-      Uri.parse('$_baseUrl$path'),
+      Uri.parse('$baseUrl$path'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
