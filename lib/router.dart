@@ -76,7 +76,25 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/timeline',
-              builder: (context, state) => const TimelinePage(),
+              builder: (context, state) {
+                final patientId = AuthService.accountId;
+                if (patientId == null) {
+                  return const Scaffold(
+                    backgroundColor: Colors.white,
+                    body: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: Text(
+                          'Sua conta não possui um ID válido no momento. Faça login novamente.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return TimelinePage(patientId: patientId);
+              },
             ),
           ],
         ),
