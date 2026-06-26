@@ -83,76 +83,90 @@ class _HomePageState extends State<HomePage> {
     final visiblePatients = _allPatients.take(_visibleCount).toList();
     final hasMore = _visibleCount < _allPatients.length;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Pacientes'),
-        centerTitle: false,
-        backgroundColor: Colors.white,
-        actions: [
-  Container(
-    margin: const EdgeInsets.only(right: 8),
-    decoration: const BoxDecoration(
-      color: Color(0xFFFFC200),
-      shape: BoxShape.circle,
-    ),
-    child: IconButton(
-      icon: const Icon(Icons.add, color: Colors.black),
-      onPressed: () => context.go('/create-pts'),
-    ),
-  ),
-  Container(
-    margin: const EdgeInsets.only(right: 16),
-    decoration: const BoxDecoration(
-      color: Color(0xFFFFC200),
-      shape: BoxShape.circle,
-    ),
-    child: IconButton(
-      icon: const Icon(Icons.search, color: Colors.black),
-      onPressed: () {},
-    ),
-  ),
-],
-
+return Scaffold(
+  backgroundColor: Colors.white,
+  appBar: AppBar(
+    backgroundColor: Colors.white,
+    elevation: 0,
+    automaticallyImplyLeading: false,
+    toolbarHeight: 72,
+    titleSpacing: 24,
+    title: const Text(
+      'Pacientes',
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: visiblePatients.length + (hasMore ? 1 : 0),
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          if (index == visiblePatients.length) {
-            return SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC200),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: _loadMore,
-                child: const Text('Carregar mais',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+    ),
+    actions: [
+      Container(
+        margin: const EdgeInsets.only(right: 8),
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFC200),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.add, color: Colors.black),
+          onPressed: () => context.go('/create-pts'),
+        ),
+      ),
+      Container(
+        margin: const EdgeInsets.only(right: 16),
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFC200),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.search, color: Colors.black),
+          onPressed: () {},
+        ),
+      ),
+    ],
+  ),
+  body: ListView.separated(
+    padding: const EdgeInsets.all(24),
+    itemCount: visiblePatients.length + (hasMore ? 1 : 0),
+    separatorBuilder: (_, __) => const SizedBox(height: 12),
+    itemBuilder: (context, index) {
+      if (index == visiblePatients.length) {
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFFFC200),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-            );
-          }
+            ),
+            onPressed: _loadMore,
+            child: const Text(
+              'Carregar mais',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        );
+      }
 
-          final patient = visiblePatients[index];
-          return CustomRowItem(
-            title: patient.name,
-            isCircularImage: false,
-            isProfileImage: false,
-            subtitle: 'Situação PTS',
-            tag: SpecialismChip(label: patient.specialism),
-            placeholderImage: 'assets/imagens/florzinha.png',
-            buttonText: 'Visualizar PTS',
-            onButtonTap: () => context.push('/view-pts/${patient.accountId}'),
-          );
-        },
-      ),
-    );
+      final patient = visiblePatients[index];
+
+      return CustomRowItem(
+        title: patient.name,
+        isCircularImage: false,
+        isProfileImage: false,
+        subtitle: 'Situação PTS',
+        tag: SpecialismChip(label: patient.specialism),
+        placeholderImage: 'assets/imagens/florzinha.png',
+        buttonText: 'Visualizar PTS',
+        onButtonTap: () => context.push('/view-pts/${patient.accountId}'),
+      );
+    },
+  ),
+);
   }
 }
