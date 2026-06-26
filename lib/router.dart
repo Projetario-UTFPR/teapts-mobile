@@ -10,6 +10,7 @@ import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
 import 'package:front_pi/screens/create_pts/index.dart';
+import 'package:front_pi/prontuario.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -41,7 +42,14 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(path: '/home', builder: (context, state) => const HomePage()),
-            GoRoute(path: '/view-pts', builder: (context, state) => ViewPtsPage()),
+            GoRoute(
+            path: '/view-pts/:patientId',
+            builder: (context, state) {
+              final patientId = state.pathParameters['patientId']!;
+              return ViewPtsPage(patientId: patientId);
+            },
+          ),
+
             GoRoute(path: '/create-pts', builder: (context, state) => const CreatePtsPage()),
             GoRoute(
               path: '/upload-doc/:patientId',
@@ -50,6 +58,14 @@ final GoRouter appRouter = GoRouter(
                 return UploadDocPage(patientId: patientId);
               },
             ),
+            GoRoute(
+            path: '/prontuario/:patientId',
+            builder: (context, state) {
+              final patientId = state.pathParameters['patientId']!;
+              return ProntuarioPage(patientId: patientId);
+            },
+          ),
+
           ],
         ),
 
