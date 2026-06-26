@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/widgets/add_activities.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart';
-import 'imageSideCard.dart';
+import 'custom_row_item.dart';
 import 'package:gap/gap.dart';
 import '../services/activity_service.dart';
 
@@ -89,78 +90,61 @@ class _ExpandableActivitiesState extends State<ExpandableActivities> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      color: Colors.transparent,
-      shadowColor: Colors.transparent,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.zero,
-        childrenPadding: EdgeInsets.zero,
-        title: const Text('Atividades', style: Styles.titlesBold),
-        trailing: Icon(
-          PhosphorIcons.caretDown(PhosphorIconsStyle.bold),
-          size: 24,
-          color: Styles.widgetBlackCarret,
-        ),
-        shape: const Border(),
-        children: [
-          const Gap(16),
+    return ExpandableSection(
+      title: 'Atividades',
+      actions:[
 
-          if (_isLoading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Center(
-                child: CircularProgressIndicator(color: Colors.amber),
-              ),
-            )
-          else if (_activities.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(
-                'Nenhuma atividade sugerida para este PTS.',
-                style: Styles.midSize,
-              ),
-            )
-          else
-            ..._activities.map(
-              (activity) => Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: CustomRowItem(
-                  title: activity['title'] ?? 'Sem título',
-                  subtitle: _formatFrequency(activity['frequency']),
-                  isCircularImage: false,
-                  placeholderIcon: PhosphorIcons.videoConference(
-                    PhosphorIconsStyle.fill,
-                  ),
-                  linkText: 'Ver mais detalhes',
-                  onLinkTap: () =>
-                      print('ID da atividade clicada: ${activity['id']}'),
-                ),
-              ),
+    ],
+      children: [
+        if (_isLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.amber),
             ),
-
-          const Gap(8),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: () async {
-                final bool? success = await addActivityPanel(
-                  context,
-                  widget.patientId,
-                );
-                if (success == true) {
-                  _loadActivities();
-                }
-              },
-              style: Styles.buttonYellow,
-              icon: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold), size: 24),
-              label: const Text('Adicionar nova atividade'),
+          )
+        else if (_activities.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              'Nenhuma atividade sugerida para este PTS.',
+              style: Styles.midSize,
+            ),
+          )
+        else
+          ..._activities.map(
+            (activity) => CustomRowItem(
+              title: activity['title'] ?? 'Sem título',
+              subtitle: _formatFrequency(activity['frequency']),
+              isCircularImage: false,
+              placeholderIcon: PhosphorIcons.videoConference(
+                PhosphorIconsStyle.fill,
+              ),
+              linkText: 'Ver mais detalhes',
+              onLinkTap: () =>
+                  print('ID da atividade clicada: ${activity['id']}'),
             ),
           ),
-        ],
-      ),
+
+        const Gap(8),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: () async {
+              final bool? success = await addActivityPanel(
+                context,
+                widget.patientId,
+              );
+              if (success == true) {
+                _loadActivities();
+              }
+            },
+            style: Styles.buttonYellow,
+            icon: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold), size: 24),
+            label: const Text('Adicionar nova atividade'),
+          ),
+        ),
+      ],
     );
   }
 }

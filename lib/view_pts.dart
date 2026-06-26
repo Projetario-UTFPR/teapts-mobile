@@ -5,8 +5,8 @@ import 'package:front_pi/widgets/expandableText.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'widgets/imageSideCard.dart';
-import 'widgets/expandableActivities.dart';
+import 'widgets/custom_row_item.dart';
+import 'widgets/expandable_activities.dart';
 
 class ViewPtsPage extends StatelessWidget {
   final String patientId;
@@ -22,10 +22,7 @@ class ViewPtsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.bgColor,
-      appBar: MainAppBar(
-        title: 'Visualizar PTS',
-        showBackButton: true,
-      ),
+      appBar: MainAppBar(title: 'Visualizar PTS', showBackButton: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -41,16 +38,13 @@ class ViewPtsPage extends StatelessWidget {
               ),
             ),
 
-            Divider(
-              color: Styles.widgetBlack40,
-              thickness: 1,
-            ),
+            Divider(color: Styles.widgetBlack40, thickness: 1),
 
             const ExpandableTextDisplay(),
 
             ExpandableActivities(patientId: patientId),
 
-            const ExpandableEquipeMultidiciplinar(),
+            const ExpandableEquipeMultidisciplinar(),
 
             SizedBox(
               width: double.infinity,

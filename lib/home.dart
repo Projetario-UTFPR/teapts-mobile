@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_pi/widgets/imageSideCard.dart';
+import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:front_pi/widgets/specialism_chip.dart';
 import 'package:go_router/go_router.dart';
