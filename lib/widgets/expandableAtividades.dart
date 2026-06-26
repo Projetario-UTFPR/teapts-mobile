@@ -4,7 +4,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart';
 import 'imageSideCard.dart';
 import 'package:gap/gap.dart';
-import '../services/api_service.dart';
+
+import '../services/activity_service.dart';
 
 class ExpandableAtividades extends StatefulWidget {
   final String patientId;
@@ -29,37 +30,41 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
     setState(() => _isLoading = true);
 
     try {
-      await Future.delayed(const Duration(milliseconds: 800));
+      final response = await ActivityService.getActivities(
+        widget.patientId,
+        limit: 50,
+      );
+      if (!mounted) return;
+
       setState(() {
-        _atividades = [
-          {
-            "id": "1",
-            "title": "Acompanhamento com psicólogo",
-            "frequency": {"interval": "week", "times": 1},
-          },
-          {
-            "id": "2",
-            "title": "Fisioterapia Motora",
-            "frequency": {"interval": "week", "times": 3},
-          },
-        ];
+        _atividades = response['items'] as List<dynamic>? ?? [];
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao carregar atividades: $e'),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.red,
         ),
       );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   String _formatarFrequencia(dynamic freq) {
     if (freq == null) return 'Frequência não informada';
+
     final int times = freq['times'] ?? 1;
-    final String interval = freq['interval'] ?? 'week';
+    int intervalValue = 1;
+    String intervalUnit = 'week';
+
+    if (freq['interval'] is List && freq['interval'].length >= 2) {
+      intervalValue = freq['interval'][0];
+      intervalUnit = freq['interval'][1];
+    }
 
     final Map<String, String> traducoes = {
       'day': 'dia',
@@ -67,7 +72,12 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
       'month': 'mês',
     };
 
-    return '$times vez(es) a cada ${traducoes[interval] ?? interval}';
+    final translatedUnit = traducoes[intervalUnit] ?? intervalUnit;
+    if (intervalValue == 1) {
+      return '$times vez(es) por $translatedUnit';
+    } else {
+      return '$times vez(es) a cada $intervalValue $translatedUnit(s)';
+    }
   }
 
   @override

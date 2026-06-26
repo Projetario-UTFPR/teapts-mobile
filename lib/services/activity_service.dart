@@ -12,6 +12,20 @@ class ActivityService {
       return e.toString().replaceAll('Exception: ', '').trim();
     }
   }
+
+  static Future<Map<String, dynamic>> getActivities(
+    String patientId, {
+    int page = 1,
+    int limit = 10,
+    String? professionalId,
+  }) async {
+    String path = '/v1/pts/$patientId/activity?page=$page&limit=$limit';
+    if (professionalId != null) {
+      path += '&professionalId=$professionalId';
+    }
+    final response = await ApiService.get(path);
+    return response ?? {};
+  }
 }
 
 class FrequencyDto {
