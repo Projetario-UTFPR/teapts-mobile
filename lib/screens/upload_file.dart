@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
-import 'package:front_pi/theme/styles.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
-
 
 const Map<String, String> specialityLabels = {
   'PSYCHOLOGIST': 'Psicólogo(a)',
@@ -25,19 +24,19 @@ String _translateSpecialism(String? raw) {
 }
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+);
 
 OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.black54),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: const BorderSide(color: Colors.black54),
+);
 
 OutlineInputBorder _inputBorderError() => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.red),
-    );
+  borderRadius: BorderRadius.circular(8),
+  borderSide: const BorderSide(color: Colors.red),
+);
 
 class UploadDocPage extends StatefulWidget {
   final String patientId;
@@ -67,27 +66,26 @@ class _UploadDocPageState extends State<UploadDocPage> {
     _init();
   }
 
-Future<void> _init() async {
-  final profiles = _professionalProfiles;
+  Future<void> _init() async {
+    final profiles = _professionalProfiles;
 
-  if (profiles.isEmpty) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sem perfil profissional ativo')),
-      );
-      // Só faz pop se tiver tela anterior
-      if (Navigator.canPop(context)) Navigator.pop(context);
-    });
-    return;
+    if (profiles.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sem perfil profissional ativo')),
+        );
+        // Só faz pop se tiver tela anterior
+        if (Navigator.canPop(context)) Navigator.pop(context);
+      });
+      return;
+    }
+
+    if (profiles.length == 1) {
+      _selectedProfessionalId = profiles.first['professionalId'] as String;
+    }
+
+    if (mounted) setState(() {});
   }
-
-  if (profiles.length == 1) {
-    _selectedProfessionalId = profiles.first['professionalId'] as String;
-  }
-
-  if (mounted) setState(() {});
-}
-
 
   @override
   void dispose() {
@@ -130,50 +128,49 @@ Future<void> _init() async {
         documentTitle: _titleController.text.trim(),
         documentDescription: description,
         documentContent: _selectedFile!.bytes!,
-        documentFileType: _selectedFile!.extension ?? 'application/octet-stream',
+        documentFileType:
+            _selectedFile!.extension ?? 'application/octet-stream',
         documentFileName: _selectedFile!.name,
       );
 
       if (!mounted) return;
-        context.pop();
-
+      context.pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao enviar documento: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao enviar documento: $e')));
     } finally {
-      if (mounted) 
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Widget _gap([double height = 24]) => SizedBox(height: height);
 
   Widget _sectionTitle(String title) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            color: Color(0xFF000000),
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      title,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
+        color: Color(0xFF000000),
+      ),
+    ),
+  );
 
   Widget _helperText(String text) => Padding(
-        padding: const EdgeInsets.only(top: 6),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 12, color: Color(0xFF000000)),
-        ),
-      );
+    padding: const EdgeInsets.only(top: 6),
+    child: Text(
+      text,
+      style: const TextStyle(fontSize: 12, color: Color(0xFF000000)),
+    ),
+  );
 
   Widget _prefixIcon(Widget icon) => Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 6.0),
-        child: icon,
-      );
+    padding: const EdgeInsets.only(left: 12.0, right: 6.0),
+    child: icon,
+  );
 
   InputDecoration _fieldDecoration({
     required String hint,
@@ -181,24 +178,23 @@ Future<void> _init() async {
     Widget? suffixIcon,
     String? errorText,
     bool filled = true,
-  }) =>
-      InputDecoration(
-        fillColor: const Color(0xFFFFFFFF),
-        filled: filled,
-        hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
-        prefixIcon: _prefixIcon(icon),
-        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-        suffixIcon: suffixIcon,
-        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-        errorText: errorText,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: _inputBorder(),
-        enabledBorder: _inputBorder(),
-        focusedBorder: _inputBorderFocused(),
-        errorBorder: _inputBorderError(),
-        focusedErrorBorder: _inputBorderError(),
-      );
+  }) => InputDecoration(
+    fillColor: const Color(0xFFFFFFFF),
+    filled: filled,
+    hintText: hint,
+    hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+    prefixIcon: _prefixIcon(icon),
+    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+    suffixIcon: suffixIcon,
+    suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+    errorText: errorText,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    border: _inputBorder(),
+    enabledBorder: _inputBorder(),
+    focusedBorder: _inputBorderFocused(),
+    errorBorder: _inputBorderError(),
+    focusedErrorBorder: _inputBorderError(),
+  );
 
   // ── build ──────────────────────────────────────────────────────────────────
 
@@ -208,11 +204,7 @@ Future<void> _init() async {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: AppBar(
-      automaticallyImplyLeading: false,
-      toolbarHeight: 0,
-      elevation: 0,
-    ),
+      appBar: MainAppBar(showBackButton: true, title: "Enviar Documento"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Form(
@@ -220,35 +212,6 @@ Future<void> _init() async {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-  Align(
-    alignment: Alignment.centerLeft,
-    child: IconButton(
-      onPressed: _isLoading ? null : () => context.pop(),
-      style: IconButton.styleFrom(
-        backgroundColor: Styles.widgetYellow,
-        padding: const EdgeInsets.all(0),
-        shape: CircleBorder(),
-      ),
-      icon: PhosphorIcon(
-        PhosphorIconsBold.arrowLeft,
-        size: 24,
-        color: Styles.widgetBlack,
-      ),
-    ),
-  ),
-
-        const SizedBox(height: 16),
-
-        const Text(
-          'Enviar Documento',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        _gap(),
-
               // ── Perfil profissional ────────────────────────────────────────
               _sectionTitle('Perfil profissional responsável'),
 
@@ -265,13 +228,17 @@ Future<void> _init() async {
                   ),
                   child: Row(
                     children: [
-                      _prefixIcon(PhosphorIcon(
-                        PhosphorIconsRegular.userList,
-                        size: 20,
-                        color: const Color(0xFF555555),
-                      )),
+                      _prefixIcon(
+                        PhosphorIcon(
+                          PhosphorIconsRegular.userList,
+                          size: 20,
+                          color: const Color(0xFF555555),
+                        ),
+                      ),
                       Text(
-                        _translateSpecialism(profiles.first['specialism'] ?? ''),
+                        _translateSpecialism(
+                          profiles.first['specialism'] ?? '',
+                        ),
                         style: const TextStyle(fontSize: 14),
                       ),
                     ],
@@ -283,36 +250,48 @@ Future<void> _init() async {
                   decoration: InputDecoration(
                     hintText: 'Selecione um perfil profissional',
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    prefixIcon: _prefixIcon(const Icon(
-                      Icons.manage_accounts_outlined,
-                      color: Color(0xFF555555),
-                      size: 20,
-                    )),
-                    prefixIconConstraints:
-                        const BoxConstraints(minWidth: 0, minHeight: 0),
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    prefixIcon: _prefixIcon(
+                      const Icon(
+                        Icons.manage_accounts_outlined,
+                        color: Color(0xFF555555),
+                        size: 20,
+                      ),
+                    ),
+                    prefixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: PhosphorIcon(PhosphorIconsRegular.caretDown,
-                          size: 16, color: const Color(0xFF999999)),
+                      child: PhosphorIcon(
+                        PhosphorIconsRegular.caretDown,
+                        size: 16,
+                        color: const Color(0xFF999999),
+                      ),
                     ),
-                    suffixIconConstraints:
-                        const BoxConstraints(minWidth: 0, minHeight: 0),
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     border: _inputBorder(),
                     enabledBorder: _inputBorder(),
                     focusedBorder: _inputBorderFocused(),
                   ),
                   items: profiles
-                      .map((p) => DropdownMenuItem(
-                            value: p['professionalId'] as String,
-                            child: Text(
-                                _translateSpecialism(p['specialism'] ?? '')),
-                          ))
+                      .map(
+                        (p) => DropdownMenuItem(
+                          value: p['professionalId'] as String,
+                          child: Text(
+                            _translateSpecialism(p['specialism'] ?? ''),
+                          ),
+                        ),
+                      )
                       .toList(),
-                  onChanged: (v) =>
-                      setState(() => _selectedProfessionalId = v),
-                  validator: (v) =>
-                      v == null ? 'Selecione um perfil' : null,
+                  onChanged: (v) => setState(() => _selectedProfessionalId = v),
+                  validator: (v) => v == null ? 'Selecione um perfil' : null,
                 ),
 
               _helperText(
@@ -328,8 +307,11 @@ Future<void> _init() async {
                 controller: _titleController,
                 decoration: _fieldDecoration(
                   hint: 'Ex: Relatório de evolução — junho 2026',
-                  icon: PhosphorIcon(PhosphorIconsRegular.textT,
-                      size: 20, color: const Color(0xFF555555)),
+                  icon: PhosphorIcon(
+                    PhosphorIconsRegular.textT,
+                    size: 20,
+                    color: const Color(0xFF555555),
+                  ),
                 ),
                 validator: (v) =>
                     v == null || v.trim().isEmpty ? 'Obrigatório' : null,
@@ -344,7 +326,8 @@ Future<void> _init() async {
                 decoration: InputDecoration(
                   fillColor: const Color(0xFFFFFFFF),
                   filled: true,
-                  hintText: 'Adicione uma descrição ou observação sobre o documento.',
+                  hintText:
+                      'Adicione uma descrição ou observação sobre o documento.',
                   hintStyle: const TextStyle(
                     color: Color(0xFF000000),
                     fontSize: 14,
@@ -366,7 +349,10 @@ Future<void> _init() async {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: _selectedFile != null
                         ? Colors.black.withOpacity(0.04)
@@ -473,8 +459,11 @@ Future<void> _init() async {
                             color: Colors.black,
                           ),
                         )
-                      : PhosphorIcon(PhosphorIconsBold.uploadSimple,
-                          size: 18, color: Colors.black),
+                      : PhosphorIcon(
+                          PhosphorIconsBold.uploadSimple,
+                          size: 18,
+                          color: Colors.black,
+                        ),
                   label: Text(_isLoading ? 'Enviando...' : 'Enviar documento'),
                 ),
               ),

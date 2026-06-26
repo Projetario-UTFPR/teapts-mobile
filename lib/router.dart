@@ -8,7 +8,7 @@ import 'package:front_pi/create_account.dart';
 import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
-import 'package:front_pi/widgets/upload_file.dart';
+import 'package:front_pi/screens/upload_file.dart';
 import 'package:front_pi/screens/timeline/index.dart';
 import 'package:front_pi/prontuario.dart';
 
