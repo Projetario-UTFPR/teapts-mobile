@@ -47,7 +47,7 @@ class CustomRowItem extends StatelessWidget {
               Text(
                 title,
                 style: isCircularImage && isProfileImage
-                    ? Styles.titlesBold
+                    ? Styles.midSizeBold
                     : Styles.normalTextBold,
               ),
               if (subtitle != null) Text(subtitle!, style: Styles.normalText),
