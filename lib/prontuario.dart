@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -74,33 +75,9 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () => context.pop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFC200),
-                shape: BoxShape.circle,
-              ),
-              child: PhosphorIcon(
-                PhosphorIconsBold.arrowLeft,
-                size: 20,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
-        title: const Text(
-          'Prontuário',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+      appBar: MainAppBar(
+        title: 'Prontuário',
+        showBackButton: true,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -171,8 +148,11 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.folder_open_outlined,
-                size: 56, color: Colors.grey.shade400),
+            Icon(
+              Icons.folder_open_outlined,
+              size: 56,
+              color: Colors.grey.shade400,
+            ),
             const SizedBox(height: 12),
             const Text(
               'Nenhum documento encontrado.',
@@ -240,7 +220,7 @@ class _DocumentoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14), 
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -254,7 +234,7 @@ class _DocumentoCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start, 
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 48,
@@ -275,7 +255,7 @@ class _DocumentoCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, 
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   documento.title,
@@ -290,10 +270,7 @@ class _DocumentoCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     documento.description!,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                 ],
                 const SizedBox(height: 4),
@@ -301,7 +278,7 @@ class _DocumentoCard extends StatelessWidget {
                   'Adicionado em ${_dateFmt.format(documento.createdAt)}. '
                   'Última modificação em ${_dateFmt.format(documento.lastUpdatedAt)}.',
                   style: TextStyle(
-                    fontSize: 12, 
+                    fontSize: 12,
                     color: Colors.grey.shade500,
                     height: 1.2,
                   ),
@@ -319,7 +296,7 @@ class _DocumentoCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
                       decorationColor: Color(0xFFE6A800),
-                      height: 1.1, 
+                      height: 1.1,
                     ),
                   ),
                 ),
