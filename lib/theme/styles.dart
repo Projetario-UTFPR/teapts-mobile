@@ -28,6 +28,12 @@ class Styles {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle subtitlesBold = TextStyle(
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.bold,
+  );
+
   static const TextStyle midSize = TextStyle(
     fontSize: 18,
     fontFamily: 'Roboto',

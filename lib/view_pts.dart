@@ -29,13 +29,10 @@ class ViewPtsPage extends StatelessWidget {
           spacing: 16,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: CustomRowItem(
-                title: patientName,
-                isCircularImage: true,
-                isProfileImage: true,
-              ),
+            CustomRowItem(
+              title: patientName,
+              isCircularImage: true,
+              isProfileImage: true,
             ),
 
             Divider(color: Styles.widgetBlack40, thickness: 1),
