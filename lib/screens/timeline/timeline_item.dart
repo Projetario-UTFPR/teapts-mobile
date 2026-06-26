@@ -3,11 +3,7 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-enum Position {
-  first,
-  middle,
-  last
-}
+enum Position { first, middle, last, unique }
 
 class TimelineItem extends StatelessWidget {
   final Position position;
@@ -22,11 +18,12 @@ class TimelineItem extends StatelessWidget {
     required this.professionalSpeciality,
     required this.eventDescription,
     required this.eventDateTime,
-    this.position = Position.middle
+    this.position = Position.middle,
   });
 
   @override
   Widget build(BuildContext context) {
+    print(position);
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,12 +40,16 @@ class TimelineItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8)
+                      bottomLeft: Radius.circular(8),
                     ),
-                    color: position != Position.first ? Styles.widgetYellow : Colors.transparent,
+                    color:
+                        (position == Position.unique ||
+                            position == Position.first)
+                        ? Colors.transparent
+                        : Styles.widgetYellow,
                   ),
                   width: 8,
-                )
+                ),
               ),
 
               Container(
@@ -65,13 +66,17 @@ class TimelineItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(8),
-                      topLeft: Radius.circular(8)
+                      topLeft: Radius.circular(8),
                     ),
-                    color: position != Position.last ? Styles.widgetYellow : Colors.transparent,
+                    color:
+                        (position == Position.last ||
+                            position == Position.unique)
+                        ? Colors.transparent
+                        : Styles.widgetYellow,
                   ),
                   width: 8,
-                )
-              )
+                ),
+              ),
             ],
           ),
 
@@ -80,15 +85,18 @@ class TimelineItem extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
               decoration: BoxDecoration(
-                border: position == Position.last ? null : Border(
-                  bottom: BorderSide(color: Color.fromRGBO(0, 0, 0, 0.2))
-                )
+                border:
+                    (position == Position.last || position == Position.unique)
+                    ? null
+                    : Border(
+                        bottom: BorderSide(color: Color.fromRGBO(0, 0, 0, 0.2)),
+                      ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 spacing: 12,
-                
+
                 children: [
                   PhosphorIcon(
                     PhosphorIconsFill.addressBookTabs,
@@ -112,26 +120,26 @@ class TimelineItem extends StatelessWidget {
                         ),
                         Text(
                           '$professionalName ($professionalSpeciality)',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(fontSize: 14),
                         ),
                         Text(
-                          DateFormat("dd/MM/yyyy HH'h'mm").format(eventDateTime),
+                          DateFormat(
+                            "dd/MM/yyyy HH'h'mm",
+                          ).format(eventDateTime),
                           style: TextStyle(
                             fontSize: 14,
-                            color: Styles.widgetBlackCarret
+                            color: Styles.widgetBlackCarret,
                           ),
                         ),
                       ],
-                    )
-                  )
+                    ),
+                  ),
                 ],
               ),
-            )
-          )
+            ),
+          ),
         ],
-      )
+      ),
     );
   }
 }

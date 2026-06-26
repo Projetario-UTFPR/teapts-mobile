@@ -33,9 +33,9 @@ class _HomePageState extends State<HomePage> {
   // TODO: substituir por chamada real ao endpoint de listagem quando existir
   final List<Patient> _allPatients = [
     Patient(
-      accountId: '400a50d9-85b1-400d-a43d-3423c7e32018',
-      name: 'Ana Souza',
-      ptsId: '143bc4a6-85d8-43d0-b6dd-8cf64d4ac04b',
+      accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
+      name: 'Diego Alves',
+      ptsId: '99999999-8888-7777-6666-555555555555',
       status: 'running',
       specialism: 'Psicólogo',
     ),
@@ -54,18 +54,18 @@ class _HomePageState extends State<HomePage> {
       specialism: 'Fisioterapeuta',
     ),
     Patient(
-      accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
-      name: 'Diego Alves',
-      ptsId: '99999999-8888-7777-6666-555555555555',
-      status: 'running',
-      specialism: 'Psicólogo',
-    ),
-    Patient(
       accountId: 'c9bea01a-4fe4-4822-b0f5-ca0ca49d214d',
       name: 'Fernanda Rocha',
       ptsId: '2c21aad4-ade0-4831-8043-3bad0672cb4b',
       status: 'running',
-      specialism: 'Psiquiatra',
+      specialism: 'Psicólogo',
+    ),
+    Patient(
+      accountId: 'c9bea01b-4fe4-4822-b0f5-ca0ca49d214d',
+      name: 'Fernando Rocha',
+      ptsId: '2c21aad4-ad10-4831-8043-3bad0672cb4b',
+      status: 'running',
+      specialism: 'Psicólogo',
     ),
   ];
 
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: MainAppBar(
-        title: 'Prontuário',
+        title: 'Pacientes',
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 8),

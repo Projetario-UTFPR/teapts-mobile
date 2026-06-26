@@ -8,7 +8,7 @@ import 'package:front_pi/create_account.dart';
 import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
-import 'package:front_pi/widgets/upload_file.dart';
+import 'package:front_pi/screens/upload_file.dart';
 import 'package:front_pi/screens/timeline/index.dart';
 import 'package:front_pi/prontuario.dart';
 
@@ -85,7 +85,25 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/timeline',
-              builder: (context, state) => const TimelinePage(),
+              builder: (context, state) {
+                final patientId = AuthService.accountId;
+                if (patientId == null) {
+                  return const Scaffold(
+                    backgroundColor: Colors.white,
+                    body: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: Text(
+                          'Sua conta não possui um ID válido no momento. Faça login novamente.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return TimelinePage(patientId: patientId);
+              },
             ),
           ],
         ),

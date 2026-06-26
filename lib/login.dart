@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:front_pi/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
-import 'package:front_pi/create_pts.dart';
 import 'package:go_router/go_router.dart';
-import 'widgets/upload_file.dart';
+import 'screens/upload_file.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -43,7 +41,10 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset('assets/imagens/infinito_laranja.png', width: 100),
+                    Image.asset(
+                      'assets/imagens/infinito_laranja.png',
+                      width: 100,
+                    ),
 
                     const SizedBox(height: 16),
 
@@ -168,7 +169,9 @@ class _LoginState extends State<Login> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const UploadDocPage(patientId: 'mock-patient-001'),
+                                builder: (_) => const UploadDocPage(
+                                  patientId: 'mock-patient-001',
+                                ),
                               ),
                             );
                           } catch (e, stackTrace) {
