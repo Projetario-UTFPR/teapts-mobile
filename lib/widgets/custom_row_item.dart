@@ -37,34 +37,30 @@ class CustomRowItem extends StatelessWidget {
     Widget rowContent = IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 16,
         children: [
           _buildImage(),
-          const SizedBox(width: 16),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: isCircularImage && isProfileImage
-                        ? Styles.titlesBold
-                        : Styles.normalTextBold,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: isCircularImage && isProfileImage
+                      ? Styles.titlesBold
+                      : Styles.normalTextBold,
+                ),
+                if (subtitle != null) Text(subtitle!, style: Styles.normalText),
+                if (tag != null) ...[const SizedBox(height: 4), tag!],
+                if (linkText != null && onLinkTap != null) ...[
+                  const SizedBox(height: 2),
+                  GestureDetector(
+                    onTap: onLinkTap,
+                    child: Text(linkText!, style: Styles.linkBold),
                   ),
-                  if (subtitle != null)
-                    Text(subtitle!, style: Styles.normalText),
-                  if (tag != null) ...[const SizedBox(height: 4), tag!],
-                  if (linkText != null && onLinkTap != null) ...[
-                    const SizedBox(height: 2),
-                    GestureDetector(
-                      onTap: onLinkTap,
-                      child: Text(linkText!, style: Styles.linkBold),
-                    ),
-                  ],
                 ],
-              ),
+              ],
             ),
           ),
         ],
@@ -74,7 +70,7 @@ class CustomRowItem extends StatelessWidget {
     if (!isCard) return rowContent;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Styles.widgetWhite,
         borderRadius: BorderRadius.circular(16),
