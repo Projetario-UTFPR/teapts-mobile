@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front_pi/screens/create_pts/timeline_item.dart';
+import 'package:front_pi/screens/timeline/timeline_item.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -61,8 +62,7 @@ class _TimelinePageState extends State<TimelinePage> {
 
   void _loadMore() {
     setState(() {
-      _visibleCount =
-          (_visibleCount + _pageSize).clamp(0, _allEvents.length);
+      _visibleCount = (_visibleCount + _pageSize).clamp(0, _allEvents.length);
     });
   }
 
@@ -73,15 +73,12 @@ class _TimelinePageState extends State<TimelinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: MainAppBar(title: "Timeline"),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.only(left: 24, right: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Timeline',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 8),
             const Text(
               'Confira os registros dos acontecimentos mais recentes no seu Plano Terapêutico Singular (PTS).',
@@ -110,7 +107,9 @@ class _TimelinePageState extends State<TimelinePage> {
                           child: const Text(
                             'Carregar mais',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -120,8 +119,12 @@ class _TimelinePageState extends State<TimelinePage> {
                   final event = visibleEvents[index];
                   final isFirst = index == 0;
                   final isLast = index == visibleEvents.length - 1 && !hasMore;
-                  final position = isFirst ? Position.first : isLast ? Position.last : Position.middle;
-              
+                  final position = isFirst
+                      ? Position.first
+                      : isLast
+                      ? Position.last
+                      : Position.middle;
+
                   return TimelineItem(
                     professionalName: event.professional,
                     professionalSpeciality: event.speciality,

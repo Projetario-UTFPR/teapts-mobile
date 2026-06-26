@@ -9,7 +9,8 @@ import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/widgets/upload_file.dart';
-import 'package:front_pi/screens/create_pts/index.dart';
+import 'package:front_pi/screens/timeline/index.dart';
+import 'package:front_pi/prontuario.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -30,7 +31,10 @@ final GoRouter appRouter = GoRouter(
 
   routes: [
     GoRoute(path: '/login', builder: (context, state) => const Login()),
-    GoRoute(path: '/create-account', builder: (context, state) => const SignUpPage()),
+    GoRoute(
+      path: '/create-account',
+      builder: (context, state) => const SignUpPage(),
+    ),
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
@@ -40,9 +44,22 @@ final GoRouter appRouter = GoRouter(
         // Branch 0 — aba "casa"
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/home', builder: (context, state) => const HomePage()),
-            GoRoute(path: '/view-pts', builder: (context, state) => ViewPtsPage()),
-            GoRoute(path: '/create-pts', builder: (context, state) => const CreatePtsPage()),
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => const HomePage(),
+            ),
+            GoRoute(
+              path: '/view-pts/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return ViewPtsPage(patientId: patientId);
+              },
+            ),
+
+            GoRoute(
+              path: '/create-pts',
+              builder: (context, state) => const CreatePtsPage(),
+            ),
             GoRoute(
               path: '/upload-doc/:patientId',
               builder: (context, state) {
@@ -50,19 +67,32 @@ final GoRouter appRouter = GoRouter(
                 return UploadDocPage(patientId: patientId);
               },
             ),
+            GoRoute(
+              path: '/prontuario/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return ProntuarioPage(patientId: patientId);
+              },
+            ),
           ],
         ),
 
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/timeline', builder: (context, state) => const TimelinePage()),
+            GoRoute(
+              path: '/timeline',
+              builder: (context, state) => const TimelinePage(),
+            ),
           ],
         ),
 
         // Branch 2 — aba "lista"
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/debug-page-2', builder: (context, state) => DebugPage()),
+            GoRoute(
+              path: '/debug-page-2',
+              builder: (context, state) => DebugPage(),
+            ),
           ],
         ),
       ],

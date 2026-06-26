@@ -17,7 +17,7 @@ class Styles {
   );
 
     static const TextStyle titlesBold = TextStyle(
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
