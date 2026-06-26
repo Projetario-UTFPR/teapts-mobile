@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart';
-import 'imageSideCard.dart';
+import 'custom_row_item.dart';
 
 class _ExpandableEquipeMultidisciplinarState
     extends State<ExpandableEquipeMultidisciplinar> {
