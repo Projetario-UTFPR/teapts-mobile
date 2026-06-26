@@ -60,6 +60,13 @@ class _HomePageState extends State<HomePage> {
       status: 'running',
       specialism: 'Psicólogo',
     ),
+    Patient(
+      accountId: 'c9bea01b-4fe4-4822-b0f5-ca0ca49d214d',
+      name: 'Fernando Rocha',
+      ptsId: '2c21aad4-ad10-4831-8043-3bad0672cb4b',
+      status: 'running',
+      specialism: 'Psicólogo',
+    ),
   ];
 
   int _visibleCount = _pageSize;

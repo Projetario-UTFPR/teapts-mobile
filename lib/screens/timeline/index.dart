@@ -122,13 +122,21 @@ class _TimelinePageState extends State<TimelinePage> {
                     }
 
                     final event = _events[index];
+                    final isUnique = _events.length == 1;
                     final isFirst = index == 0;
                     final isLast = index == _events.length - 1 && !_hasMore;
-                    final position = isFirst
-                        ? Position.first
-                        : isLast
-                        ? Position.last
-                        : Position.middle;
+
+                    Position position;
+
+                    if (isUnique) {
+                      position = Position.unique;
+                    } else if (isFirst) {
+                      position = Position.first;
+                    } else if (isLast) {
+                      position = Position.last;
+                    } else {
+                      position = Position.middle;
+                    }
 
                     final DateTime parsedDate = event['happenedAt'] != null
                         ? DateTime.parse(event['happenedAt']).toLocal()
