@@ -36,7 +36,6 @@ class CustomRowItem extends StatelessWidget {
 
     Widget rowContent = IntrinsicHeight(
       child: Row(
-        // 2. Mudamos para 'stretch' para que os filhos estiquem até a altura máxima da linha
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildImage(),
