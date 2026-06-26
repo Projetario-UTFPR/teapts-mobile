@@ -193,6 +193,27 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     }
   }
 
+  Widget _sectionTitle(String title) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      title,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
+        color: Color(0xFF000000),
+      ),
+    ),
+  );
+
+  OutlineInputBorder _inputBorder() => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+  );
+
+  OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: const BorderSide(color: Colors.black54),
+  );
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -209,7 +230,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
           _buildFrequencyDropdown(),
           const Gap(24),
           _buildDocumentSection(),
-          const Gap(24),
+          const Gap(32),
           _buildSubmitButton(),
         ],
       ),
@@ -217,20 +238,91 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
   }
 
   Widget _buildTitleInput() {
-    return TextField(
-      controller: _titleController,
-      decoration: Styles.textFieldDefault(labelText: 'Título'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Título da atividade'),
+        TextField(
+          controller: _titleController,
+          decoration: InputDecoration(
+            fillColor: const Color(0xFFFFFFFF),
+            filled: true,
+            hintText: 'Ex: Sessão de fonoaudiologia',
+            hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            prefixIcon: const Padding(
+              padding: EdgeInsets.only(left: 12.0, right: 6.0),
+              child: PhosphorIcon(
+                PhosphorIconsRegular.textT,
+                size: 20,
+                color: Color(0xFF555555),
+              ),
+            ),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            border: _inputBorder(),
+            enabledBorder: _inputBorder(),
+            focusedBorder: _inputBorderFocused(),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildFrequencyDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedFrequency,
-      decoration: Styles.textFieldDefault(labelText: 'Frequência'),
-      items: _frequencies
-          .map((f) => DropdownMenuItem(value: f, child: Text(f)))
-          .toList(),
-      onChanged: (val) => setState(() => _selectedFrequency = val!),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Frequência'),
+        DropdownButtonFormField<String>(
+          value: _selectedFrequency,
+          decoration: InputDecoration(
+            fillColor: const Color(0xFFFFFFFF),
+            filled: true,
+            hintText: 'Selecione a frequência',
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            prefixIcon: const Padding(
+              padding: EdgeInsets.only(left: 12.0, right: 6.0),
+              child: PhosphorIcon(
+                PhosphorIconsRegular.clock,
+                size: 20,
+                color: Color(0xFF555555),
+              ),
+            ),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            suffixIcon: const Padding(
+              padding: EdgeInsets.only(right: 12.0),
+              child: PhosphorIcon(
+                PhosphorIconsRegular.caretDown,
+                size: 16,
+                color: Color(0xFF999999),
+              ),
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            border: _inputBorder(),
+            enabledBorder: _inputBorder(),
+            focusedBorder: _inputBorderFocused(),
+          ),
+          items: _frequencies
+              .map((f) => DropdownMenuItem(value: f, child: Text(f)))
+              .toList(),
+          onChanged: (val) => setState(() => _selectedFrequency = val!),
+        ),
+      ],
     );
   }
 
@@ -238,8 +330,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Vincular Documentos do Prontuário', style: Styles.midSize),
-        const Gap(8),
+        _sectionTitle('Vincular Documentos do Prontuário'),
 
         if (_isLoadingDocs)
           const Padding(
@@ -280,18 +371,9 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
                   minWidth: 0,
                   minHeight: 0,
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.black54),
-                ),
+                border: _inputBorder(),
+                enabledBorder: _inputBorder(),
+                focusedBorder: _inputBorderFocused(),
               ),
             ),
             suggestionsCallback: (search) {
@@ -341,7 +423,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
                   side: BorderSide.none,
                   label: Text(
                     doc['title'] ?? 'Documento sem título',
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   onDeleted: () => setState(() {
                     _selectedDocuments.remove(doc);
