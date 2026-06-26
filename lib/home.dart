@@ -54,9 +54,9 @@ class _HomePageState extends State<HomePage> {
       specialism: 'Fisioterapeuta',
     ),
     Patient(
-      accountId: 'eabe6dbd-5e4d-41d9-9688-5a3f17bf2c44',
+      accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
       name: 'Diego Alves',
-      ptsId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
+      ptsId: '99999999-8888-7777-6666-555555555555',
       status: 'running',
       specialism: 'Psicólogo',
     ),
@@ -147,7 +147,12 @@ class _HomePageState extends State<HomePage> {
             tag: SpecialismChip(label: patient.specialism),
             placeholderImage: 'assets/imagens/florzinha.png',
             buttonText: 'Visualizar PTS',
-            onButtonTap: () => context.push('/view-pts/${patient.accountId}'),
+            onButtonTap: () {
+              context.push(
+                '/view-pts/${patient.accountId}',
+                extra: patient.name,
+              );
+            },
           );
         },
       ),

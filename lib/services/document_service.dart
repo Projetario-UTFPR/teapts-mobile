@@ -20,6 +20,17 @@ class DocumentService {
     }
   }
 
+  static Future<List<dynamic>> getDocumentosDoProntuario(
+    String patientId,
+  ) async {
+    final path = '/v1/patient/$patientId/prontuario?page=1&limit=10';
+    final response = await ApiService.get(path);
+    if (response != null && response['items'] != null) {
+      return response['items'] as List<dynamic>;
+    }
+    return [];
+  }
+
   static Future<void> uploadDocument({
     required String patientId,
     required String assigneeProfessionalId,
@@ -54,17 +65,11 @@ class DocumentService {
       fileName: documentFileName,
     );
 
-    final finalPayload = {
+    await ApiService.post('/v1/patient/$patientId/prontuario/document/upload', {
       'assigneeProfessionalId': assigneeProfessionalId,
       'documentFileKey': fileKey as String,
       'documentTitle': documentTitle,
-      if (documentDescription != null)
-        'documentDescription': documentDescription,
-    };
-
-    await ApiService.post(
-      '/v1/patient/$patientId/prontuario/document/upload',
-      finalPayload,
-    );
+      'documentDescription': ?documentDescription,
+    });
   }
 }

@@ -52,7 +52,11 @@ final GoRouter appRouter = GoRouter(
               path: '/view-pts/:patientId',
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
-                return ViewPtsPage(patientId: patientId);
+                final patientName = (state.extra as String?) ?? 'Paciente';
+                return ViewPtsPage(
+                  patientId: patientId,
+                  patientName: patientName,
+                );
               },
             ),
 

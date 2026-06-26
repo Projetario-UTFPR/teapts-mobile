@@ -6,12 +6,17 @@ import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/imageSideCard.dart';
-import 'widgets/expandableAtividades.dart';
+import 'widgets/expandableActivities.dart';
 
 class ViewPtsPage extends StatelessWidget {
   final String patientId;
+  final String patientName;
 
-  const ViewPtsPage({super.key, required this.patientId});
+  const ViewPtsPage({
+    super.key,
+    required this.patientId,
+    required this.patientName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +32,13 @@ class ViewPtsPage extends StatelessWidget {
           spacing: 16,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomRowItem(
-              title: 'John Doe',
-              isCircularImage: true,
-              isProfileImage: true,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: CustomRowItem(
+                title: patientName,
+                isCircularImage: true,
+                isProfileImage: true,
+              ),
             ),
 
             Divider(
@@ -40,7 +48,7 @@ class ViewPtsPage extends StatelessWidget {
 
             const ExpandableTextDisplay(),
 
-            ExpandableAtividades(patientId: patientId),
+            ExpandableActivities(patientId: patientId),
 
             const ExpandableEquipeMultidiciplinar(),
 

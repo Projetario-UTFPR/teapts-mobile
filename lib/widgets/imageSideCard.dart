@@ -34,38 +34,41 @@ class CustomRowItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isCard = !isCircularImage || !isProfileImage;
 
-    Widget rowContent = Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _buildImage(),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: isCircularImage && isProfileImage
-                    ? Styles.midSizeBold
-                    : Styles.normalTextBold,
+    Widget rowContent = IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildImage(),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: isCircularImage && isProfileImage
+                        ? Styles.titlesBold
+                        : Styles.normalTextBold,
+                  ),
+                  if (subtitle != null)
+                    Text(subtitle!, style: Styles.normalText),
+                  if (tag != null) ...[const SizedBox(height: 4), tag!],
+                  if (linkText != null && onLinkTap != null) ...[
+                    const SizedBox(height: 2),
+                    GestureDetector(
+                      onTap: onLinkTap,
+                      child: Text(linkText!, style: Styles.linkBold),
+                    ),
+                  ],
+                ],
               ),
-              if (subtitle != null) Text(subtitle!, style: Styles.normalText),
-              if (tag != null) ...[
-                const SizedBox(height: 4),
-                tag!,
-              ],
-              if (linkText != null && onLinkTap != null) ...[
-                const SizedBox(height: 2),
-                GestureDetector(
-                  onTap: onLinkTap,
-                  child: Text(linkText!, style: Styles.linkBold),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
 
     if (!isCard) return rowContent;
@@ -101,7 +104,9 @@ class CustomRowItem extends StatelessWidget {
                     Text(
                       buttonText!,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                     PhosphorIcon(PhosphorIconsBold.arrowRight, size: 18),
                   ],
@@ -116,30 +121,29 @@ class CustomRowItem extends StatelessWidget {
 
   Widget _buildImage() {
     if (isCircularImage) {
-      return CircleAvatar(
-        radius: 24,
-        backgroundColor: Colors.grey,
-        child: Icon(placeholderIcon, size: 36, color: Styles.widgetWhite),
+      return Center(
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: Colors.grey,
+          child: Icon(placeholderIcon, size: 36, color: Styles.widgetWhite),
+        ),
       );
     } else {
-      return Container(
-        width: 64,
-        height: 72,
-        decoration: BoxDecoration(
-          color: Styles.IconLightGray,
-          borderRadius: BorderRadius.circular(12),
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 72),
+        child: Container(
+          width: 64,
+          decoration: BoxDecoration(
+            color: Styles.IconLightGray,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: placeholderImage != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(placeholderImage!, fit: BoxFit.cover),
+                )
+              : Icon(placeholderIcon, size: 48, color: Styles.IconDarkGray),
         ),
-        child: placeholderImage != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  placeholderImage!,
-                  fit: BoxFit.cover,
-                  width: 64,
-                  height: 72,
-                ),
-              )
-            : Icon(placeholderIcon, size: 48, color: Styles.IconDarkGray),
       );
     }
   }

@@ -36,6 +36,28 @@ class ApiService {
     return decoded as Map<String, dynamic>;
   }
 
+  static Future<dynamic> get(String path) async {
+    final token = AuthService.accessToken;
+
+    final response = await http.get(
+      Uri.parse('$baseUrl$path'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 204) return null;
+    final decoded = jsonDecode(response.body);
+    if (response.statusCode >= 400) {
+      final msg =
+          decoded['message'] ??
+          decoded['errors']?.toString() ??
+          'Erro na requisição: ${response.statusCode}';
+      throw Exception(msg);
+    }
+    return decoded;
+  }
+
   static Future<void> putRaw({
     required String url,
     required Uint8List bytes,
