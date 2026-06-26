@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/expandableEquipeMultidiciplinar.dart';
 import 'package:front_pi/widgets/expandableText.dart';
+import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/imageSideCard.dart';
@@ -16,55 +17,30 @@ class ViewPtsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.bgColor,
-      appBar: AppBar(
-        backgroundColor: Styles.bgColor,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () => context.pop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFC200),
-                shape: BoxShape.circle,
-              ),
-              child: PhosphorIcon(
-                PhosphorIconsBold.arrowLeft,
-                size: 20,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
+      appBar: MainAppBar(
+        title: 'Visualizar PTS',
+        showBackButton: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 48.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          spacing: 24,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 16,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const CustomRowItem(
-                title: 'John Doe',
-                isCircularImage: true,
-                isProfileImage: true,
-              ),
+            CustomRowItem(
+              title: 'John Doe',
+              isCircularImage: true,
+              isProfileImage: true,
             ),
 
             Divider(
               color: Styles.widgetBlack40,
               thickness: 1,
-              endIndent: 16,
-              indent: 16,
             ),
 
             const ExpandableTextDisplay(),
 
             ExpandableAtividades(patientId: patientId),
-
 
             const ExpandableEquipeMultidiciplinar(),
 
@@ -79,10 +55,10 @@ class ViewPtsPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Prontuario'),
+                      const Text('Prontuario', style: Styles.midSizeBold),
                       Icon(
                         PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 24,
+                        size: 18,
                       ),
                     ],
                   ),
