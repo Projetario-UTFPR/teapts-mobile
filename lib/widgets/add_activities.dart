@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:gap/gap.dart';
 import 'package:front_pi/services/activity_service.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 Future<bool?> addActivityPanel(BuildContext context, String patientId) {
   return showModalBottomSheet<bool>(
@@ -33,6 +35,8 @@ class SuggestActivityForm extends StatefulWidget {
 
 class _SuggestActivityFormState extends State<SuggestActivityForm> {
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _docController = TextEditingController();
+
   String _selectedFrequency = 'Semanal';
   final List<String> _frequencies = [
     'Diária',
@@ -42,31 +46,33 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     'Contínua',
   ];
 
-  List<dynamic> _documentosDisponiveis = [];
-  final List<String> _documentosSelecionados = [];
+  List<dynamic> _availableDocuments = [];
+  final List<dynamic> _selectedDocuments = [];
+
   bool _isLoadingDocs = true;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _buscarDocumentosDoProntuario();
+    _loadRecordDocuments();
   }
 
   @override
   void dispose() {
     _titleController.dispose();
+    _docController.dispose();
     super.dispose();
   }
 
-  Future<void> _buscarDocumentosDoProntuario() async {
+  Future<void> _loadRecordDocuments() async {
     try {
       final docs = await DocumentService.getDocumentosDoProntuario(
         widget.patientId,
       );
       if (!mounted) return;
       setState(() {
-        _documentosDisponiveis = docs;
+        _availableDocuments = docs;
         _isLoadingDocs = false;
       });
     } catch (e) {
@@ -139,9 +145,9 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
       return;
     }
 
-    final idProfissional = AuthService.professionalId;
+    final professionalId = AuthService.professionalId;
 
-    if (idProfissional == null) {
+    if (professionalId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -155,10 +161,14 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
 
     setState(() => _isLoading = true);
 
+    final List<String> docIdsToSubmit = _selectedDocuments
+        .map((doc) => doc['id'] as String)
+        .toList();
+
     final dto = CreateActivityDto(
       title: _titleController.text.trim(),
-      professionalId: idProfissional,
-      documentsIds: _documentosSelecionados,
+      professionalId: professionalId,
+      documentsIds: docIdsToSubmit,
       frequency: _mapFrequencyToDto(_selectedFrequency),
     );
 
@@ -183,7 +193,6 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     }
   }
 
-  //-------------------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -231,15 +240,13 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
       children: [
         const Text('Vincular Documentos do Prontuário', style: Styles.midSize),
         const Gap(8),
-        const Divider(height: 1),
-        const Gap(8),
 
         if (_isLoadingDocs)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             child: Center(child: CircularProgressIndicator()),
           )
-        else if (_documentosDisponiveis.isEmpty)
+        else if (_availableDocuments.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
@@ -247,28 +254,103 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
               style: Styles.midSize,
             ),
           )
-        else
-          ..._documentosDisponiveis.map((doc) {
-            final docId = doc['id'] as String;
-            final docTitle = doc['title'] ?? 'Documento sem título';
-            final isChecked = _documentosSelecionados.contains(docId);
+        else ...[
+          TypeAheadField<dynamic>(
+            controller: _docController,
+            builder: (context, controller, focusNode) => TextField(
+              controller: controller,
+              focusNode: focusNode,
+              decoration: InputDecoration(
+                fillColor: const Color(0xFFFFFFFF),
+                filled: true,
+                hintText: 'Buscar documento...',
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.only(left: 12.0, right: 6.0),
+                  child: PhosphorIcon(
+                    PhosphorIconsRegular.file,
+                    size: 20,
+                    color: Color(0xFF555555),
+                  ),
+                ),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 0,
+                  minHeight: 0,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.black54),
+                ),
+              ),
+            ),
+            suggestionsCallback: (search) {
+              return _availableDocuments.where((doc) {
+                final docTitle = (doc['title'] ?? '').toString().toLowerCase();
+                final searchTerm = search.toLowerCase();
+                final alreadySelected = _selectedDocuments.any(
+                  (selected) => selected['id'] == doc['id'],
+                );
 
-            return CheckboxListTile(
-              title: Text(docTitle, style: Styles.midSize),
-              value: isChecked,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (bool? checked) {
-                setState(() {
-                  if (checked == true) {
-                    _documentosSelecionados.add(docId);
-                  } else {
-                    _documentosSelecionados.remove(docId);
-                  }
-                });
-              },
-            );
-          }),
+                return !alreadySelected && docTitle.contains(searchTerm);
+              }).toList();
+            },
+            emptyBuilder: (context) => const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('Nenhum documento encontrado.'),
+            ),
+            itemBuilder: (context, doc) => ListTile(
+              leading: const PhosphorIcon(
+                PhosphorIconsRegular.fileText,
+                color: Color(0xFF555555),
+              ),
+              title: Text(doc['title'] ?? 'Documento sem título'),
+            ),
+            onSelected: (doc) {
+              setState(() {
+                _selectedDocuments.add(doc);
+                _docController.clear();
+              });
+            },
+          ),
+
+          const Gap(4),
+          const Text(
+            'Selecione os arquivos para anexar a esta atividade.',
+            style: TextStyle(fontSize: 12, color: Color(0xFF555555)),
+          ),
+
+          if (_selectedDocuments.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _selectedDocuments.map((doc) {
+                return Chip(
+                  backgroundColor: Colors.black.withOpacity(0.05),
+                  side: BorderSide.none,
+                  label: Text(
+                    doc['title'] ?? 'Documento sem título',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  onDeleted: () => setState(() {
+                    _selectedDocuments.remove(doc);
+                  }),
+                );
+              }).toList(),
+            ),
+          ],
+        ],
       ],
     );
   }
@@ -284,7 +366,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: Colors.black,
                   strokeWidth: 2,
                 ),
               )

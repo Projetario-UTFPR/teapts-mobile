@@ -4,29 +4,28 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/styles.dart';
 import 'imageSideCard.dart';
 import 'package:gap/gap.dart';
-
 import '../services/activity_service.dart';
 
-class ExpandableAtividades extends StatefulWidget {
+class ExpandableActivities extends StatefulWidget {
   final String patientId;
 
-  const ExpandableAtividades({super.key, required this.patientId});
+  const ExpandableActivities({super.key, required this.patientId});
 
   @override
-  State<ExpandableAtividades> createState() => _ExpandableAtividadesState();
+  State<ExpandableActivities> createState() => _ExpandableActivitiesState();
 }
 
-class _ExpandableAtividadesState extends State<ExpandableAtividades> {
-  List<dynamic> _atividades = [];
+class _ExpandableActivitiesState extends State<ExpandableActivities> {
+  List<dynamic> _activities = [];
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _buscarAtividadesDoBackend();
+    _loadActivities();
   }
 
-  Future<void> _buscarAtividadesDoBackend() async {
+  Future<void> _loadActivities() async {
     setState(() => _isLoading = true);
 
     try {
@@ -34,10 +33,11 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
         widget.patientId,
         limit: 50,
       );
+
       if (!mounted) return;
 
       setState(() {
-        _atividades = response['items'] as List<dynamic>? ?? [];
+        _activities = response['items'] as List<dynamic>? ?? [];
       });
     } catch (e) {
       if (!mounted) return;
@@ -54,29 +54,36 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
     }
   }
 
-  String _formatarFrequencia(dynamic freq) {
-    if (freq == null) return 'Frequência não informada';
+  String _formatFrequency(dynamic frequency) {
+    if (frequency == null) return 'Frequência não informada';
 
-    final int times = freq['times'] ?? 1;
+    final int times = frequency['times'] ?? 1;
+
     int intervalValue = 1;
     String intervalUnit = 'week';
 
-    if (freq['interval'] is List && freq['interval'].length >= 2) {
-      intervalValue = freq['interval'][0];
-      intervalUnit = freq['interval'][1];
+    if (frequency['interval'] is List && frequency['interval'].length >= 2) {
+      intervalValue = frequency['interval'][0];
+      intervalUnit = frequency['interval'][1];
     }
 
-    final Map<String, String> traducoes = {
-      'day': 'dia',
-      'week': 'semana',
-      'month': 'mês',
-    };
+    final String wordTimes = times == 1 ? 'vez' : 'vezes';
 
-    final translatedUnit = traducoes[intervalUnit] ?? intervalUnit;
-    if (intervalValue == 1) {
-      return '$times vez(es) por $translatedUnit';
+    String translatedUnit = '';
+    if (intervalUnit == 'day') {
+      translatedUnit = intervalValue == 1 ? 'dia' : 'dias';
+    } else if (intervalUnit == 'week') {
+      translatedUnit = intervalValue == 1 ? 'semana' : 'semanas';
+    } else if (intervalUnit == 'month') {
+      translatedUnit = intervalValue == 1 ? 'mês' : 'meses';
     } else {
-      return '$times vez(es) a cada $intervalValue $translatedUnit(s)';
+      translatedUnit = intervalUnit;
+    }
+
+    if (intervalValue == 1) {
+      return '$times $wordTimes por $translatedUnit';
+    } else {
+      return '$times $wordTimes a cada $intervalValue $translatedUnit';
     }
   }
 
@@ -108,7 +115,7 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
                 child: CircularProgressIndicator(color: Colors.amber),
               ),
             )
-          else if (_atividades.isEmpty)
+          else if (_activities.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
@@ -117,19 +124,19 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
               ),
             )
           else
-            ..._atividades.map(
-              (atividade) => Padding(
+            ..._activities.map(
+              (activity) => Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: CustomRowItem(
-                  title: atividade['title'] ?? 'Sem título',
-                  subtitle: _formatarFrequencia(atividade['frequency']),
+                  title: activity['title'] ?? 'Sem título',
+                  subtitle: _formatFrequency(activity['frequency']),
                   isCircularImage: false,
                   placeholderIcon: PhosphorIcons.videoConference(
                     PhosphorIconsStyle.fill,
                   ),
                   linkText: 'Ver mais detalhes',
                   onLinkTap: () =>
-                      print('ID da atividade clicada: ${atividade['id']}'),
+                      print('ID da atividade clicada: ${activity['id']}'),
                 ),
               ),
             ),
@@ -139,12 +146,12 @@ class _ExpandableAtividadesState extends State<ExpandableAtividades> {
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: () async {
-                final bool? salvouComSucesso = await addActivityPanel(
+                final bool? success = await addActivityPanel(
                   context,
                   widget.patientId,
                 );
-                if (salvouComSucesso == true) {
-                  _buscarAtividadesDoBackend();
+                if (success == true) {
+                  _loadActivities();
                 }
               },
               style: Styles.buttonYellow,

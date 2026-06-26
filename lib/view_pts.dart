@@ -6,7 +6,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/imageSideCard.dart';
-import 'widgets/expandableAtividades.dart';
+import 'widgets/expandableActivities.dart';
 
 class ViewPtsPage extends StatelessWidget {
   final String patientId;
@@ -66,7 +66,7 @@ class ViewPtsPage extends StatelessWidget {
             ),
 
             const ExpandableTextDisplay(),
-            ExpandableAtividades(patientId: patientId),
+            ExpandableActivities(patientId: patientId),
 
             const ExpandableEquipeMultidiciplinar(),
 

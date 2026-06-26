@@ -28,7 +28,8 @@ class _TimelinePageState extends State<TimelinePage> {
     (
       professional: 'Bruno Lima',
       speciality: "Psichologist",
-      activityName: 'Avaliação psiquiátrica ggvhgvhfc hfgfc  fhgf hf hf hfhf hgfgfgfh',
+      activityName:
+          'Avaliação psiquiátrica ggvhgvhfc hfgfc  fhgf hf hf hfhf hgfgfgfh',
       dateTime: DateTime(2024, 5, 12, 11, 15),
     ),
     (
@@ -61,8 +62,7 @@ class _TimelinePageState extends State<TimelinePage> {
 
   void _loadMore() {
     setState(() {
-      _visibleCount =
-          (_visibleCount + _pageSize).clamp(0, _allEvents.length);
+      _visibleCount = (_visibleCount + _pageSize).clamp(0, _allEvents.length);
     });
   }
 
@@ -110,7 +110,9 @@ class _TimelinePageState extends State<TimelinePage> {
                           child: const Text(
                             'Carregar mais',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -120,8 +122,12 @@ class _TimelinePageState extends State<TimelinePage> {
                   final event = visibleEvents[index];
                   final isFirst = index == 0;
                   final isLast = index == visibleEvents.length - 1 && !hasMore;
-                  final position = isFirst ? Position.first : isLast ? Position.last : Position.middle;
-              
+                  final position = isFirst
+                      ? Position.first
+                      : isLast
+                      ? Position.last
+                      : Position.middle;
+
                   return TimelineItem(
                     professionalName: event.professional,
                     professionalSpeciality: event.speciality,
