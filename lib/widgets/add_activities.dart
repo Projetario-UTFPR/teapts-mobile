@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:gap/gap.dart';
 import 'package:front_pi/services/activity_service.dart';
-
-class MockDocument {
-  final String title;
-  final String content;
-  MockDocument({required this.title, required this.content});
-}
 
 Future<bool?> addActivityPanel(BuildContext context, String patientId) {
   return showModalBottomSheet<bool>(
@@ -46,14 +41,44 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     'Mensal',
     'Contínua',
   ];
-  final List<MockDocument> _draftedDocuments = [];
 
+  List<dynamic> _documentosDisponiveis = [];
+  final List<String> _documentosSelecionados = [];
+  bool _isLoadingDocs = true;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _buscarDocumentosDoProntuario();
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
+  }
+
+  Future<void> _buscarDocumentosDoProntuario() async {
+    try {
+      final docs = await DocumentService.getDocumentosDoProntuario(
+        widget.patientId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _documentosDisponiveis = docs;
+        _isLoadingDocs = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoadingDocs = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar prontuário: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   FrequencyDto _mapFrequencyToDto(String freq) {
@@ -133,7 +158,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     final dto = CreateActivityDto(
       title: _titleController.text.trim(),
       professionalId: idProfissional,
-      documentsIds: [],
+      documentsIds: _documentosSelecionados,
       frequency: _mapFrequencyToDto(_selectedFrequency),
     );
 
@@ -156,15 +181,6 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
         SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
       );
     }
-  }
-
-  void _openDocumentCreator() async {
-    final MockDocument? newDoc = await showDialog<MockDocument>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const CreateDocumentDialog(),
-    );
-    if (newDoc != null) setState(() => _draftedDocuments.add(newDoc));
   }
 
   //-------------------------------------------------------------------------------------
@@ -213,52 +229,46 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Documentos', style: Styles.midSize),
-            TextButton(
-              style: Styles.buttonYellow,
-              onPressed: _openDocumentCreator,
-              child: const Text('adicionar', style: Styles.midSize),
-            ),
-          ],
-        ),
+        const Text('Vincular Documentos do Prontuário', style: Styles.midSize),
         const Gap(8),
         const Divider(height: 1),
         const Gap(8),
 
-        if (_draftedDocuments.isEmpty)
+        if (_isLoadingDocs)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else if (_documentosDisponiveis.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Text('Nenhum documento.', style: Styles.midSize),
-          ),
+            child: Text(
+              'O paciente não possui documentos no prontuário.',
+              style: Styles.midSize,
+            ),
+          )
+        else
+          ..._documentosDisponiveis.map((doc) {
+            final docId = doc['id'] as String;
+            final docTitle = doc['title'] ?? 'Documento sem título';
+            final isChecked = _documentosSelecionados.contains(docId);
 
-        ..._draftedDocuments.map(
-          (doc) => Container(
-            margin: const EdgeInsets.only(bottom: 8.0),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12.0,
-              vertical: 8.0,
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(doc.title, style: Styles.midSize),
-                InkWell(
-                  onTap: () => setState(() => _draftedDocuments.remove(doc)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Text('Remover', style: Styles.midSize),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+            return CheckboxListTile(
+              title: Text(docTitle, style: Styles.midSize),
+              value: isChecked,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (bool? checked) {
+                setState(() {
+                  if (checked == true) {
+                    _documentosSelecionados.add(docId);
+                  } else {
+                    _documentosSelecionados.remove(docId);
+                  }
+                });
+              },
+            );
+          }),
       ],
     );
   }
@@ -280,63 +290,6 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
               )
             : const Text('Salvar', style: Styles.midSizeBold),
       ),
-    );
-  }
-}
-
-class CreateDocumentDialog extends StatefulWidget {
-  const CreateDocumentDialog({super.key});
-  @override
-  State<CreateDocumentDialog> createState() => _CreateDocumentDialogState();
-}
-
-class _CreateDocumentDialogState extends State<CreateDocumentDialog> {
-  final TextEditingController _docTitleController = TextEditingController();
-  final TextEditingController _docContentController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Styles.bgColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      title: const Text('Criar Documento', style: Styles.midSizeBold),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _docTitleController,
-              decoration: Styles.textFieldDefault(labelText: 'Título'),
-            ),
-            Gap(16),
-            TextField(
-              controller: _docContentController,
-              maxLines: 5,
-              decoration: Styles.textFieldDefault(labelText: 'Conteúdo'),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        ElevatedButton(
-          style: Styles.buttonWhite,
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar', style: Styles.midSize),
-        ),
-        ElevatedButton(
-          style: Styles.buttonYellow,
-          onPressed: () {
-            final newDoc = MockDocument(
-              title: _docTitleController.text.isEmpty
-                  ? 'Sem título'
-                  : _docTitleController.text,
-              content: _docContentController.text,
-            );
-            Navigator.pop(context, newDoc);
-          },
-          child: const Text('Salvar', style: Styles.midSizeBold),
-        ),
-      ],
     );
   }
 }
