@@ -135,7 +135,7 @@ Future<void> _init() async {
       );
 
       if (!mounted) return;
-        context.go('/debug-page');
+        context.pop();
 
     } catch (e) {
       if (!mounted) return;
@@ -223,7 +223,7 @@ Future<void> _init() async {
   Align(
     alignment: Alignment.centerLeft,
     child: IconButton(
-      onPressed: _isLoading ? null : () => context.go('/debug-page'),
+      onPressed: _isLoading ? null : () => context.pop(),
       style: IconButton.styleFrom(
         backgroundColor: Styles.widgetYellow,
         padding: const EdgeInsets.all(0),
@@ -493,7 +493,7 @@ Future<void> _init() async {
                     side: BorderSide(color: Colors.black.withOpacity(0.10)),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: _isLoading ? null : () => context.go('/debug-page'),
+                  onPressed: _isLoading ? null : () => context.pop(),
                   child: const Text('Cancelar'),
                 ),
               ),
