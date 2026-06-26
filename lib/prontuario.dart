@@ -202,7 +202,7 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
             );
           }
 
-          return DocumentoCard(documento: _documents[index]);
+          return DocumentoCard(document: _documents[index]);
         },
       ),
     );
