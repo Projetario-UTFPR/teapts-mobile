@@ -3,16 +3,20 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/models/prontuario_document.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 final _dateFmt = DateFormat('dd/MM/yyyy');
 
 class DocumentoCard extends StatelessWidget {
-  final ProntuarioDocument documento;
+  final ProntuarioDocument document;
 
-  const DocumentoCard({super.key, required this.documento});
+  const DocumentoCard({super.key, required this.document});
 
   @override
   Widget build(BuildContext context) {
+    final documentUrl = Uri.parse(document.documentUrl);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
@@ -52,17 +56,17 @@ class DocumentoCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    documento.title,
+                    document.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  if (documento.description != null &&
-                      documento.description!.isNotEmpty) ...[
+                  if (document.description != null &&
+                      document.description!.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      documento.description!,
+                      document.description!,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey.shade700,
@@ -71,14 +75,30 @@ class DocumentoCard extends StatelessWidget {
                   ],
                   const SizedBox(height: 4),
                   Text(
-                    'Adicionado em ${_dateFmt.format(documento.createdAt)}. '
-                    'Última modificação em ${_dateFmt.format(documento.lastUpdatedAt)}.',
+                    'Adicionado em ${_dateFmt.format(document.createdAt)}. '
+                    'Última modificação em ${_dateFmt.format(document.lastUpdatedAt)}.',
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade500),
                   ),
                   const SizedBox(height: 6),
                   GestureDetector(
-                    onTap: () {
-                      // TODO: abrir documento via documento.documentUrl
+                    onTap: () async {
+                      if (await canLaunchUrl(documentUrl)) {
+                        await launchUrl(
+                          documentUrl,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Não foi possível abrir o documento.',
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
                     child: const Text(
                       'Baixar o documento',
