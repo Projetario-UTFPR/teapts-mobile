@@ -37,9 +37,6 @@ services:
     container_name: teapts_backend_blob_storage
     image: rustfs/rustfs:latest
     user: "10001:10001"
-    ports:
-      - "${BLOB_STORAGE_PORT}:9000"
-      - "9001:9001"
     volumes:
       - tea_pts_blob_storage:/data
     environment:
