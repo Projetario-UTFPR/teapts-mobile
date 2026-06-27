@@ -122,17 +122,7 @@ class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
                     SizedBox(
                       width: double.infinity,
                       height: 48,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(
-                            color: Colors.black.withOpacity(0.10),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          textStyle: Styles.midSizeBold,
-                        ),
+                      child: FilledButton(
                         onPressed: () {
                           context.push(
                             '/social-situation/${widget.patientId}',
@@ -142,17 +132,18 @@ class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
                             },
                           );
                         },
+                        style: Styles.buttonWhite,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Ver mais'),
+                              const Text('Ver mais', style: Styles.midSizeBold),
                               Icon(
                                 PhosphorIcons.arrowRight(
                                   PhosphorIconsStyle.bold,
                                 ),
-                                size: 24,
+                                size: 18,
                               ),
                             ],
                           ),
