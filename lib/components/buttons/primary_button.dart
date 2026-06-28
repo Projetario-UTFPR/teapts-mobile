@@ -28,19 +28,6 @@ class PrimaryButton extends StatelessWidget {
     final effectiveIconAlignment =
         iconAlignment ?? style?.iconAlignment ?? IconAlignment.start;
 
-    final effectiveIconWidget = isLoading
-        ? const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 1,
-              color: Colors.black,
-            ),
-          )
-        : icon != null
-        ? PhosphorIcon(icon!, size: 20, color: Colors.black)
-        : null;
-
     final text = Text(
       title,
       style: TextStyle(
@@ -60,9 +47,9 @@ class PrimaryButton extends StatelessWidget {
           Icon(PhosphorIcons.arrowRight(PhosphorIconsStyle.bold), size: 18),
         ],
       );
-    } else if (effectiveIconWidget != null) {
+    } else {
+      final effectiveIconWidget = _buildAnimatedIcon(effectiveIconAlignment);
       child = Row(
-        spacing: 12,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: effectiveIconAlignment == IconAlignment.start
@@ -82,6 +69,45 @@ class PrimaryButton extends StatelessWidget {
       ).merge(style),
       onPressed: isLoading ? null : onPressed,
       child: child,
+    );
+  }
+
+  Widget _buildAnimatedIcon(IconAlignment alignment) {
+    final duration = const Duration(milliseconds: 200);
+    var emptyBox = const SizedBox.shrink();
+    Widget? effectiveIcon;
+
+    if (isLoading || icon != null) {
+      effectiveIcon = isLoading
+          ? const SizedBox(
+              key: ValueKey("loadingIcon"),
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.black,
+              ),
+            )
+          : PhosphorIcon(
+              key: const ValueKey("actualIcon"),
+              icon!,
+              size: 20,
+              color: Colors.black,
+            );
+    }
+
+    return AnimatedSize(
+      duration: duration,
+      curve: Curves.easeOut,
+      child: effectiveIcon == null
+          ? emptyBox
+          : Padding(
+              padding: EdgeInsets.only(
+                right: alignment == IconAlignment.start ? 12.0 : 0.0,
+                left: alignment == IconAlignment.end ? 12.0 : 0.0,
+              ),
+              child: AnimatedSwitcher(duration: duration, child: effectiveIcon),
+            ),
     );
   }
 }
