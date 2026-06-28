@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/screens/timeline/timeline_item.dart';
 import 'package:front_pi/services/timeline_service.dart';
+import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 
 class TimelinePage extends StatefulWidget {
@@ -23,6 +25,16 @@ class _TimelinePageState extends State<TimelinePage> {
   void initState() {
     super.initState();
     _fetchTimeline();
+  }
+
+  Future<void> _refreshTimeline() async {
+    setState(() {
+      _events.clear();
+      _currentPage = 1;
+      _hasMore = true;
+    });
+
+    await _fetchTimeline();
   }
 
   Future<void> _fetchTimeline() async {
@@ -87,75 +99,63 @@ class _TimelinePageState extends State<TimelinePage> {
               )
             else
               Expanded(
-                child: ListView.builder(
-                  itemCount: _events.length + (_hasMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _events.length) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: _isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFFC200),
-                                    foregroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: _fetchTimeline,
-                                  child: const Text(
-                                    'Carregar mais',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                        ),
+                child: RefreshIndicator(
+                  color: Styles.widgetYellow,
+                  onRefresh: _refreshTimeline,
+                  child: ListView.builder(
+                    itemCount: _events.length + (_hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == _events.length) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: PrimaryButton(
+                              title: "Carregar mais",
+                              isLoading: _isLoading,
+                              onPressed: _fetchTimeline,
+                            ),
+                          ),
+                        );
+                      }
+
+                      final event = _events[index];
+                      final isUnique = _events.length == 1;
+                      final isFirst = index == 0;
+                      final isLast = index == _events.length - 1 && !_hasMore;
+
+                      Position position;
+
+                      if (isUnique) {
+                        position = Position.unique;
+                      } else if (isFirst) {
+                        position = Position.first;
+                      } else if (isLast) {
+                        position = Position.last;
+                      } else {
+                        position = Position.middle;
+                      }
+
+                      final DateTime parsedDate = event['happenedAt'] != null
+                          ? DateTime.parse(event['happenedAt']).toLocal()
+                          : DateTime.now();
+
+                      final profName =
+                          event['professional']?['name'] ??
+                          'Equipe Multidisciplinar';
+                      final profSpec =
+                          event['professional']?['specialism'] ?? 'Atendimento';
+
+                      return TimelineItem(
+                        professionalName: profName,
+                        professionalSpeciality: profSpec,
+                        eventDescription:
+                            event['description'] ?? 'Sem descrição',
+                        eventDateTime: parsedDate,
+                        position: position,
                       );
-                    }
-
-                    final event = _events[index];
-                    final isUnique = _events.length == 1;
-                    final isFirst = index == 0;
-                    final isLast = index == _events.length - 1 && !_hasMore;
-
-                    Position position;
-
-                    if (isUnique) {
-                      position = Position.unique;
-                    } else if (isFirst) {
-                      position = Position.first;
-                    } else if (isLast) {
-                      position = Position.last;
-                    } else {
-                      position = Position.middle;
-                    }
-
-                    final DateTime parsedDate = event['happenedAt'] != null
-                        ? DateTime.parse(event['happenedAt']).toLocal()
-                        : DateTime.now();
-
-                    final profName =
-                        event['professional']?['name'] ??
-                        'Equipe Multidisciplinar';
-                    final profSpec =
-                        event['professional']?['specialism'] ?? 'Atendimento';
-
-                    return TimelineItem(
-                      professionalName: profName,
-                      professionalSpeciality: profSpec,
-                      eventDescription: event['description'] ?? 'Sem descrição',
-                      eventDateTime: parsedDate,
-                      position: position,
-                    );
-                  },
+                    },
+                  ),
                 ),
               ),
           ],
