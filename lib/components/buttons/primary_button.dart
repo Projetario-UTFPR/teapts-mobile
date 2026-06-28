@@ -28,6 +28,19 @@ class PrimaryButton extends StatelessWidget {
     final effectiveIconAlignment =
         iconAlignment ?? style?.iconAlignment ?? IconAlignment.start;
 
+    final effectiveIconWidget = isLoading
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 1,
+              color: Colors.black,
+            ),
+          )
+        : icon != null
+        ? PhosphorIcon(icon!, size: 20, color: Colors.black)
+        : null;
+
     final text = Text(
       title,
       style: TextStyle(
@@ -47,16 +60,14 @@ class PrimaryButton extends StatelessWidget {
           Icon(PhosphorIcons.arrowRight(PhosphorIconsStyle.bold), size: 18),
         ],
       );
-    } else if (icon != null) {
-      final effectiveIcon = PhosphorIcon(icon!, size: 20, color: Colors.black);
-
+    } else if (effectiveIconWidget != null) {
       child = Row(
         spacing: 12,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: effectiveIconAlignment == IconAlignment.start
-            ? [effectiveIcon, text]
-            : [text, effectiveIcon],
+            ? [effectiveIconWidget, text]
+            : [text, effectiveIconWidget],
       );
     }
 
