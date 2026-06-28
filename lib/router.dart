@@ -11,6 +11,8 @@ import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/screens/upload_file.dart';
 import 'package:front_pi/screens/timeline/index.dart';
 import 'package:front_pi/prontuario.dart';
+import 'package:front_pi/screens/social_situation.dart';
+
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -43,80 +45,53 @@ final GoRouter appRouter = GoRouter(
       branches: [
         // Branch 0 — aba "casa"
         StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/home',
-              builder: (context, state) => const HomePage(),
-            ),
-            GoRoute(
-              path: '/view-pts/:patientId',
-              builder: (context, state) {
-                final patientId = state.pathParameters['patientId']!;
-                final patientName = (state.extra as String?) ?? 'Paciente';
-                return ViewPtsPage(
-                  patientId: patientId,
-                  patientName: patientName,
-                );
-              },
-            ),
-
-            GoRoute(
-              path: '/create-pts',
-              builder: (context, state) => const CreatePtsPage(),
-            ),
-            GoRoute(
-              path: '/upload-doc/:patientId',
-              builder: (context, state) {
-                final patientId = state.pathParameters['patientId']!;
-                return UploadDocPage(patientId: patientId);
-              },
-            ),
-            GoRoute(
-              path: '/prontuario/:patientId',
-              builder: (context, state) {
-                final patientId = state.pathParameters['patientId']!;
-                return ProntuarioPage(patientId: patientId);
-              },
-            ),
-          ],
-        ),
-
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/timeline',
-              builder: (context, state) {
-                final patientId = AuthService.accountId;
-                if (patientId == null) {
-                  return const Scaffold(
-                    backgroundColor: Colors.white,
-                    body: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          'Sua conta não possui um ID válido no momento. Faça login novamente.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return TimelinePage(patientId: patientId);
-              },
-            ),
-          ],
-        ),
-
-        // Branch 2 — aba "lista"
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/debug-page-2',
-              builder: (context, state) => DebugPage(),
-            ),
-          ],
-        ),
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: '/view-pts/:patientId',
+            builder: (context, state) {
+              final patientId = state.pathParameters['patientId']!;
+              final patientName = (state.extra as String?) ?? 'Paciente';
+              return ViewPtsPage(
+                patientId: patientId,
+                patientName: patientName,
+              );
+            },
+          ),
+          GoRoute(
+            path: '/create-pts',
+            builder: (context, state) => const CreatePtsPage(),
+          ),
+          GoRoute(
+            path: '/upload-doc/:patientId',
+            builder: (context, state) {
+              final patientId = state.pathParameters['patientId']!;
+              return UploadDocPage(patientId: patientId);
+            },
+          ),
+          GoRoute(
+            path: '/prontuario/:patientId',
+            builder: (context, state) {
+              final patientId = state.pathParameters['patientId']!;
+              return ProntuarioPage(patientId: patientId);
+            },
+          ),
+          GoRoute(
+            path: '/social-situation/:patientId',
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return SocialSituationPage(
+                patientName: extra?['patientName'] as String? ?? 'Paciente',
+                socialSituation: extra?['socialSituation'] as String? ?? '',
+              );
+            },
+          ),
+        ],
+      ),
+        
       ],
     ),
   ],

@@ -1,19 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/theme/styles.dart';
+import 'package:front_pi/services/pts_service.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:go_router/go_router.dart';
 
-// Renamed slightly to reflect its new purpose!
 class ExpandableTextDisplay extends StatefulWidget {
-  const ExpandableTextDisplay({super.key});
+  final String patientId;
+  final String patientName;
+
+  const ExpandableTextDisplay({
+    super.key,
+    required this.patientId,
+    required this.patientName,
+  });
 
   @override
   State<ExpandableTextDisplay> createState() => _ExpandableTextDisplayState();
 }
 
 class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
-  String _displayText =
-      "Texto de exemplo sobre o que vai ter nesse campo. Aqui deve ser puxado do backend as informações sobre o paciente deste Pts";
+  bool _isLoading = true;
+  String? _error;
+  String _socialSituation = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSocialSituation();
+  }
+
+  Future<void> _loadSocialSituation() async {
+    try {
+      final pts = await PtsService.getPts(widget.patientId);
+      if (!mounted) return;
+      setState(() {
+        _socialSituation = (pts['socialSituation'] as String?) ?? '';
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  bool _textExceedsMaxLines(
+    String text,
+    TextStyle style,
+    double maxWidth,
+    int maxLines,
+  ) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: maxLines,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: maxWidth);
+    return textPainter.didExceedMaxLines;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,40 +78,83 @@ class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
           style: IconButton.styleFrom(
             backgroundColor: Styles.widgetYellow,
             padding: const EdgeInsets.all(0),
-            shape: CircleBorder(),
+            shape: const CircleBorder(),
           ),
         ),
       ],
       children: [
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: Text(_displayText, style: Styles.normalText),
-        ),
-        SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: FilledButton(
-            style: Styles.buttonWhite.copyWith(
-              textStyle: WidgetStateProperty.all(Styles.midSizeBold),
+        if (_isLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.amber),
             ),
-            onPressed: () {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          )
+        else if (_error != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              'Erro ao carregar situação social: $_error',
+              style: Styles.normalText,
+            ),
+          )
+        else
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final overflows = _textExceedsMaxLines(
+                _socialSituation,
+                Styles.normalText,
+                constraints.maxWidth,
+                3,
+              );
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Ver mais'),
-                  Icon(
-                    PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                    size: 24,
+                  Text(
+                    _socialSituation,
+                    style: Styles.normalText,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (overflows) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FilledButton(
+                        onPressed: () {
+                          context.push(
+                            '/social-situation/${widget.patientId}',
+                            extra: {
+                              'patientName': widget.patientName,
+                              'socialSituation': _socialSituation,
+                            },
+                          );
+                        },
+                        style: Styles.buttonWhite,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Ver mais', style: Styles.midSizeBold),
+                              Icon(
+                                PhosphorIcons.arrowRight(
+                                  PhosphorIconsStyle.bold,
+                                ),
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
-              ),
-            ),
+              );
+            },
           ),
-        ),
       ],
     );
   }

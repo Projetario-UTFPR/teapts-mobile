@@ -37,7 +37,11 @@ class ViewPtsPage extends StatelessWidget {
 
             Divider(color: Styles.widgetBlack40, thickness: 1),
 
-            const ExpandableTextDisplay(),
+            ExpandableTextDisplay(
+              patientId: patientId,
+              patientName: patientName,
+            ),
+
 
             ExpandableActivities(patientId: patientId),
 
