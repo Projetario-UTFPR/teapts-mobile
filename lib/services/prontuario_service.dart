@@ -7,7 +7,7 @@ import 'package:front_pi/models/prontuario_document.dart';
 class ProntuarioService {
   static String get baseUrl => AppConfig.baseUrl;
 
-  static Future<List<ProntuarioDocument>> getDocuments({
+  static Future<(List<ProntuarioDocument>, int)> getDocuments({
     required String patientId,
     int page = 1,
     int limit = 24,
@@ -27,9 +27,12 @@ class ProntuarioService {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final items = body['items'] as List;
-      return items
-          .map((d) => ProntuarioDocument.fromJson(d as Map<String, dynamic>))
-          .toList();
+      return (
+        items
+            .map((d) => ProntuarioDocument.fromJson(d as Map<String, dynamic>))
+            .toList(),
+        body["totalElements"] as int,
+      );
     }
 
     if (response.statusCode == 403) {

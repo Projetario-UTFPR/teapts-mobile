@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/widgets/document_card.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
@@ -39,7 +40,7 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
     });
 
     try {
-      final newDocs = await ProntuarioService.getDocuments(
+      final (newDocs, totalElements) = await ProntuarioService.getDocuments(
         patientId: widget.patientId,
         page: _currentPage,
         limit: _pageSize,
@@ -48,7 +49,7 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
       setState(() {
         _documents.addAll(newDocs);
         _currentPage++;
-        _hasMore = newDocs.length == _pageSize;
+        _hasMore = (_currentPage - 1) * _pageSize < totalElements;
       });
     } catch (e) {
       setState(() {
@@ -167,37 +168,15 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: _documents.length + (_hasMore ? 1 : 0),
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           if (index == _documents.length) {
             return SizedBox(
               width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC200),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+              child: PrimaryButton(
                 onPressed: _isLoading ? null : _loadMore,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                      )
-                    : const Text(
-                        'Carregar mais documentos',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                isLoading: _isLoading,
+                title: 'Carregar mais documentos',
               ),
             );
           }
