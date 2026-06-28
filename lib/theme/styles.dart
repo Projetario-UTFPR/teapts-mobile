@@ -18,48 +18,36 @@ class Styles {
 
   static const TextStyle titles = TextStyle(
     fontSize: 24,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle titlesBold = TextStyle(
     fontSize: 24,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle subtitlesBold = TextStyle(
     fontSize: 20,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle midSize = TextStyle(
-    fontSize: 18,
-    fontFamily: 'Roboto',
-  );
+  static const TextStyle midSize = TextStyle(fontSize: 18);
 
   static const TextStyle midSizeBold = TextStyle(
     fontSize: 18,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle linkBold = TextStyle(
     fontSize: 18,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
     color: linkOrange,
   );
 
-  static const TextStyle normalText = TextStyle(
-    fontSize: 16,
-    fontFamily: 'Roboto',
-  );
+  static const TextStyle normalText = TextStyle(fontSize: 16);
 
   static const TextStyle normalTextBold = TextStyle(
     fontSize: 16,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
