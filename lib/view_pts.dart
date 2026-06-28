@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/expandableEquipeMultidiciplinar.dart';
 import 'package:front_pi/widgets/expandableText.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/custom_row_item.dart';
 import 'widgets/expandable_activities.dart';
@@ -45,23 +45,10 @@ class ViewPtsPage extends StatelessWidget {
 
             SizedBox(
               width: double.infinity,
-              height: 48,
-              child: FilledButton(
+              child: SecondaryButton(
+                title: "Prontuário",
+                isLinkButton: true,
                 onPressed: () => context.push('/prontuario/$patientId'),
-                style: Styles.buttonWhite,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Prontuario', style: Styles.midSizeBold),
-                      Icon(
-                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ],

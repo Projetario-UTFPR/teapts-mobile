@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -46,24 +47,10 @@ class _ExpandableTextDisplayState extends State<ExpandableTextDisplay> {
         SizedBox(
           width: double.infinity,
           height: 48,
-          child: FilledButton(
-            style: Styles.buttonWhite.copyWith(
-              textStyle: WidgetStateProperty.all(Styles.midSizeBold),
-            ),
+          child: SecondaryButton(
+            title: "Ver mais",
+            isLinkButton: true,
             onPressed: () {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Ver mais'),
-                  Icon(
-                    PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                    size: 24,
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ],
