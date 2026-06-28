@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:front_pi/widgets/specialism_chip.dart';
@@ -119,20 +120,9 @@ class _HomePageState extends State<HomePage> {
           if (index == visiblePatients.length) {
             return SizedBox(
               width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC200),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+              child: PrimaryButton(
+                title: "Carregar mais",
                 onPressed: _loadMore,
-                child: const Text(
-                  'Carregar mais',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
               ),
             );
           }
