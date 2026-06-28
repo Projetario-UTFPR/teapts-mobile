@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
@@ -431,16 +433,9 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFC200),
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                child: PrimaryButton(
+                  title: "Criar proposta",
+                  icon: PhosphorIconsBold.plus,
                   onPressed: () async {
                     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -453,15 +448,9 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                           .toList(),
                     );
 
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     context.go('/home');
                   },
-                  icon: PhosphorIcon(
-                    PhosphorIconsBold.plus,
-                    size: 18,
-                    color: Colors.black,
-                  ),
-                  label: const Text('Criar proposta de plano'),
                 ),
               ),
 
@@ -469,20 +458,11 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
               SizedBox(
                 width: double.infinity,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: BorderSide(color: Colors.black.withOpacity(0.10)),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                child: SecondaryButton(
+                  title: "Cancelar",
                   onPressed: () {
                     context.go('/home');
                   },
-                  child: const Text('Cancelar'),
                 ),
               ),
 
