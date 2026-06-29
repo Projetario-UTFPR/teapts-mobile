@@ -156,7 +156,7 @@ class _BottomNavState extends State<_BottomNav> {
 
       if (isAdmin)
         _NavButton(
-          icon: PhosphorIconsFill.userCircle,
+          icon: PhosphorIconsFill.userCirclePlus,
           label: 'Novo paciente',
           isActive: currentLocation == '/create-pts',
           onTap: () => context.pushNamed('create pts'),
