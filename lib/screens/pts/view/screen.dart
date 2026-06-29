@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
 import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/models/pts.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/screens/pts/view/expandable_multidisciplinary_team.dart';
@@ -55,6 +56,10 @@ class ViewPtsPageState extends State<ViewPtsPage> {
   Widget build(BuildContext context) {
     final error = _error;
     final pts = _pts;
+    final userCanSeeThisPtsSocialSituation =
+        !(AuthService.authCollection!.isPatient &&
+            widget.patientId == AuthService.authCollection!.account.id);
+
     return Scaffold(
       backgroundColor: Styles.bgColor,
       appBar: MainAppBar(title: 'Visualizar PTS', showBackButton: true),
@@ -79,7 +84,7 @@ class ViewPtsPageState extends State<ViewPtsPage> {
                   child: CircularProgressIndicator(color: Colors.amber),
                 ),
               )
-            else
+            else if (userCanSeeThisPtsSocialSituation)
               SitualSociationSection(
                 patientId: widget.patientId,
                 patientName: widget.patientName,

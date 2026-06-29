@@ -7,18 +7,19 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 class SitualSociationSection extends StatelessWidget {
-  final String? error;
-  final String? socialSituation;
+  final String? _error;
+  final String? _socialSituation;
   final String patientId;
   final String patientName;
 
   const SitualSociationSection({
     super.key,
-    required this.socialSituation,
-    this.error,
+    required String? socialSituation,
+    String? error,
     required this.patientId,
     required this.patientName,
-  });
+  }) : _socialSituation = socialSituation,
+       _error = error;
 
   bool _textExceedsMaxLines(
     String text,
@@ -36,6 +37,8 @@ class SitualSociationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final error = _error;
+    final socialSituation = _socialSituation;
     return ExpandableSection(
       title: 'Situação social',
       actions: [
@@ -57,12 +60,12 @@ class SitualSociationSection extends StatelessWidget {
       ],
       children: [
         if (error != null)
-          Alert(message: error!, type: AlertType.error)
-        else
+          Alert(message: error, type: AlertType.error)
+        else if (socialSituation != null)
           LayoutBuilder(
             builder: (context, constraints) {
               final overflows = _textExceedsMaxLines(
-                socialSituation!,
+                socialSituation,
                 Styles.normalText,
                 constraints.maxWidth,
                 3,
@@ -72,7 +75,7 @@ class SitualSociationSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    socialSituation!,
+                    socialSituation,
                     style: Styles.normalText,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -87,7 +90,7 @@ class SitualSociationSection extends StatelessWidget {
                           '/social-situation/$patientId',
                           extra: {
                             'patientName': patientName,
-                            'socialSituation': socialSituation!,
+                            'socialSituation': socialSituation,
                           },
                         );
                       },
