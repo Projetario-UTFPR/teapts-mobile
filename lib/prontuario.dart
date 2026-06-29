@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/document_card.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
@@ -72,34 +73,37 @@ class _ProntuarioPageState extends State<ProntuarioPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isProfessional =
+        !(AuthService.authCollection?.professionalProfiles.isEmpty ?? true);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: MainAppBar(
         title: 'Prontuário',
         showBackButton: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () => context.push(
-                '/upload-doc/${widget.patientId}',
-                extra: widget.patientId,
-              ),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFC200),
-                  shape: BoxShape.circle,
+          if (isProfessional)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () => context.push(
+                  '/upload-doc/${widget.patientId}',
+                  extra: widget.patientId,
                 ),
-                child: PhosphorIcon(
-                  PhosphorIconsBold.plus,
-                  size: 20,
-                  color: Colors.black,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFC200),
+                    shape: BoxShape.circle,
+                  ),
+                  child: PhosphorIcon(
+                    PhosphorIconsBold.plus,
+                    size: 20,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
       body: _buildBody(),
