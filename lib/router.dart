@@ -4,8 +4,8 @@ import 'package:front_pi/create_pts.dart';
 import 'package:front_pi/screens/pts/view/screen.dart';
 import 'package:front_pi/screens/timeline/screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:front_pi/login.dart';
-import 'package:front_pi/create_account.dart';
+import 'screens/login/login.dart';
+import 'screens/login/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/screens/upload_file.dart';
@@ -32,14 +32,11 @@ final GoRouter appRouter = GoRouter(
   },
 
   routes: [
-    // public routes
     GoRoute(path: '/login', builder: (context, state) => const Login()),
     GoRoute(
       path: '/create-account',
       builder: (context, state) => const SignUpPage(),
     ),
-
-    // protected routes
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),

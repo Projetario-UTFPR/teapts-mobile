@@ -106,7 +106,7 @@ class _TimelinePageState extends State<TimelinePage> {
                     itemBuilder: (context, index) {
                       if (index == _events.length) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 24),
                           child: SizedBox(
                             width: double.infinity,
                             child: PrimaryButton(

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:front_pi/services/api_client.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'router.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
 
   await initializeDateFormatting("pt_BR", null);
   Intl.defaultLocale = "pt_BR";
+
+  setupApiClient();
+  await AuthService.initializeSession();
 
   runApp(const MainApp());
 }

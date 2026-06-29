@@ -1,61 +1,27 @@
-import 'dart:convert';
 import 'dart:typed_data';
-import 'package:front_pi/config/app_config.dart';
-import 'package:http/http.dart' as http;
-import 'package:front_pi/services/auth_service.dart';
+import 'package:dio/dio.dart';
+import 'package:front_pi/services/api_client.dart';
 
 class ApiService {
-  static String get baseUrl => AppConfig.baseUrl;
-
   static Future<Map<String, dynamic>> post(
     String path,
     Map<String, dynamic> body,
   ) async {
-    final token = AuthService.accessToken;
-    final response = await http.post(
-      Uri.parse('$baseUrl$path'),
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 204) return {};
-
-    final decoded = jsonDecode(response.body);
-
-    if (response.statusCode >= 400) {
-      final msg =
-          decoded['message'] ??
-          decoded['errors']?.toString() ??
-          'Erro desconhecido';
-      throw Exception(msg);
+    try {
+      final response = await api.post(path, data: body);
+      return response.data ?? {};
+    } on DioException catch (e) {
+      throw _handleError(e);
     }
-
-    return decoded as Map<String, dynamic>;
   }
 
   static Future<dynamic> get(String path) async {
-    final token = AuthService.accessToken;
-
-    final response = await http.get(
-      Uri.parse('$baseUrl$path'),
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
-    if (response.statusCode == 204) return null;
-    final decoded = jsonDecode(response.body);
-    if (response.statusCode >= 400) {
-      final msg =
-          decoded['message'] ??
-          decoded['errors']?.toString() ??
-          'Erro na requisição: ${response.statusCode}';
-      throw Exception(msg);
+    try {
+      final response = await api.get(path);
+      return response.data;
+    } on DioException catch (e) {
+      throw _handleError(e);
     }
-    return decoded;
   }
 
   static Future<void> putRaw({
@@ -64,18 +30,34 @@ class ApiService {
     required String contentType,
     required String fileName,
   }) async {
-    final response = await http.put(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': contentType,
-        'Content-Disposition': 'inline',
-        'Content-Length': bytes.length.toString(),
-      },
-      body: bytes,
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 204) {
-      throw Exception('Falha no upload do arquivo: ${response.statusCode}');
+    try {
+      final cleanDio = Dio();
+      await cleanDio.put(
+        url,
+        data: Stream.fromIterable([bytes]),
+        options: Options(
+          headers: {
+            'Content-Type': contentType,
+            'Content-Disposition': 'inline',
+            'Content-Length': bytes.length.toString(),
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw Exception('Falha no upload do arquivo: ${e.response?.statusCode}');
     }
+  }
+
+  static Exception _handleError(DioException e) {
+    final responseData = e.response?.data;
+    if (responseData is Map) {
+      if (e.response?.statusCode == 422 && responseData['errors'] != null) {
+        final errors = responseData['errors'] as Map<String, dynamic>;
+        final messages = errors.values.expand((val) => val as List).join('\n');
+        return Exception(messages);
+      }
+      return Exception(responseData['message'] ?? 'Erro desconhecido');
+    }
+    return Exception(e.message ?? 'Erro na requisição');
   }
 }

@@ -12,13 +12,15 @@ class AuthCollectionDto {
   factory AuthCollectionDto.fromJson(Map<String, dynamic> json) {
     return AuthCollectionDto(
       account: AccountDto.fromJson(json['account'] as Map<String, dynamic>),
-      professionalProfiles: (json['professionalProfiles'] as List<dynamic>)
-          .map(
-            (e) =>
-                AuthProfessionalProfileDto.fromJson(e as Map<String, dynamic>),
-          )
-          .toList(),
-      isPatient: json['isPatient'] as bool,
+      professionalProfiles:
+          (json['professionalProfiles'] as List<dynamic>? ?? [])
+              .map(
+                (e) => AuthProfessionalProfileDto.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+      isPatient: json['isPatient'] ?? false,
     );
   }
 

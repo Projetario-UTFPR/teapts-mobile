@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
+import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -38,19 +39,31 @@ class MainLayout extends StatelessWidget {
                 height: 40,
                 fit: BoxFit.contain,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black.withAlpha(80),
-                    width: 1,
-                  ),
-                ),
+              GestureDetector(
+                onTap: () {
+                  final userName =
+                      AuthService.authCollection?.account.name ??
+                      AuthService.currentUserName;
 
-                child: const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: AssetImage("assets/imagens/dog.png"),
+                  final isPatient =
+                      AuthService.authCollection?.isPatient ?? false;
+                  final role = isPatient ? 'Paciente' : AuthService.currentRole;
+
+                  showProfilePanel(context, userName, role);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.black.withAlpha(80),
+                      width: 1,
+                    ),
+                  ),
+                  child: const CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: AssetImage("assets/imagens/dog.png"),
+                  ),
                 ),
               ),
             ],
