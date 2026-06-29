@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/widgets/add_activities.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -129,7 +130,9 @@ class _ActivitiesSectionState extends State<ActivitiesSection> {
         const Gap(8),
         SizedBox(
           width: double.infinity,
-          child: FilledButton.icon(
+          child: PrimaryButton(
+            title: 'Adicionar nova atividade',
+            icon: PhosphorIconsBold.plus,
             onPressed: () async {
               final bool? success = await addActivityPanel(
                 context,
@@ -139,9 +142,6 @@ class _ActivitiesSectionState extends State<ActivitiesSection> {
                 _loadActivities();
               }
             },
-            style: Styles.buttonYellow,
-            icon: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold), size: 24),
-            label: const Text('Adicionar nova atividade'),
           ),
         ),
       ],

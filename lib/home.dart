@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
@@ -84,71 +85,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+
       body: _error != null
           ? Center(child: Text('Erro: $_error'))
           : _isLoading && _patients.isEmpty
-              ? const Center(
-                  child: CircularProgressIndicator(color: Colors.amber),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(24),
-                  itemCount: _patients.length + (hasMore ? 1 : 0),
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    if (index == _patients.length) {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFFFFC200),
-                            foregroundColor: Colors.black,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: _isLoading
-                              ? null
-                              : () => _loadPatients(loadMore: true),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.black,
-                                  ),
-                                )
-                              : const Text(
-                                  'Carregar mais',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                        ),
-                      );
-                    }
+          ? const Center(child: CircularProgressIndicator(color: Colors.amber))
+          : ListView.separated(
+              padding: const EdgeInsets.all(24),
+              itemCount: _patients.length + (hasMore ? 1 : 0),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                if (index == _patients.length) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: PrimaryButton(
+                      title: "Carregar mais",
+                      isLoading: _isLoading,
+                      onPressed: () => _loadPatients(loadMore: true),
+                    ),
+                  );
+                }
 
-                    final patient = _patients[index];
+                final patient = _patients[index];
 
-                    return CustomRowItem(
-                      title: patient['name'] as String,
-                      isCircularImage: false,
-                      isProfileImage: false,
-                      subtitle: 'Situação PTS',
-                      placeholderImage: 'assets/imagens/florzinha.png',
-                      buttonText: 'Visualizar PTS',
-                      onButtonTap: () {
-                        context.push(
-                          '/view-pts/${patient['accountId']}',
-                          extra: patient['name'],
-                        );
-                      },
+                return CustomRowItem(
+                  title: patient['name'] as String,
+                  isCircularImage: false,
+                  isProfileImage: false,
+                  subtitle: 'Situação PTS',
+                  placeholderImage: 'assets/imagens/florzinha.png',
+                  buttonText: 'Visualizar PTS',
+                  onButtonTap: () {
+                    context.push(
+                      '/view-pts/${patient['accountId']}',
+                      extra: patient['name'],
                     );
                   },
-                ),
+                );
+              },
+            ),
     );
   }
 }

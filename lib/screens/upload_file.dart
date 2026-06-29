@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
@@ -206,9 +208,11 @@ class _UploadDocPageState extends State<UploadDocPage> {
                   height: 48,
                   padding: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black.withOpacity(0.10)),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.10),
+                    ),
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                   ),
                   child: Row(
                     children: [
@@ -228,7 +232,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                 )
               else
                 DropdownButtonFormField<String>(
-                  value: _selectedProfessionalId,
+                  initialValue: _selectedProfessionalId,
                   decoration: InputDecoration(
                     hintText: 'Selecione um perfil profissional',
                     contentPadding: const EdgeInsets.symmetric(
@@ -335,12 +339,12 @@ class _UploadDocPageState extends State<UploadDocPage> {
                   ),
                   decoration: BoxDecoration(
                     color: _selectedFile != null
-                        ? Colors.black.withOpacity(0.04)
+                        ? Colors.black.withValues(alpha: 0.04)
                         : const Color(0xFFFFFFFF),
                     border: Border.all(
                       color: _selectedFile != null
-                          ? Colors.black.withOpacity(0.30)
-                          : Colors.black.withOpacity(0.10),
+                          ? Colors.black.withValues(alpha: 0.30)
+                          : Colors.black.withValues(alpha: 0.10),
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -365,7 +369,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                               'PDF, PNG, JPG, DOC, DOCX',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.black.withOpacity(0.40),
+                                color: Colors.black.withValues(alpha: 0.40),
                               ),
                             ),
                           ],
@@ -395,7 +399,9 @@ class _UploadDocPageState extends State<UploadDocPage> {
                                     _formatSize(_selectedFile!.size),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black.withOpacity(0.45),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.45,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -419,32 +425,11 @@ class _UploadDocPageState extends State<UploadDocPage> {
               // ── Botões ─────────────────────────────────────────────────────
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFC200),
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                child: PrimaryButton(
+                  title: _isLoading ? 'Enviando...' : 'Enviar documento',
+                  isLoading: _isLoading,
                   onPressed: _isLoading ? null : _submit,
-                  icon: _isLoading
-                      ? const SizedBox(
-                          width: 18,
-                          height: 32,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
-                        )
-                      : PhosphorIcon(
-                          PhosphorIconsBold.uploadSimple,
-                          size: 18,
-                          color: Colors.black,
-                        ),
-                  label: Text(_isLoading ? 'Enviando...' : 'Enviar documento'),
+                  icon: PhosphorIconsBold.uploadSimple,
                 ),
               ),
 
@@ -452,18 +437,9 @@ class _UploadDocPageState extends State<UploadDocPage> {
 
               SizedBox(
                 width: double.infinity,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: BorderSide(color: Colors.black.withOpacity(0.10)),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                child: SecondaryButton(
                   onPressed: _isLoading ? null : () => context.pop(),
-                  child: const Text('Cancelar'),
+                  title: 'Cancelar',
                 ),
               ),
 

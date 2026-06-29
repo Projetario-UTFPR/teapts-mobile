@@ -4,8 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'router.dart';
 
-
-void main() async{
+void main() async {
   await dotenv.load(fileName: '.env');
 
   await initializeDateFormatting("pt_BR", null);
@@ -19,19 +18,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return  MaterialApp.router(
-    routerConfig: appRouter,
-    theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color.fromARGB(255, 15, 68, 111),
+    return MaterialApp.router(
+      routerConfig: appRouter,
+      theme: ThemeData(
+        fontFamily: "Roboto",
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 15, 68, 111),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFFFFCF2),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFFFFCF2),
+          elevation: 0,
+          foregroundColor: Colors.black,
+        ),
       ),
-    scaffoldBackgroundColor: const Color(0xFFFFFCF2), 
-    appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFFFFFCF2),
-    elevation: 0,
-    foregroundColor: Colors.black, 
-  ),
-  ),
-);
+    );
   }
 }

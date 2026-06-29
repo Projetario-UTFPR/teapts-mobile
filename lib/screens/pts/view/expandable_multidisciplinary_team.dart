@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
@@ -38,7 +39,7 @@ class _MultidisciplinaryTeamSectionState
   bool _hasNextPage = false;
   bool _isLoading = false;
 
-  Future<void> _fetchNextMultidisciplinaryTeamPage(BuildContext context) async {
+  Future<void> _fetchNextMultidisciplinaryTeamPage() async {
     setState(() => _isLoading = true);
 
     try {
@@ -62,7 +63,7 @@ class _MultidisciplinaryTeamSectionState
   @override
   void initState() {
     super.initState();
-    _fetchNextMultidisciplinaryTeamPage(context);
+    _fetchNextMultidisciplinaryTeamPage();
   }
 
   @override
@@ -127,13 +128,12 @@ class _MultidisciplinaryTeamSectionState
 
         if (!_hasNextPage) return null;
 
-        // TODO: add primary button
-        // put _isLoading in it
         return Padding(
           padding: EdgeInsets.only(top: 4),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text("Carregar mais"),
+          child: PrimaryButton(
+            title: "Carregar mais",
+            isLoading: _isLoading,
+            onPressed: _fetchNextMultidisciplinaryTeamPage,
           ),
         );
       },

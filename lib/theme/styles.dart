@@ -19,73 +19,42 @@ class Styles {
 
   static const TextStyle titles = TextStyle(
     fontSize: 24,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle titlesBold = TextStyle(
     fontSize: 24,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle subtitlesBold = TextStyle(
     fontSize: 20,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle midSize = TextStyle(
-    fontSize: 18,
-    fontFamily: 'Roboto',
-  );
+  static const TextStyle midSize = TextStyle(fontSize: 18);
 
   static const TextStyle midSizeBold = TextStyle(
     fontSize: 18,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle linkBold = TextStyle(
     fontSize: 18,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
     color: linkOrange,
   );
 
-  static const TextStyle normalText = TextStyle(
-    fontSize: 16,
-    fontFamily: 'Roboto',
-  );
+  static const TextStyle normalText = TextStyle(fontSize: 16);
 
   static const TextStyle normalTextBold = TextStyle(
     fontSize: 16,
-    fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
-  );
-
-  static final ButtonStyle buttonYellow = FilledButton.styleFrom(
-    backgroundColor: widgetYellow,
-    foregroundColor: widgetBlack,
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    textStyle: Styles.midSizeBold,
-    minimumSize: const Size(120, 40),
-  );
-
-  static final ButtonStyle buttonWhite = FilledButton.styleFrom(
-    backgroundColor: Styles.widgetWhite,
-    foregroundColor: Styles.widgetBlack,
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    side: BorderSide(color: widgetBlack40),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    textStyle: Styles.titlesBold,
-    minimumSize: const Size(120, 24),
   );
 
   static final OutlineInputBorder _inputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
-    borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+    borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.10)),
   );
 
   static final OutlineInputBorder _inputBorderFocused = OutlineInputBorder(

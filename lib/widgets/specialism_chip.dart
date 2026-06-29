@@ -9,25 +9,24 @@ class SpecialismChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF3CD),
+        color: const Color.fromRGBO(255, 194, 0, 0.25),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFFFC200), width: 1),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min, 
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
         children: [
           PhosphorIcon(
             PhosphorIconsRegular.identificationCard,
-            size: 16,
+            size: 20,
             color: Colors.black,
           ),
-          const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Colors.black,
             ),

@@ -27,7 +27,10 @@ class _ExpandableSectionState extends State<ExpandableSection> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text(widget.title, style: Styles.subtitlesBold),
+      title: Text(
+        widget.title,
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+      ),
       childrenPadding: EdgeInsets.zero,
       tilePadding: EdgeInsets.zero,
 

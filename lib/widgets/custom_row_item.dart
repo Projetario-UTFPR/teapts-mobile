@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/theme/styles.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CustomRowItem extends StatelessWidget {
   final String title;
@@ -84,29 +84,10 @@ class CustomRowItem extends StatelessWidget {
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
-              height: 44,
-              child: OutlinedButton(
+              child: SecondaryButton(
+                title: buttonText!,
                 onPressed: onButtonTap,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  side: BorderSide(color: Styles.widgetBlack40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      buttonText!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    PhosphorIcon(PhosphorIconsBold.arrowRight, size: 18),
-                  ],
-                ),
+                isLinkButton: true,
               ),
             ),
           ],

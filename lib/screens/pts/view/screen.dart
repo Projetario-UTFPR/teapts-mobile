@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/models/pts.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/screens/pts/view/expandable_multidisciplinary_team.dart';
 import 'package:front_pi/screens/pts/view/social_situation.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../widgets/custom_row_item.dart';
 import 'activities.dart';
@@ -22,10 +22,10 @@ class ViewPtsPage extends StatefulWidget {
   });
 
   @override
-  _ViewPtsPageState createState() => _ViewPtsPageState();
+  ViewPtsPageState createState() => ViewPtsPageState();
 }
 
-class _ViewPtsPageState extends State<ViewPtsPage> {
+class ViewPtsPageState extends State<ViewPtsPage> {
   bool _isLoading = false;
   PTSDto? _pts;
   String? _error;
@@ -101,23 +101,11 @@ class _ViewPtsPageState extends State<ViewPtsPage> {
             SizedBox(
               width: double.infinity,
               height: 48,
-              child: FilledButton(
+              child: SecondaryButton(
+                title: "Prontuário",
+                isLinkButton: true,
                 onPressed: () =>
                     context.push('/prontuario/${widget.patientId}'),
-                style: Styles.buttonWhite,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Prontuario', style: Styles.midSizeBold),
-                      Icon(
-                        PhosphorIcons.arrowRight(PhosphorIconsStyle.bold),
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ],

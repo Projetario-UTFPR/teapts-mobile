@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
+import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -78,36 +79,18 @@ class SitualSociationSection extends StatelessWidget {
                   ),
                   if (overflows) ...[
                     const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: FilledButton(
-                        onPressed: () {
-                          context.push(
-                            '/social-situation/${patientId}',
-                            extra: {
-                              'patientName': patientName,
-                              'socialSituation': socialSituation!,
-                            },
-                          );
-                        },
-                        style: Styles.buttonWhite,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Ver mais', style: Styles.midSizeBold),
-                              Icon(
-                                PhosphorIcons.arrowRight(
-                                  PhosphorIconsStyle.bold,
-                                ),
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SecondaryButton(
+                      title: "Ver mais",
+                      isLinkButton: true,
+                      onPressed: () {
+                        context.push(
+                          '/social-situation/$patientId',
+                          extra: {
+                            'patientName': patientName,
+                            'socialSituation': socialSituation!,
+                          },
+                        );
+                      },
                     ),
                   ],
                 ],

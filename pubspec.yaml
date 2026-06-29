@@ -35,6 +35,6 @@ flutter:
   fonts:
     - family: Roboto
       fonts:
-        - asset: assets/fonts/Roboto/static/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto/static/Roboto-Bold.ttf
-          weight: 700
+        - asset: assets/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf
+        - asset: assets/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf
+          style: "italic"

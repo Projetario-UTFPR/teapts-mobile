@@ -23,10 +23,7 @@ class SocialSituationPage extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Text(
           socialSituation,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF000000),
-          ),
+          style: const TextStyle(fontSize: 16, color: Color(0xFF000000)),
         ),
       ),
     );
