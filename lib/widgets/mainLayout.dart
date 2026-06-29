@@ -139,7 +139,7 @@ class _BottomNavState extends State<_BottomNav> {
                 currentLocation.startsWith("/view-pts/"),
             onTap: () => hasActivePts
                 ? context.push('/view-pts/${authCollection!.account.id}')
-                : context.push('/pts-proposals/${authCollection!.account.id}'),
+                : context.push('/approve-pts/${authCollection!.account.id}'),
           );
         }),
 
