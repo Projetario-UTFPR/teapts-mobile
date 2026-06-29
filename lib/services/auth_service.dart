@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:front_pi/config/app_config.dart';
 import 'package:front_pi/models/auth_collection.dart';
+import 'package:front_pi/models/professional.dart';
 
 class AuthService {
   static String get baseUrl => AppConfig.baseUrl;
@@ -41,10 +42,8 @@ class AuthService {
     final profile = activeProfessionalProfile;
     if (profile == null) return 'Profissional';
 
-    final specialisms = profile['specialism'] as List<dynamic>? ?? [];
-    return specialisms.isNotEmpty
-        ? specialisms.first.toString()
-        : 'Profissional';
+    final specialisms = mapSpecialism(profile['specialism'] as String);
+    return specialisms.isNotEmpty ? specialisms : 'Profissional';
   }
 
   static Future<void> login({
