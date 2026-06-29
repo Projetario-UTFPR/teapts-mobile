@@ -11,6 +11,7 @@ import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/screens/upload_file.dart';
 import 'package:front_pi/prontuario.dart';
 import 'package:front_pi/screens/social_situation.dart';
+import 'package:front_pi/screens/create_patient_profile.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -72,6 +73,11 @@ final GoRouter appRouter = GoRouter(
               path: '/create-pts',
               name: "create pts",
               builder: (context, state) => const CreatePtsPage(),
+            ),
+            GoRoute(
+              path: '/create-patient-profile',
+              name: "create patient profile",
+              builder: (context, state) => const CreatePatientProfilePage(),
             ),
             GoRoute(
               path: '/upload-doc/:patientId',
