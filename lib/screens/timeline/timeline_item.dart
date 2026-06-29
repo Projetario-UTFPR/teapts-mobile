@@ -23,7 +23,7 @@ class TimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
+    final child = IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,5 +140,11 @@ class TimelineItem extends StatelessWidget {
         ],
       ),
     );
+
+    if (position == Position.last) {
+      return Container(padding: EdgeInsets.only(bottom: 24), child: child);
+    }
+
+    return child;
   }
 }
