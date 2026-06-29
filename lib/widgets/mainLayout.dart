@@ -158,8 +158,8 @@ class _BottomNavState extends State<_BottomNav> {
         _NavButton(
           icon: PhosphorIconsFill.userCirclePlus,
           label: 'Novo paciente',
-          isActive: currentLocation == '/create-pts',
-          onTap: () => context.pushNamed('create pts'),
+          isActive: currentLocation == '/create patient profile',
+          onTap: () => context.pushNamed('create patient profile'),
         ),
     ]);
   }
