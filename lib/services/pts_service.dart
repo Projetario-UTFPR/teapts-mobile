@@ -73,4 +73,92 @@ class PtsService {
     }
     return Exception(e.message ?? 'Erro inesperado.');
   }
+  static Future<List<Map<String, String>>> getProfessionals() async {
+  final url = Uri.parse('$baseUrl/v1/professionals');
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${AuthService.accessToken}',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final body = jsonDecode(response.body);
+    final items = body['items'] as List;
+    return items.map<Map<String, String>>((p) => {
+      'id': p['professionalId'].toString(),
+      'accountId': p['accountId'].toString(),
+      'name': p['name'].toString(),
+      'specialism': (p['specialism'] ?? 'Not informed').toString(),
+    }).toList();
+  }
+
+  throw Exception('Erro ao buscar profissionais');
 }
+static Future<List<PTSProposalDto>> getProposals(
+  String patientId,{
+  int page = 1,
+  int limit = 24,
+}) async {
+  final url = Uri.parse(
+    '$baseUrl/v1/pts/proposals/me?page=$page&limit=$limit',
+  );
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${AuthService.accessToken}',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    final items = body['items'] as List;
+
+    return items
+        .map((e) => PTSProposalDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  if (response.statusCode == 403) {
+    throw Exception('Usuário não é paciente');
+  }
+
+  throw Exception('Erro ao buscar propostas: ${response.body}');
+  }
+  static Future<void> rejectProposal(String patientId, String proposalId) async {
+  final url = Uri.parse('$baseUrl/v1/pts/proposals/$proposalId/reject');
+
+  final response = await http.patch(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${AuthService.accessToken}',
+    },
+  );
+
+  if (response.statusCode == 200 || response.statusCode == 204) return;
+
+  final body = jsonDecode(response.body);
+  throw Exception(body['message'] ?? 'Erro ao rejeitar proposta');
+  }
+  static Future<void> acceptProposal(String proposalId) async {
+    final url = Uri.parse('$baseUrl/v1/pts/proposals/$proposalId/accept');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${AuthService.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) return;
+
+    final body = jsonDecode(response.body);
+    throw Exception(body['message'] ?? 'Erro ao aceitar proposta');
+  }
+}  

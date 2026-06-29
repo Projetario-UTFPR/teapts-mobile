@@ -73,6 +73,72 @@ class MainLayout extends StatelessWidget {
 
       bottomNavigationBar: SizedBox(
         height: 68,
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Colors.black.withValues(alpha: 0.2)),
+          ),
+        ),
+        child: ColoredBox(
+          color: Styles.widgetWhite,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: children,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authCollection = AuthService.authCollection;
+    final isPatient = authCollection?.isPatient ?? false;
+    final isAdmin = authCollection?.account.role == 'admin';
+
+    final currentLocation = GoRouterState.of(context).uri.toString();
+
+    return _container([
+      _NavButton(
+        icon: PhosphorIconsFill.house,
+        label: 'Home',
+        isActive: currentLocation == '/home',
+        onTap: () => context.pushNamed('home'),
+      ),
+
+      if (isPatient)
+        ?navButtonDependingOnPtsCheck((hasActivePts) {
+          return _NavButton(
+            icon: PhosphorIconsFill.puzzlePiece,
+            label: 'PTS',
+            isActive:
+                currentLocation.startsWith('/pts-proposals/') ||
+                currentLocation.startsWith("/view-pts/"),
+            onTap: () => hasActivePts
+                ? context.push('/view-pts/${authCollection!.account.id}')
+                : context.push('/approve-pts/${authCollection!.account.id}'),
+          );
+        }),
+
+      ?navButtonDependingOnPtsCheck(
+        (hasActivePts) => hasActivePts
+            ? _NavButton(
+                icon: PhosphorIconsFill.path,
+                label: 'Timeline',
+                isActive: currentLocation == '/timeline',
+                onTap: () => context.pushNamed('timeline'),
+              )
+            : null,
+      ),
+
+      if (isAdmin)
+        _NavButton(
+          icon: PhosphorIconsFill.userCirclePlus,
+          label: 'Novo paciente',
+          isActive: currentLocation == '/create patient profile',
+          onTap: () => context.pushNamed('create patient profile'),
+        ),
+    ]);
+  }
 
         child: BottomNavigationBar(
           currentIndex: navigationShell.currentIndex,
