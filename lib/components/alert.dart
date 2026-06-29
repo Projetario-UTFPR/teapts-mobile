@@ -19,7 +19,7 @@ class _ColorSet {
 final colors = {
   AlertType.info: _ColorSet(
     icon: Styles.linkOrange,
-    background: Styles.Cyan500.withValues(alpha: 0.2),
+    background: Styles.cyan500.withValues(alpha: 0.2),
     text: Colors.black87,
   ),
   AlertType.error: _ColorSet(
