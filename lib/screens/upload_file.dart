@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
-
-const Map<String, String> specialityLabels = {
-  'PSYCHOLOGIST': 'Psicólogo(a)',
-  'PSYCHIATRIST': 'Psiquiatra',
-  'SOCIAL_WORKER': 'Assistente Social',
-  'OCCUPATIONAL_THERAPIST': 'Terapeuta Ocupacional',
-  'NURSE': 'Enfermeiro(a)',
-  'DOCTOR': 'Médico(a)',
-  'PHYSIOTHERAPIST': 'Fisioterapeuta',
-  'SPEECH_THERAPIST': 'Fonoaudiólogo(a)',
-  'NUTRITIONIST': 'Nutricionista',
-  'PHARMACIST': 'Farmacêutico(a)',
-};
-
-String _translateSpecialism(String? raw) {
-  return specialityLabels[raw?.toUpperCase()] ?? 'Outro';
-}
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
@@ -236,9 +220,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                         ),
                       ),
                       Text(
-                        _translateSpecialism(
-                          profiles.first['specialism'] ?? '',
-                        ),
+                        mapSpecialism(profiles.first['specialism'] ?? ''),
                         style: const TextStyle(fontSize: 14),
                       ),
                     ],
@@ -284,9 +266,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                       .map(
                         (p) => DropdownMenuItem(
                           value: p['professionalId'] as String,
-                          child: Text(
-                            _translateSpecialism(p['specialism'] ?? ''),
-                          ),
+                          child: Text(mapSpecialism(p['specialism'] ?? '')),
                         ),
                       )
                       .toList(),
