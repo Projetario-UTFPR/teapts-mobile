@@ -1,31 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/professional_service.dart';
 import 'package:front_pi/services/pts_service.dart';
+import 'package:front_pi/utils/snackbar.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-const Map<String, String> specialityLabels = {
-  'PSYCHOLOGIST': 'Psicólogo(a)',
-  'PSYCHIATRIST': 'Psiquiatra',
-  'SOCIAL_WORKER': 'Assistente Social',
-  'OCCUPATIONAL_THERAPIST': 'Terapeuta Ocupacional',
-  'NURSE': 'Enfermeiro(a)',
-  'DOCTOR': 'Médico(a)',
-  'PHYSIOTHERAPIST': 'Fisioterapeuta',
-  'SPEECH_THERAPIST': 'Fonoaudiólogo(a)',
-  'NUTRITIONIST': 'Nutricionista',
-  'PHARMACIST': 'Farmacêutico(a)',
-};
-
-String _translateSpecialism(String? raw) {
-  return specialityLabels[raw?.toUpperCase()] ?? 'Outro';
-}
-
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
-  borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+  borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.10)),
 );
 
 OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
@@ -47,11 +33,11 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
   final _patientController = TextEditingController();
   final _teamController = TextEditingController();
 
-  List<Map<String, dynamic>> _professionals = [];
+  List<ProfessionalDto> _professionals = [];
 
   Map<String, String>? _selectedPatient;
 
-  final List<Map<String, dynamic>> _selectedMultidisciplinaryTeam = [];
+  final List<ProfessionalDto> _selectedMultidisciplinaryTeam = [];
 
   final List<Map<String, String>> _patients = [
     {'id': '019e0600-0000-7000-8000-000000000001', 'name': 'João Silva'},
@@ -75,8 +61,9 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
     if (profiles.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sem perfil profissional ativo')),
+        SnackbarUtils.showErrorSnackBar(
+          context,
+          'Sem perfil profissional ativo',
         );
       });
       return;
@@ -86,18 +73,23 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
       _selectedProfessionalId = profiles.first['professionalId'] as String;
     }
 
-    await loadProfessionals();
+    await loadProfessionals(context);
 
     if (mounted) setState(() {});
   }
 
-  Future<void> loadProfessionals() async {
+  Future<void> loadProfessionals(BuildContext context) async {
     try {
-      final list = await PtsService.getProfessionals();
+      final professionals = await ProfessionalService.getProfessionals();
       setState(() {
-        _professionals = list;
+        _professionals = professionals.items;
       });
-    } catch (_) {}
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      if (context.mounted) {
+        SnackbarUtils.showErrorSnackBar(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -162,9 +154,11 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                   // Ajustado para alinhar com o padrão do InputDecoration
                   padding: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black.withOpacity(0.10)),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.10),
+                    ),
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                   ),
                   child: Row(
                     children: [
@@ -178,9 +172,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       ),
                       // Removido o SizedBox extra para não empurrar o texto
                       Text(
-                        _translateSpecialism(
-                          profiles.first['specialism'] ?? '',
-                        ),
+                        mapSpecialism(profiles.first['specialism'] ?? ''),
                         style: const TextStyle(fontSize: 14),
                       ),
                     ],
@@ -188,7 +180,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                 )
               else
                 DropdownButtonFormField<String>(
-                  value: _selectedProfessionalId,
+                  initialValue: _selectedProfessionalId,
                   decoration: InputDecoration(
                     hintText: 'Selecione um perfil profissional',
                     contentPadding: const EdgeInsets.symmetric(
@@ -226,9 +218,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       .map(
                         (p) => DropdownMenuItem(
                           value: p['professionalId'] as String,
-                          child: Text(
-                            _translateSpecialism(p['specialism'] ?? ''),
-                          ),
+                          child: Text(mapSpecialism(p['specialism'] ?? '')),
                         ),
                       )
                       .toList(),
@@ -314,8 +304,12 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
               _sectionTitle('Equipe multidisciplinar (opcional)'),
 
-              TypeAheadField<Map<String, dynamic>>(
+              TypeAheadField<ProfessionalDto>(
                 controller: _teamController,
+                emptyBuilder: (context) => const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text("Ainda não há profissionais registrados."),
+                ),
                 builder: (context, controller, focusNode) => TextField(
                   controller: controller,
                   focusNode: focusNode,
@@ -355,23 +349,28 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     focusedBorder: _inputBorderFocused(),
                   ),
                 ),
-                suggestionsCallback: (search) => _professionals
-                    .where(
-                      (p) =>
-                          !_selectedMultidisciplinaryTeam.any(
-                            (e) => e['id'] == p['id'],
-                          ) &&
-                          ((p['name'] ?? '').toLowerCase().contains(
-                                search.toLowerCase(),
-                              ) ||
-                              (p['specialism'] ?? '').toLowerCase().contains(
-                                search.toLowerCase(),
-                              )),
-                    )
-                    .toList(),
+                suggestionsCallback: (search) {
+                  final searchTerm = search.toLowerCase();
+
+                  final selectedIds = _selectedMultidisciplinaryTeam
+                      .map((e) => e.professionalId)
+                      .toSet();
+
+                  return _professionals.where((p) {
+                    if (selectedIds.contains(p.professionalId)) {
+                      return false;
+                    }
+
+                    final name = (p.name).toLowerCase();
+                    final specialism = (p.specialism).toLowerCase();
+
+                    return name.contains(searchTerm) ||
+                        specialism.contains(searchTerm);
+                  }).toList();
+                },
                 itemBuilder: (context, p) => ListTile(
-                  title: Text(p['name'] ?? ''),
-                  subtitle: Text(_translateSpecialism(p['specialism'])),
+                  title: Text(p.name),
+                  subtitle: Text(mapSpecialism(p.specialism)),
                 ),
                 onSelected: (p) {
                   setState(() {
@@ -391,9 +390,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                   runSpacing: 8,
                   children: _selectedMultidisciplinaryTeam.map((p) {
                     return Chip(
-                      label: Text(
-                        '${p['name']} • ${_translateSpecialism(p['specialism'])}',
-                      ),
+                      label: Text('${p.name} • ${mapSpecialism(p.specialism)}'),
                       onDeleted: () => setState(() {
                         _selectedMultidisciplinaryTeam.remove(p);
                       }),
@@ -449,11 +446,11 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       patientId: _selectedPatient!['id']!,
                       socialSituation: _socialSituationController.text,
                       multidisciplinaryTeamIds: _selectedMultidisciplinaryTeam
-                          .map((e) => e['id'] as String)
+                          .map((e) => e.professionalId)
                           .toList(),
                     );
 
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     context.go('/home');
                   },
                   icon: PhosphorIcon(
@@ -476,7 +473,9 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    side: BorderSide(color: Colors.black.withOpacity(0.10)),
+                    side: BorderSide(
+                      color: Colors.black.withValues(alpha: 0.10),
+                    ),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
