@@ -110,4 +110,28 @@ class PtsService {
 
     throw Exception('Erro inesperado: ${response.body}');
   }
+  static Future<List<Map<String, String>>> getProfessionals() async {
+  final url = Uri.parse('$baseUrl/v1/professionals');
+
+  final response = await http.get(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${AuthService.accessToken}',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final body = jsonDecode(response.body);
+    final items = body['items'] as List;
+    return items.map<Map<String, String>>((p) => {
+      'id': p['professionalId'].toString(),
+      'accountId': p['accountId'].toString(),
+      'name': p['name'].toString(),
+      'specialism': (p['specialism'] ?? 'Not informed').toString(),
+    }).toList();
+  }
+
+  throw Exception('Erro ao buscar profissionais');
+}
 }
