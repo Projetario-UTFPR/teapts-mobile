@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class Styles {
   static const Color bgColor = Color(0Xfffafafa);
@@ -88,6 +89,81 @@ class Styles {
       focusedBorder: _inputBorderFocused,
       errorBorder: _inputBorderError,
       focusedErrorBorder: _inputBorderError,
+    );
+  }
+
+  static final OutlineInputBorder _activityInputBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+  );
+
+  static final OutlineInputBorder _activityInputBorderFocused =
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.black54),
+      );
+
+  static InputDecoration InputDecoratorDefault({
+    required String hintText,
+    IconData? prefixIcon,
+    String? errorText,
+  }) {
+    return InputDecoration(
+      fillColor: const Color(0xFFFFFFFF),
+      filled: true,
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Color(0xFF000000), fontSize: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      prefixIcon: prefixIcon != null
+          ? Padding(
+              padding: const EdgeInsets.only(left: 12.0, right: 6.0),
+              child: Icon(prefixIcon, size: 20, color: const Color(0xFF555555)),
+            )
+          : null,
+
+      prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+      errorText: errorText,
+      border: _activityInputBorder,
+      enabledBorder: _activityInputBorder,
+      focusedBorder: _activityInputBorderFocused,
+      errorBorder: _inputBorderError,
+      focusedErrorBorder: _inputBorderError,
+    );
+  }
+
+  static Widget buildCustomInput({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    TextInputType? keyboardType,
+    void Function(String)? onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Styles.normalTextBold),
+        const Gap(4),
+        TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          onChanged: onChanged,
+          validator: validator,
+          decoration: Styles.InputDecoratorDefault(hintText: hint).copyWith(
+            suffixIcon: suffixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      right: 12.0,
+                    ), // <- Ajuste esse número!
+                    child: suffixIcon,
+                  )
+                : null,
+          ),
+        ),
+      ],
     );
   }
 }
