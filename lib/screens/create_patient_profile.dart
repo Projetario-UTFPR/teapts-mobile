@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:front_pi/widgets/swipe_to_reveal_delete.dart';
 import 'package:front_pi/services/patient_service.dart';
+import 'package:front_pi/services/identity_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -27,19 +28,34 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _selectedAccountId;
-
-  // TODO: substituir por chamada real ao endpoint
-  // GET /v1/patients/available-accounts quando ele existir.
-  // Deve listar contas que não são admin e ainda não possuem perfil de paciente.
-  final List<Map<String, String>> _availableAccounts = [
-    {'accountId': '019e0600-0000-7000-8000-000000000010', 'name': 'Lucas Andrade'},
-    {'accountId': '019e0600-0000-7000-8000-000000000011', 'name': 'Beatriz Costa'},
-    {'accountId': '019e0600-0000-7000-8000-000000000012', 'name': 'Rafael Souza'},
-  ];
+  List<Map<String, dynamic>> _availableAccounts = [];
+  bool _isLoadingAccounts = true;
 
   final List<Map<String, TextEditingController>> _supportContacts = [];
 
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccounts();
+  }
+
+  Future<void> _loadAccounts() async {
+    try {
+      final list = await IdentityService.getNonPatientAccounts();
+      setState(() {
+        _availableAccounts = list;
+        _isLoadingAccounts = false;
+      });
+    } catch (e) {
+      setState(() => _isLoadingAccounts = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar contas: $e')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -156,44 +172,50 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _sectionTitle('Conta'),
-              DropdownButtonFormField<String>(
-                value: _selectedAccountId,
-                decoration: InputDecoration(
-                  hintText: 'Selecione a conta',
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 12),
-                  prefixIcon: _prefixIcon(
-                    PhosphorIcon(
-                      PhosphorIconsRegular.userList,
-                      size: 20,
-                      color: const Color(0xFF555555),
+              _isLoadingAccounts
+                  ? const Center(
+                      child: CircularProgressIndicator(color: Colors.amber),
+                    )
+                  : DropdownButtonFormField<String>(
+                      value: _selectedAccountId,
+                      decoration: InputDecoration(
+                        hintText: 'Selecione a conta',
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        prefixIcon: _prefixIcon(
+                          PhosphorIcon(
+                            PhosphorIconsRegular.userList,
+                            size: 20,
+                            color: const Color(0xFF555555),
+                          ),
+                        ),
+                        prefixIconConstraints:
+                            const BoxConstraints(minWidth: 0, minHeight: 0),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: PhosphorIcon(
+                            PhosphorIconsRegular.caretDown,
+                            size: 16,
+                            color: const Color(0xFF999999),
+                          ),
+                        ),
+                        suffixIconConstraints:
+                            const BoxConstraints(minWidth: 0, minHeight: 0),
+                        border: _inputBorder(),
+                        enabledBorder: _inputBorder(),
+                        focusedBorder: _inputBorderFocused(),
+                      ),
+                      items: _availableAccounts
+                          .map((a) => DropdownMenuItem(
+                                value: a['id'] as String,
+                                child: Text(a['name'] as String),
+                              ))
+                          .toList(),
+                      onChanged: (v) =>
+                          setState(() => _selectedAccountId = v),
+                      validator: (v) =>
+                          v == null ? 'Selecione uma conta' : null,
                     ),
-                  ),
-                  prefixIconConstraints:
-                      const BoxConstraints(minWidth: 0, minHeight: 0),
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: PhosphorIcon(
-                      PhosphorIconsRegular.caretDown,
-                      size: 16,
-                      color: const Color(0xFF999999),
-                    ),
-                  ),
-                  suffixIconConstraints:
-                      const BoxConstraints(minWidth: 0, minHeight: 0),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
-                items: _availableAccounts
-                    .map((a) => DropdownMenuItem(
-                          value: a['accountId'],
-                          child: Text(a['name']!),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedAccountId = v),
-                validator: (v) => v == null ? 'Selecione uma conta' : null,
-              ),
               _helperText(
                 'Selecione a conta à qual o perfil de paciente será associada. Contas que já são pacientes não são listadas.',
               ),
