@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
+import 'package:front_pi/widgets/swipe_to_reveal_delete.dart';
 import 'package:front_pi/services/patient_service.dart';
-import 'package:front_pi/services/pts_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:front_pi/widgets/swipe_to_reveal_delete.dart';
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
@@ -28,30 +27,19 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _selectedAccountId;
-  List<Map<String, dynamic>> _professionals = [];
-  bool _isLoadingAccounts = true;
+
+  // TODO: substituir por chamada real ao endpoint
+  // GET /v1/patients/available-accounts quando ele existir.
+  // Deve listar contas que não são admin e ainda não possuem perfil de paciente.
+  final List<Map<String, String>> _availableAccounts = [
+    {'accountId': '019e0600-0000-7000-8000-000000000010', 'name': 'Lucas Andrade'},
+    {'accountId': '019e0600-0000-7000-8000-000000000011', 'name': 'Beatriz Costa'},
+    {'accountId': '019e0600-0000-7000-8000-000000000012', 'name': 'Rafael Souza'},
+  ];
 
   final List<Map<String, TextEditingController>> _supportContacts = [];
 
   bool _isSubmitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAccounts();
-  }
-
-  Future<void> _loadAccounts() async {
-    try {
-      final list = await PtsService.getProfessionals();
-      setState(() {
-        _professionals = list;
-        _isLoadingAccounts = false;
-      });
-    } catch (e) {
-      setState(() => _isLoadingAccounts = false);
-    }
-  }
 
   @override
   void dispose() {
@@ -111,6 +99,7 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
       );
 
   Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_selectedAccountId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Selecione uma conta')),
@@ -167,50 +156,44 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _sectionTitle('Conta'),
-              _isLoadingAccounts
-                  ? const Center(
-                      child: CircularProgressIndicator(color: Colors.amber),
-                    )
-                  : DropdownButtonFormField<String>(
-                      value: _selectedAccountId,
-                      decoration: InputDecoration(
-                        hintText: 'Selecione a conta',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        prefixIcon: _prefixIcon(
-                          PhosphorIcon(
-                            PhosphorIconsRegular.userList,
-                            size: 20,
-                            color: const Color(0xFF555555),
-                          ),
-                        ),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 12.0),
-                          child: PhosphorIcon(
-                            PhosphorIconsRegular.caretDown,
-                            size: 16,
-                            color: const Color(0xFF999999),
-                          ),
-                        ),
-                        suffixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        border: _inputBorder(),
-                        enabledBorder: _inputBorder(),
-                        focusedBorder: _inputBorderFocused(),
-                      ),
-                      items: _professionals
-                          .map((p) => DropdownMenuItem(
-                                value: p['accountId'] as String,
-                                child: Text(p['name'] as String),
-                              ))
-                          .toList(),
-                      onChanged: (v) =>
-                          setState(() => _selectedAccountId = v),
-                      validator: (v) =>
-                          v == null ? 'Selecione uma conta' : null,
+              DropdownButtonFormField<String>(
+                value: _selectedAccountId,
+                decoration: InputDecoration(
+                  hintText: 'Selecione a conta',
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 12),
+                  prefixIcon: _prefixIcon(
+                    PhosphorIcon(
+                      PhosphorIconsRegular.userList,
+                      size: 20,
+                      color: const Color(0xFF555555),
                     ),
+                  ),
+                  prefixIconConstraints:
+                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: PhosphorIcon(
+                      PhosphorIconsRegular.caretDown,
+                      size: 16,
+                      color: const Color(0xFF999999),
+                    ),
+                  ),
+                  suffixIconConstraints:
+                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorderFocused(),
+                ),
+                items: _availableAccounts
+                    .map((a) => DropdownMenuItem(
+                          value: a['accountId'],
+                          child: Text(a['name']!),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => _selectedAccountId = v),
+                validator: (v) => v == null ? 'Selecione uma conta' : null,
+              ),
               _helperText(
                 'Selecione a conta à qual o perfil de paciente será associada. Contas que já são pacientes não são listadas.',
               ),
@@ -237,86 +220,89 @@ class _CreatePatientProfilePageState extends State<CreatePatientProfilePage> {
               ),
               _gap(16),
 
-            ..._supportContacts.asMap().entries.map((entry) {
-              final index = entry.key;
-              final contact = entry.value;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: SwipeToRevealDelete(
-                  onDelete: () => _removeContact(index),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: contact['name'],
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            hintText: 'Nome do contato',
-                            border: InputBorder.none,
-                          ),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 4),
-                        TextFormField(
-                          controller: contact['description'],
-                          maxLines: 2,
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            hintText: 'Descrição',
-                            border: InputBorder.none,
-                          ),
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            PhosphorIcon(PhosphorIconsRegular.envelopeSimple, size: 16),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: TextFormField(
-                                controller: contact['email'],
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  hintText: 'email@exemplo.com',
-                                  border: InputBorder.none,
-                                ),
-                                style: const TextStyle(fontSize: 14),
-                              ),
+              ..._supportContacts.asMap().entries.map((entry) {
+                final index = entry.key;
+                final contact = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SwipeToRevealDelete(
+                    onDelete: () => _removeContact(index),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: contact['name'],
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              hintText: 'Nome do contato',
+                              border: InputBorder.none,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            PhosphorIcon(PhosphorIconsRegular.phone, size: 16),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: TextFormField(
-                                controller: contact['phone'],
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  hintText: '(00) 00000-0000',
-                                  border: InputBorder.none,
-                                ),
-                                style: const TextStyle(fontSize: 14),
-                              ),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          TextFormField(
+                            controller: contact['description'],
+                            maxLines: 2,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              hintText: 'Descrição',
+                              border: InputBorder.none,
                             ),
-                          ],
-                        ),
-                      ],
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              PhosphorIcon(
+                                  PhosphorIconsRegular.envelopeSimple,
+                                  size: 16),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: contact['email'],
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    hintText: 'email@exemplo.com',
+                                    border: InputBorder.none,
+                                  ),
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              PhosphorIcon(PhosphorIconsRegular.phone,
+                                  size: 16),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: contact['phone'],
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    hintText: '(00) 00000-0000',
+                                    border: InputBorder.none,
+                                  ),
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
 
               _gap(32),
 
