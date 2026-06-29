@@ -81,15 +81,15 @@ class MainLayout extends StatelessWidget {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(PhosphorIconsFill.house, size: 32),
-              label: 'pagina 1',
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(PhosphorIconsFill.path, size: 32),
-              label: 'pagina 2',
+              label: 'Timeline',
             ),
             BottomNavigationBarItem(
               icon: Icon(PhosphorIconsBold.list, size: 32),
-              label: 'pagina 3',
+              label: 'Mapa de telas (Debug)',
             ),
           ],
         ),

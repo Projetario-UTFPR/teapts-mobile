@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/home.dart';
 import 'package:front_pi/create_pts.dart';
+import 'package:front_pi/screens/pts/view/screen.dart';
+import 'package:front_pi/screens/timeline/screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:front_pi/login.dart';
-import 'package:front_pi/view_pts.dart';
 import 'package:front_pi/create_account.dart';
-import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/screens/upload_file.dart';
-import 'package:front_pi/screens/timeline/index.dart';
 import 'package:front_pi/prontuario.dart';
+import 'package:front_pi/screens/social_situation.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -30,23 +30,27 @@ final GoRouter appRouter = GoRouter(
   },
 
   routes: [
+    // public routes
     GoRoute(path: '/login', builder: (context, state) => const Login()),
     GoRoute(
       path: '/create-account',
       builder: (context, state) => const SignUpPage(),
     ),
 
+    // protected routes
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),
 
       branches: [
-        // Branch 0 — aba "casa"
+        // home
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/home',
               builder: (context, state) => const HomePage(),
+              routes: [
+              ]
             ),
             GoRoute(
               path: '/view-pts/:patientId',
@@ -59,7 +63,6 @@ final GoRouter appRouter = GoRouter(
                 );
               },
             ),
-
             GoRoute(
               path: '/create-pts',
               builder: (context, state) => const CreatePtsPage(),
@@ -78,42 +81,24 @@ final GoRouter appRouter = GoRouter(
                 return ProntuarioPage(patientId: patientId);
               },
             ),
-          ],
-        ),
-
-        StatefulShellBranch(
-          routes: [
             GoRoute(
-              path: '/timeline',
+              path: '/social-situation/:patientId',
               builder: (context, state) {
-                final patientId = AuthService.accountId;
-                if (patientId == null) {
-                  return const Scaffold(
-                    backgroundColor: Colors.white,
-                    body: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          'Sua conta não possui um ID válido no momento. Faça login novamente.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return TimelinePage(patientId: patientId);
+                final extra = state.extra as Map<String, dynamic>?;
+                return SocialSituationPage(
+                  patientName: extra?['patientName'] as String? ?? 'Paciente',
+                  socialSituation: extra?['socialSituation'] as String? ?? '',
+                );
               },
             ),
           ],
         ),
-
-        // Branch 2 — aba "lista"
+        // timeline
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/debug-page-2',
-              builder: (context, state) => DebugPage(),
+              path: "/timeline",
+              builder: (context, state) => const TimelinePage(),
             ),
           ],
         ),

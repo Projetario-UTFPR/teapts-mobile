@@ -62,7 +62,7 @@ class _ExpandableSectionState extends State<ExpandableSection> {
       shape: const Border(),
 
       children: [
-        const Gap(24),
+        const Gap(12),
         Column(spacing: 8, children: widget.children),
       ],
     );

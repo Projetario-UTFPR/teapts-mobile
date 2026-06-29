@@ -2,24 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
-import 'package:front_pi/widgets/specialism_chip.dart';
 import 'package:go_router/go_router.dart';
-
-class Patient {
-  final String accountId;
-  final String name;
-  final String ptsId;
-  final String status;
-  final String specialism;
-
-  Patient({
-    required this.accountId,
-    required this.name,
-    required this.ptsId,
-    required this.status,
-    required this.specialism,
-  });
-}
+import 'services/pts_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,59 +13,48 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const int _pageSize = 2;
+  List<Map<String, dynamic>> _patients = [];
+  int _page = 1;
+  int _totalElements = 0;
+  bool _isLoading = false;
+  String? _error;
 
-  // TODO: substituir por chamada real ao endpoint de listagem quando existir
-  final List<Patient> _allPatients = [
-    Patient(
-      accountId: '4ceedf12-d170-40e2-9662-ce3a913d7808',
-      name: 'Diego Alves',
-      ptsId: '99999999-8888-7777-6666-555555555555',
-      status: 'running',
-      specialism: 'Psicólogo',
-    ),
-    Patient(
-      accountId: '24561f7f-470d-4f1c-9831-6df403c3ce16',
-      name: 'Bruno Lima',
-      ptsId: '737f559f-7071-4418-98aa-619604fc138d',
-      status: 'running',
-      specialism: 'Psiquiatra',
-    ),
-    Patient(
-      accountId: '771ca8b8-f81f-43d8-8450-4558f0d8de21',
-      name: 'Carla Mendes',
-      ptsId: 'c1fe3c90-1169-4471-a32d-57d551f7a032',
-      status: 'running',
-      specialism: 'Fisioterapeuta',
-    ),
-    Patient(
-      accountId: 'c9bea01a-4fe4-4822-b0f5-ca0ca49d214d',
-      name: 'Fernanda Rocha',
-      ptsId: '2c21aad4-ade0-4831-8043-3bad0672cb4b',
-      status: 'running',
-      specialism: 'Psicólogo',
-    ),
-    Patient(
-      accountId: 'c9bea01b-4fe4-4822-b0f5-ca0ca49d214d',
-      name: 'Fernando Rocha',
-      ptsId: '2c21aad4-ad10-4831-8043-3bad0672cb4b',
-      status: 'running',
-      specialism: 'Psicólogo',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadPatients();
+  }
 
-  int _visibleCount = _pageSize;
+  Future<void> _loadPatients({bool loadMore = false}) async {
+    setState(() => _isLoading = true);
 
-  void _loadMore() {
-    setState(() {
-      _visibleCount = (_visibleCount + _pageSize).clamp(0, _allPatients.length);
-    });
+    try {
+      final pageToLoad = loadMore ? _page + 1 : 1;
+      final response = await PtsService.getMyPatients(page: pageToLoad);
+
+      final items = (response['items'] as List).cast<Map<String, dynamic>>();
+
+      setState(() {
+        if (loadMore) {
+          _patients.addAll(items);
+          _page = pageToLoad;
+        } else {
+          _patients = items;
+          _page = 1;
+        }
+        _totalElements = response['totalElements'] as int;
+        _error = null;
+      });
+    } catch (e) {
+      setState(() => _error = e.toString());
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final visiblePatients = _allPatients.take(_visibleCount).toList();
-    final hasMore = _visibleCount < _allPatients.length;
+    final hasMore = _patients.length < _totalElements;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -112,40 +85,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(24),
-        itemCount: visiblePatients.length + (hasMore ? 1 : 0),
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          if (index == visiblePatients.length) {
-            return SizedBox(
-              width: double.infinity,
-              child: PrimaryButton(
-                title: "Carregar mais",
-                onPressed: _loadMore,
-              ),
-            );
-          }
 
-          final patient = visiblePatients[index];
+      body: _error != null
+          ? Center(child: Text('Erro: $_error'))
+          : _isLoading && _patients.isEmpty
+          ? const Center(child: CircularProgressIndicator(color: Colors.amber))
+          : ListView.separated(
+              padding: const EdgeInsets.all(24),
+              itemCount: _patients.length + (hasMore ? 1 : 0),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                if (index == _patients.length) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: PrimaryButton(
+                      title: "Carregar mais",
+                      isLoading: _isLoading,
+                      onPressed: () => _loadPatients(loadMore: true),
+                    ),
+                  );
+                }
 
-          return CustomRowItem(
-            title: patient.name,
-            isCircularImage: false,
-            isProfileImage: false,
-            subtitle: 'Situação PTS',
-            tag: SpecialismChip(label: patient.specialism),
-            placeholderImage: 'assets/imagens/florzinha.png',
-            buttonText: 'Visualizar PTS',
-            onButtonTap: () {
-              context.push(
-                '/view-pts/${patient.accountId}',
-                extra: patient.name,
-              );
-            },
-          );
-        },
-      ),
+                final patient = _patients[index];
+
+                return CustomRowItem(
+                  title: patient['name'] as String,
+                  isCircularImage: false,
+                  isProfileImage: false,
+                  subtitle: 'Situação PTS',
+                  placeholderImage: 'assets/imagens/florzinha.png',
+                  buttonText: 'Visualizar PTS',
+                  onButtonTap: () {
+                    context.push(
+                      '/view-pts/${patient['accountId']}',
+                      extra: patient['name'],
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

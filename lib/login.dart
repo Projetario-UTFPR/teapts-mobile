@@ -151,7 +151,7 @@ class _LoginState extends State<Login> {
                               password: _passwordController.text,
                             );
 
-                            if (!mounted) return;
+                            if (!context.mounted) return;
 
                             final profiles = AuthService.professionalProfiles;
 
