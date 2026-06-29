@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/screens/timeline/timeline_item.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/timeline_service.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 
 class TimelinePage extends StatefulWidget {
-  final String patientId;
-
-  const TimelinePage({super.key, required this.patientId});
+  const TimelinePage({super.key});
 
   @override
   State<TimelinePage> createState() => _TimelinePageState();
@@ -32,7 +31,7 @@ class _TimelinePageState extends State<TimelinePage> {
 
     try {
       final response = await TimelineService.getTimeline(
-        widget.patientId,
+        AuthService.accountId!,
         _currentPage,
         _limit,
       );

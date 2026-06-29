@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/home.dart';
 import 'package:front_pi/create_pts.dart';
 import 'package:front_pi/screens/pts/view/screen.dart';
+import 'package:front_pi/screens/timeline/screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:front_pi/login.dart';
 import 'package:front_pi/create_account.dart';
@@ -29,23 +30,27 @@ final GoRouter appRouter = GoRouter(
   },
 
   routes: [
+    // public routes
     GoRoute(path: '/login', builder: (context, state) => const Login()),
     GoRoute(
       path: '/create-account',
       builder: (context, state) => const SignUpPage(),
     ),
 
+    // protected routes
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainLayout(navigationShell: navigationShell),
 
       branches: [
-        // Branch 0 — aba "casa"
+        // home
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/home',
               builder: (context, state) => const HomePage(),
+              routes: [
+              ]
             ),
             GoRoute(
               path: '/view-pts/:patientId',
@@ -85,6 +90,15 @@ final GoRouter appRouter = GoRouter(
                   socialSituation: extra?['socialSituation'] as String? ?? '',
                 );
               },
+            ),
+          ],
+        ),
+        // timeline
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/timeline",
+              builder: (context, state) => const TimelinePage(),
             ),
           ],
         ),
