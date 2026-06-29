@@ -57,7 +57,7 @@ class AccountDto {
 
 class AuthProfessionalProfileDto {
   final String professionalId;
-  final List<String> specialism;
+  final String specialism;
 
   AuthProfessionalProfileDto({
     required this.professionalId,
@@ -67,9 +67,7 @@ class AuthProfessionalProfileDto {
   factory AuthProfessionalProfileDto.fromJson(Map<String, dynamic> json) {
     return AuthProfessionalProfileDto(
       professionalId: json['professionalId'] as String,
-      specialism: (json['specialism'] as List<dynamic>? ?? [])
-          .map((e) => e.toString())
-          .toList(),
+      specialism: json['specialism'] as String,
     );
   }
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:front_pi/services/auth_service.dart';
 
 class MainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -23,7 +24,7 @@ class MainLayout extends StatelessWidget {
         titleSpacing: 0,
         shape: Border(
           bottom: BorderSide(
-            color: Styles.widgetBlack.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             width: 1,
           ),
         ),
@@ -54,7 +55,7 @@ class MainLayout extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Styles.widgetBlack.withAlpha(80),
+                      color: Colors.black.withAlpha(80),
                       width: 1,
                     ),
                   ),
@@ -71,7 +72,43 @@ class MainLayout extends StatelessWidget {
       ),
       body: navigationShell,
 
-      bottomNavigationBar: SizedBox(
+      bottomNavigationBar: _BottomNav(navigationShell: navigationShell),
+    );
+  }
+}
+
+class _BottomNav extends StatefulWidget {
+  final StatefulNavigationShell navigationShell;
+  const _BottomNav({required this.navigationShell});
+
+  @override
+  State<_BottomNav> createState() => _BottomNavState();
+}
+
+class _BottomNavState extends State<_BottomNav> {
+  bool _hasActivePts = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPtsStatus();
+  }
+
+  Future<void> _loadPtsStatus() async {
+    setState(() => _isLoading = true);
+
+    final result = await PtsService.checkSelfHasActivePts();
+
+    setState(() {
+      _hasActivePts = result;
+      _isLoading = false;
+    });
+  }
+
+  Widget _container(List<Widget> children) {
+    return SafeArea(
+      child: Container(
         height: 68,
         decoration: BoxDecoration(
           border: Border(
@@ -140,38 +177,58 @@ class MainLayout extends StatelessWidget {
     ]);
   }
 
-        child: BottomNavigationBar(
-          currentIndex: navigationShell.currentIndex,
-          onTap: (index) {
-            navigationShell.goBranch(
-              index,
-              initialLocation: index == navigationShell.currentIndex,
-            );
-          },
+  Widget? navButtonDependingOnPtsCheck(_NavButton? Function(bool) builder) {
+    final ptsButtonSkeleton = SizedBox(
+      width: 64,
+      height: 68,
+      child: Center(
+        child: SizedBox(
+          key: ValueKey("loading-spinner"),
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+        ),
+      ),
+    );
 
-          backgroundColor: Styles.widgetWhite,
+    Widget? ptsNavButton;
+    if (_isLoading) {
+      ptsNavButton = ptsButtonSkeleton;
+    } else {
+      ptsNavButton = builder(_hasActivePts);
+    }
 
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+    return ptsNavButton;
+  }
+}
 
-          selectedItemColor: Styles.widgetBlack,
-          unselectedItemColor: Styles.widgetBlack,
-          type: BottomNavigationBarType.fixed,
+class _NavButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
 
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsFill.house, size: 32),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsFill.path, size: 32),
-              label: 'Timeline',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsBold.list, size: 32),
-              label: 'Mapa de telas (Debug)',
-            ),
-          ],
+  const _NavButton({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: isActive ? null : onTap,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 64,
+        height: 68,
+        child: Icon(
+          icon,
+          size: 32,
+          color: isActive
+              ? Colors.black
+              : Styles.widgetBlack.withValues(alpha: 0.64),
         ),
       ),
     );
