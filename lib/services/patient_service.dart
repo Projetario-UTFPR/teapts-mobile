@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:front_pi/config/app_config.dart';
+import 'package:front_pi/models/patient.dart';
 import 'auth_service.dart';
 
 class PatientService {
@@ -34,5 +35,41 @@ class PatientService {
     }
 
     throw Exception('Erro inesperado: ${response.body}');
+  }
+
+  static Future<PaginatedPatientsDto> getPatients({
+    bool? withActivePts,
+    String? professionalAccountId,
+    int? page,
+    int? limit,
+  }) async {
+    var url = Uri.parse('$baseUrl/v1/patients');
+
+    final Map<String, dynamic> parameters = {};
+    if (withActivePts != null) {
+      parameters['withActivePts'] = withActivePts.toString();
+    }
+    if (professionalAccountId != null) {
+      parameters['professionalAccountId'] = professionalAccountId;
+    }
+    if (page != null) parameters['page'] = page.toString();
+    if (limit != null) parameters['limit'] = limit.toString();
+
+    url = url.replace(queryParameters: parameters);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${AuthService.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return PaginatedPatientsDto.fromJson(body);
+    }
+
+    throw Exception('Erro ao buscar pacientes.');
   }
 }
