@@ -138,8 +138,6 @@ class _PtsProposalsPageState extends State<PtsProposalsPage> {
   }
 }
 
-// ─── Body ─────────────────────────────────────────────────────────────────────
-
 class _Body extends StatelessWidget {
   final List<PTSProposalDto> proposals;
   final String? acceptedId;
@@ -229,7 +227,6 @@ class _Body extends StatelessWidget {
   }
 }
 
-// ─── Tile de proposta ─────────────────────────────────────────────────────────
 
 class _ProposalTile extends StatelessWidget {
   final PTSProposalDto proposal;
@@ -279,7 +276,6 @@ class _ProposalTile extends StatelessWidget {
             ],
           ),
 
-          // Equipe multidisciplinar
           if (proposal.teamMembers.isNotEmpty) ...[
             const SizedBox(height: 12),
             const Text(
@@ -351,7 +347,6 @@ class _ProposalTile extends StatelessWidget {
   }
 }
 
-// ─── Avatar ───────────────────────────────────────────────────────────────────
 
 class _Avatar extends StatelessWidget {
   final String? avatarUrl;
@@ -374,7 +369,6 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-// ─── Botões pill ──────────────────────────────────────────────────────────────
 
 class _PillButton extends StatelessWidget {
   final String label;
@@ -430,7 +424,6 @@ class _PillOutlineButton extends StatelessWidget {
   }
 }
 
-// ─── Estado de erro ───────────────────────────────────────────────────────────
 
 class _ErrorState extends StatelessWidget {
   final String message;
