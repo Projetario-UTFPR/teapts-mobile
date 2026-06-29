@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/expandable-section.dart';
 import 'package:front_pi/widgets/add_activities.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../theme/styles.dart';
-import 'custom_row_item.dart';
+import '../../../theme/styles.dart';
+import '../../../widgets/custom_row_item.dart';
 import 'package:gap/gap.dart';
-import '../services/activity_service.dart';
+import '../../../services/activity_service.dart';
 
-class ExpandableActivities extends StatefulWidget {
+class ActivitiesSection extends StatefulWidget {
   final String patientId;
 
-  const ExpandableActivities({super.key, required this.patientId});
+  const ActivitiesSection({super.key, required this.patientId});
 
   @override
-  State<ExpandableActivities> createState() => _ExpandableActivitiesState();
+  State<ActivitiesSection> createState() => _ActivitiesSectionState();
 }
 
-class _ExpandableActivitiesState extends State<ExpandableActivities> {
+class _ActivitiesSectionState extends State<ActivitiesSection> {
   List<dynamic> _activities = [];
   bool _isLoading = false;
 

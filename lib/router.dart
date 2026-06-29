@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/home.dart';
 import 'package:front_pi/create_pts.dart';
+import 'package:front_pi/screens/pts/view/screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:front_pi/login.dart';
-import 'package:front_pi/view_pts.dart';
 import 'package:front_pi/create_account.dart';
-import 'package:front_pi/debug_page_routes.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/mainLayout.dart';
 import 'package:front_pi/screens/upload_file.dart';
-import 'package:front_pi/screens/timeline/index.dart';
 import 'package:front_pi/prontuario.dart';
 import 'package:front_pi/screens/social_situation.dart';
-
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -45,53 +42,52 @@ final GoRouter appRouter = GoRouter(
       branches: [
         // Branch 0 — aba "casa"
         StatefulShellBranch(
-        routes: [
-          GoRoute(
-            path: '/home',
-            builder: (context, state) => const HomePage(),
-          ),
-          GoRoute(
-            path: '/view-pts/:patientId',
-            builder: (context, state) {
-              final patientId = state.pathParameters['patientId']!;
-              final patientName = (state.extra as String?) ?? 'Paciente';
-              return ViewPtsPage(
-                patientId: patientId,
-                patientName: patientName,
-              );
-            },
-          ),
-          GoRoute(
-            path: '/create-pts',
-            builder: (context, state) => const CreatePtsPage(),
-          ),
-          GoRoute(
-            path: '/upload-doc/:patientId',
-            builder: (context, state) {
-              final patientId = state.pathParameters['patientId']!;
-              return UploadDocPage(patientId: patientId);
-            },
-          ),
-          GoRoute(
-            path: '/prontuario/:patientId',
-            builder: (context, state) {
-              final patientId = state.pathParameters['patientId']!;
-              return ProntuarioPage(patientId: patientId);
-            },
-          ),
-          GoRoute(
-            path: '/social-situation/:patientId',
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              return SocialSituationPage(
-                patientName: extra?['patientName'] as String? ?? 'Paciente',
-                socialSituation: extra?['socialSituation'] as String? ?? '',
-              );
-            },
-          ),
-        ],
-      ),
-        
+          routes: [
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => const HomePage(),
+            ),
+            GoRoute(
+              path: '/view-pts/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                final patientName = (state.extra as String?) ?? 'Paciente';
+                return ViewPtsPage(
+                  patientId: patientId,
+                  patientName: patientName,
+                );
+              },
+            ),
+            GoRoute(
+              path: '/create-pts',
+              builder: (context, state) => const CreatePtsPage(),
+            ),
+            GoRoute(
+              path: '/upload-doc/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return UploadDocPage(patientId: patientId);
+              },
+            ),
+            GoRoute(
+              path: '/prontuario/:patientId',
+              builder: (context, state) {
+                final patientId = state.pathParameters['patientId']!;
+                return ProntuarioPage(patientId: patientId);
+              },
+            ),
+            GoRoute(
+              path: '/social-situation/:patientId',
+              builder: (context, state) {
+                final extra = state.extra as Map<String, dynamic>?;
+                return SocialSituationPage(
+                  patientName: extra?['patientName'] as String? ?? 'Paciente',
+                  socialSituation: extra?['socialSituation'] as String? ?? '',
+                );
+              },
+            ),
+          ],
+        ),
       ],
     ),
   ],
