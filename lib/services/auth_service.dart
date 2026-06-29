@@ -10,6 +10,7 @@ class AuthService {
   static String? accessToken;
   static String? refreshToken;
   static AuthCollectionDto? authCollection;
+  static bool get isPatient => authCollection?.isPatient ?? false;
 
   @Deprecated("Use `authCollection` instead")
   static String? accountId;
@@ -85,6 +86,7 @@ class AuthService {
     accountId = null;
     professionalId = null;
     professionalProfiles = [];
+    authCollection = null;
     authNotifier.value = false;
   }
 
