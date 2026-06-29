@@ -48,12 +48,17 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/home',
+              name: "home",
               builder: (context, state) => const HomePage(),
-              routes: [
-              ]
+            ),
+            GoRoute(
+              path: "/timeline",
+              name: "timeline",
+              builder: (context, state) => const TimelinePage(),
             ),
             GoRoute(
               path: '/view-pts/:patientId',
+              name: "patient's pts",
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
                 final patientName = (state.extra as String?) ?? 'Paciente';
@@ -65,10 +70,12 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: '/create-pts',
+              name: "create pts",
               builder: (context, state) => const CreatePtsPage(),
             ),
             GoRoute(
               path: '/upload-doc/:patientId',
+              name: "upload document to prontuario",
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
                 return UploadDocPage(patientId: patientId);
@@ -76,6 +83,7 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: '/prontuario/:patientId',
+              name: "patient's prontuario",
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
                 return ProntuarioPage(patientId: patientId);
@@ -83,6 +91,7 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: '/social-situation/:patientId',
+              name: "patient's social situation",
               builder: (context, state) {
                 final extra = state.extra as Map<String, dynamic>?;
                 return SocialSituationPage(
@@ -90,15 +99,6 @@ final GoRouter appRouter = GoRouter(
                   socialSituation: extra?['socialSituation'] as String? ?? '',
                 );
               },
-            ),
-          ],
-        ),
-        // timeline
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: "/timeline",
-              builder: (context, state) => const TimelinePage(),
             ),
           ],
         ),
