@@ -10,6 +10,9 @@ import 'package:front_pi/utils/snackbar.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:front_pi/models/patient.dart';
+import 'package:front_pi/services/patient_service.dart';
+
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
@@ -37,15 +40,12 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
   List<ProfessionalDto> _professionals = [];
 
-  Map<String, String>? _selectedPatient;
+  PatientDto? _selectedPatient;
 
   final List<ProfessionalDto> _selectedMultidisciplinaryTeam = [];
 
-  final List<Map<String, String>> _patients = [
-    {'id': '019e0600-0000-7000-8000-000000000001', 'name': 'João Silva'},
-    {'id': '019e0600-0000-7000-8000-000000000002', 'name': 'Maria Santos'},
-    {'id': '019e0600-0000-7000-8000-000000000003', 'name': 'Carlos Pereira'},
-  ];
+  List<PatientDto> _patients = [];
+
 
   List<Map<String, dynamic>> get _professionalProfiles =>
       AuthService.professionalProfiles;
@@ -57,6 +57,20 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
     super.initState();
     _init();
   }
+
+  Future<void> loadProfessionals(BuildContext context) async {
+    try {
+      final professionals = await ProfessionalService.getProfessionals();
+      setState(() {
+        _professionals = professionals.items;
+      });
+    } catch (e) {
+      if (context.mounted) {
+        SnackbarUtils.showErrorSnackBar(context, e.toString());
+      }
+    }
+  }
+
 
   Future<void> _init() async {
     final profiles = _professionalProfiles;
@@ -75,16 +89,19 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
       _selectedProfessionalId = profiles.first['professionalId'] as String;
     }
 
-    await loadProfessionals(context);
+    await Future.wait([
+      loadProfessionals(context),
+      loadPatients(context),
+    ]);
 
     if (mounted) setState(() {});
   }
 
-  Future<void> loadProfessionals(BuildContext context) async {
+  Future<void> loadPatients(BuildContext context) async {
     try {
-      final professionals = await ProfessionalService.getProfessionals();
+      final patients = await PatientService.getPatients();
       setState(() {
-        _professionals = professionals.items;
+        _patients = patients.items;
       });
     } catch (e) {
       // ignore: use_build_context_synchronously
@@ -236,71 +253,73 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
               _gap(),
 
               _sectionTitle('Paciente'),
-              FormField<Map<String, String>>(
-                validator: (_) =>
-                    _selectedPatient == null ? 'Selecione um paciente' : null,
-                builder: (fieldState) => TypeAheadField<Map<String, String>>(
-                  controller: _patientController,
-                  builder: (context, controller, focusNode) => TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      fillColor: const Color(0xFFFFFFFF),
-                      filled: true,
-                      hintText: 'Selecione o paciente',
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-
-                      prefixIcon: _prefixIcon(
-                        const PhosphorIcon(
-                          PhosphorIconsRegular.personSimpleCircle,
-                          size: 20,
-                          color: Color(0xFF555555),
+                FormField<PatientDto>(
+                  validator: (_) =>
+                      _selectedPatient == null ? 'Selecione um paciente' : null,
+                  builder: (fieldState) => TypeAheadField<PatientDto>(
+                    controller: _patientController,
+                    builder: (context, controller, focusNode) => TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        fillColor: const Color(0xFFFFFFFF),
+                        filled: true,
+                        hintText: 'Selecione o paciente',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
                         ),
-                      ),
-                      prefixIconConstraints: const BoxConstraints(
-                        minWidth: 0,
-                        minHeight: 0,
-                      ),
-
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 12.0),
-                        child: PhosphorIcon(
-                          PhosphorIconsRegular.caretDown,
-                          size: 16,
-                          color: const Color(0xFF999999),
+                        prefixIcon: _prefixIcon(
+                          const PhosphorIcon(
+                            PhosphorIconsRegular.personSimpleCircle,
+                            size: 20,
+                            color: Color(0xFF555555),
+                          ),
                         ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: PhosphorIcon(
+                            PhosphorIconsRegular.caretDown,
+                            size: 16,
+                            color: const Color(0xFF999999),
+                          ),
+                        ),
+                        suffixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
+                        errorText: fieldState.errorText,
+                        border: _inputBorder(),
+                        enabledBorder: _inputBorder(),
+                        focusedBorder: _inputBorderFocused(),
                       ),
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 0,
-                        minHeight: 0,
-                      ),
-                      errorText: fieldState.errorText,
-                      border: _inputBorder(),
-                      enabledBorder: _inputBorder(),
-                      focusedBorder: _inputBorderFocused(),
                     ),
+                    emptyBuilder: (context) => const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Text("Nenhum paciente encontrado."),
+                    ),
+                    suggestionsCallback: (search) => _patients
+                        .where(
+                          (p) => p.name.toLowerCase().contains(search.toLowerCase()),
+                        )
+                        .toList(),
+                    itemBuilder: (context, p) => ListTile(
+                      title: Text(p.name),
+                      subtitle: Text(p.email),
+                    ),
+                    onSelected: (p) {
+                      setState(() {
+                        _selectedPatient = p;
+                        _patientController.text = p.name;
+                      });
+                      fieldState.didChange(p);
+                    },
                   ),
-                  suggestionsCallback: (search) => _patients
-                      .where(
-                        (p) => p['name']!.toLowerCase().contains(
-                          search.toLowerCase(),
-                        ),
-                      )
-                      .toList(),
-                  itemBuilder: (context, p) =>
-                      ListTile(title: Text(p['name']!)),
-                  onSelected: (p) {
-                    setState(() {
-                      _selectedPatient = p;
-                      _patientController.text = p['name']!;
-                    });
-                    fieldState.didChange(p);
-                  },
                 ),
-              ),
 
               _gap(),
 
@@ -438,7 +457,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
                     await PtsService.createPts(
                       professionalId: _selectedProfessionalId!,
-                      patientId: _selectedPatient!['id']!,
+                      patientId: _selectedPatient!.accountId,
                       socialSituation: _socialSituationController.text,
                       multidisciplinaryTeamIds: _selectedMultidisciplinaryTeam
                           .map((e) => e.professionalId)

@@ -139,7 +139,7 @@ class _BottomNavState extends State<_BottomNav> {
                 currentLocation.startsWith("/view-pts/"),
             onTap: () => hasActivePts
                 ? context.push('/view-pts/${authCollection!.account.id}')
-                : context.push('/pts-proposals/${authCollection!.account.id}'),
+                : context.push('/approve-pts/${authCollection!.account.id}'),
           );
         }),
 
@@ -156,10 +156,10 @@ class _BottomNavState extends State<_BottomNav> {
 
       if (isAdmin)
         _NavButton(
-          icon: PhosphorIconsFill.userCircle,
+          icon: PhosphorIconsFill.userCirclePlus,
           label: 'Novo paciente',
-          isActive: currentLocation == '/create-pts',
-          onTap: () => context.pushNamed('create pts'),
+          isActive: currentLocation == '/create patient profile',
+          onTap: () => context.pushNamed('create patient profile'),
         ),
     ]);
   }

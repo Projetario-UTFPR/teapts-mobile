@@ -4,6 +4,7 @@ import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'services/pts_service.dart';
+import 'package:front_pi/screens/create_patient_profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
