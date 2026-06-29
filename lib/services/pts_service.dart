@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:front_pi/models/pts.dart';
 import 'package:http/http.dart' as http;
 import 'package:front_pi/config/app_config.dart';
 import 'auth_service.dart';
@@ -48,8 +49,8 @@ class PtsService {
     throw Exception('Erro inesperado: ${response.body}');
   }
 
-  static Future<List<Map<String, String>>> getProfessionals() async {
-    final url = Uri.parse('$baseUrl/v1/professionals');
+  static Future<PTSDto> getPts(String patientId) async {
+    final url = Uri.parse('$baseUrl/v1/pts/$patientId');
 
     final response = await http.get(
       url,
@@ -60,19 +61,23 @@ class PtsService {
     );
 
     if (response.statusCode == 200) {
-      final body = jsonDecode(response.body);
-      final items = body['items'] as List;
-      return items.map<Map<String, String>>((p) => {
-        'id': p['professionalId'].toString(),
-        'name': p['name'].toString(),
-        'specialism': (p['specialism'] ?? 'Not informed').toString(),
-      }).toList();
+      final json = await jsonDecode(response.body);
+      return PTSDto.fromJson(json);
     }
 
-    throw Exception('Erro ao buscar profissionais');  
-  } 
-  static Future<Map<String, dynamic>> getPts(String patientId) async {
-    final url = Uri.parse('$baseUrl/v1/pts/$patientId');
+    if (response.statusCode == 403 || response.statusCode == 500) {
+      final body = jsonDecode(response.body);
+      throw Exception(body['message']);
+    }
+
+    throw Exception('Erro inesperado: ${response.body}');
+  }
+
+  static Future<Map<String, dynamic>> getMyPatients({
+    int page = 1,
+    int limit = 24,
+  }) async {
+    final url = Uri.parse('$baseUrl/v1/patients/me?page=$page&limit=$limit');
 
     final response = await http.get(
       url,
@@ -86,36 +91,11 @@ class PtsService {
       return jsonDecode(response.body) as Map<String, dynamic>;
     }
 
-    if (response.statusCode == 403 || response.statusCode == 500) {
+    if (response.statusCode == 422 || response.statusCode == 500) {
       final body = jsonDecode(response.body);
-      throw Exception(body['message']);
+      throw Exception(body['message'] ?? 'Erro ao buscar pacientes');
     }
 
     throw Exception('Erro inesperado: ${response.body}');
-  } 
-  static Future<Map<String, dynamic>> getMyPatients({
-  int page = 1,
-  int limit = 24,
-}) async {
-  final url = Uri.parse('$baseUrl/v1/patients/me?page=$page&limit=$limit');
-
-  final response = await http.get(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${AuthService.accessToken}',
-    },
-  );
-
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body) as Map<String, dynamic>;
   }
-
-  if (response.statusCode == 422 || response.statusCode == 500) {
-    final body = jsonDecode(response.body);
-    throw Exception(body['message'] ?? 'Erro ao buscar pacientes');
-  }
-
-  throw Exception('Erro inesperado: ${response.body}');
-} 
 }
