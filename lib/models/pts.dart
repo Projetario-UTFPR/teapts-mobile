@@ -29,33 +29,35 @@ class PTSDto {
 
   factory PTSDto.fromJson(Map<String, dynamic> json) {
     return PTSDto(
-      id: json['id'] as String,
-      patient: PatientDto.fromJson(json['patient'] as Map<String, dynamic>),
+      id: json['id']?.toString() ?? '',
+      patient: PatientDto.fromJson(
+        (json['patient'] as Map<String, dynamic>?) ?? {},
+      ),
       responsibleProfessional: ResponsibleProfessionalDto.fromJson(
-        json['responsibleProfessional'] as Map<String, dynamic>,
+        (json['responsibleProfessional'] as Map<String, dynamic>?) ?? {},
       ),
       multidisciplinaryTeam:
-          (json["multidisciplinaryTeamIds"] as List<dynamic>?)
-              ?.map((e) => e as String)
+          (json['multidisciplinaryTeamIds'] as List<dynamic>?)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
-      socialSituation: json['socialSituation'] as String?,
-      status: json['status'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      socialSituation: json['socialSituation']?.toString(),
+      status: json['status']?.toString() ?? '',
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
       acceptedAt: json['acceptedAt'] != null
-          ? DateTime.parse(json['acceptedAt'] as String)
+          ? DateTime.tryParse(json['acceptedAt'].toString())
           : null,
       rejectedAt: json['rejectedAt'] != null
-          ? DateTime.parse(json['rejectedAt'] as String)
+          ? DateTime.tryParse(json['rejectedAt'].toString())
           : null,
       beganAt: json['beganAt'] != null
-          ? DateTime.parse(json['beganAt'] as String)
+          ? DateTime.tryParse(json['beganAt'].toString())
           : null,
       concludedAt: json['concludedAt'] != null
-          ? DateTime.parse(json['concludedAt'] as String)
+          ? DateTime.tryParse(json['concludedAt'].toString())
           : null,
       cancelledAt: json['cancelledAt'] != null
-          ? DateTime.parse(json['cancelledAt'] as String)
+          ? DateTime.tryParse(json['cancelledAt'].toString())
           : null,
     );
   }
@@ -87,9 +89,7 @@ class PatientDto {
     return PatientDto(
       supportContacts:
           (json['supportContacts'] as List<dynamic>?)
-              ?.map(
-                (e) => SupportContactDto.fromJson(e as Map<String, dynamic>),
-              )
+              ?.map((e) => SupportContactDto.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
@@ -115,10 +115,10 @@ class SupportContactDto {
 
   factory SupportContactDto.fromJson(Map<String, dynamic> json) {
     return SupportContactDto(
-      name: json['name'] as String,
-      description: json['description'] as String,
-      phone: json['phone'] as String,
-      email: json['email'] as String?,
+      name: json['name']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      email: json['email']?.toString(),
     );
   }
 
@@ -153,15 +153,15 @@ class ResponsibleProfessionalDto {
 
   factory ResponsibleProfessionalDto.fromJson(Map<String, dynamic> json) {
     return ResponsibleProfessionalDto(
-      professionalId: json['professionalId'] as String,
-      accountId: json['accountId'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      specialism: json['specialism'] as String,
+      professionalId: json['professionalId']?.toString() ?? '',
+      accountId: json['accountId']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      specialism: json['specialism']?.toString() ?? '',
       lastUpdatedAt: json['lastUpdatedAt'] != null
-          ? DateTime.parse(json['lastUpdatedAt'] as String)
+          ? DateTime.tryParse(json['lastUpdatedAt'].toString())
           : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
     );
   }
 
@@ -175,6 +175,71 @@ class ResponsibleProfessionalDto {
       if (lastUpdatedAt != null)
         'lastUpdatedAt': lastUpdatedAt!.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
+    };
+  }
+}
+
+class PTSProposalDto {
+  final String id;
+  final ResponsibleProfessionalDto responsibleProfessional;
+  final List<ProposalTeamMemberDto> teamMembers;
+
+  PTSProposalDto({
+    required this.id,
+    required this.responsibleProfessional,
+    required this.teamMembers,
+  });
+
+  String get responsibleName => responsibleProfessional.name;
+  String get responsibleRole => responsibleProfessional.specialism;
+  String? get responsibleAvatarUrl => null;
+
+  factory PTSProposalDto.fromJson(Map<String, dynamic> json) {
+    return PTSProposalDto(
+      id: json['id']?.toString() ?? '',
+      responsibleProfessional: ResponsibleProfessionalDto.fromJson(
+        (json['responsibleProfessional'] as Map<String, dynamic>?) ?? {},
+      ),
+      teamMembers: (json['teamMembers'] as List<dynamic>?)
+              ?.map((e) => ProposalTeamMemberDto.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'responsibleProfessional': responsibleProfessional.toJson(),
+      'teamMembers': teamMembers.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class ProposalTeamMemberDto {
+  final String professionalId;
+  final String name;
+  final String role;
+
+  ProposalTeamMemberDto({
+    required this.professionalId,
+    required this.name,
+    required this.role,
+  });
+
+  factory ProposalTeamMemberDto.fromJson(Map<String, dynamic> json) {
+    return ProposalTeamMemberDto(
+      professionalId: json['professionalId']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      role: json['role']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'professionalId': professionalId,
+      'name': name,
+      'role': role,
     };
   }
 }
