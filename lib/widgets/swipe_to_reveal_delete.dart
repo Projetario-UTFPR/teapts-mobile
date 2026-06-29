@@ -17,7 +17,6 @@ class SwipeToRevealDelete extends StatefulWidget {
 
 class _SwipeToRevealDeleteState extends State<SwipeToRevealDelete>
     with SingleTickerProviderStateMixin {
-  // Mantemos 72 para cobrir bem o botão de 56x72
   static const double _revealWidth = 72;
 
   double _dragExtent = 0;
@@ -73,28 +72,25 @@ class _SwipeToRevealDeleteState extends State<SwipeToRevealDelete>
       onHorizontalDragUpdate: _onHorizontalDragUpdate,
       onHorizontalDragEnd: _onHorizontalDragEnd,
       child: Stack(
-        alignment: Alignment.centerRight, // Garante que a elipse alinhe à direita no stack
+        alignment: Alignment.centerRight,
         children: [
-          // Área de revelação (fundo/botão de ação)
           Positioned(
             right: 0,
             top: 0,
             bottom: 0,
             width: _revealWidth,
             child: Container(
-              color: Colors.transparent, // Fundo invisível para a área de swipe
+              color: Colors.transparent, 
               child: Center(
                 child: GestureDetector(
                   onTap: _closeAndDelete,
                   child: GestureDetector(
   onTap: _closeAndDelete,
   child: Container(
-    width: 56,  // Mantém as proporções exatas de W: 56
-    height: 72, // Mantém as proporções exatas de H: 72
+    width: 56,  
+    height: 72, 
     decoration: ShapeDecoration(
-      // Usando o vermelho coral correto (do print da esquerda)
       color: const Color(0xFFFF0000),
-      // O StadiumBorder é a solução para "radius 999": ele cria semicírculos perfeitos nas pontas.
       shape: const StadiumBorder(),
     ),
     child: Center(
@@ -110,7 +106,6 @@ class _SwipeToRevealDeleteState extends State<SwipeToRevealDelete>
               ),
             ),
           ),
-          // O conteúdo do item (a lista/card que desliza)
           Transform.translate(
             offset: Offset(_dragExtent, 0),
             child: widget.child,
