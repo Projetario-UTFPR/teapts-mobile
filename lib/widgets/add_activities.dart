@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
 import 'package:front_pi/theme/styles.dart';
@@ -207,7 +207,7 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
 
   OutlineInputBorder _inputBorder() => OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
-    borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+    borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.10)),
   );
 
   OutlineInputBorder _inputBorderFocused() => OutlineInputBorder(
@@ -279,50 +279,77 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitle('Frequência'),
-        DropdownButtonFormField<String>(
-          value: _selectedFrequency,
-          decoration: InputDecoration(
-            fillColor: const Color(0xFFFFFFFF),
-            filled: true,
-            hintText: 'Selecione a frequência',
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
+        GestureDetector(
+          onTap: () => _showFrequencyPicker(),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.10)),
             ),
-            prefixIcon: const Padding(
-              padding: EdgeInsets.only(left: 12.0, right: 6.0),
-              child: PhosphorIcon(
-                PhosphorIconsRegular.clock,
-                size: 20,
-                color: Color(0xFF555555),
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(right: 6.0),
+                  child: PhosphorIcon(
+                    PhosphorIconsRegular.clock,
+                    size: 20,
+                    color: Color(0xFF555555),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    _selectedFrequency,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+                const PhosphorIcon(
+                  PhosphorIconsRegular.caretDown,
+                  size: 16,
+                  color: Colors.black54,
+                ),
+              ],
             ),
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 0,
-              minHeight: 0,
-            ),
-            suffixIcon: const Padding(
-              padding: EdgeInsets.only(right: 12.0),
-              child: PhosphorIcon(
-                PhosphorIconsRegular.caretDown,
-                size: 16,
-                color: Color(0xFF999999),
-              ),
-            ),
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 0,
-              minHeight: 0,
-            ),
-            border: _inputBorder(),
-            enabledBorder: _inputBorder(),
-            focusedBorder: _inputBorderFocused(),
           ),
-          items: _frequencies
-              .map((f) => DropdownMenuItem(value: f, child: Text(f)))
-              .toList(),
-          onChanged: (val) => setState(() => _selectedFrequency = val!),
         ),
       ],
+    );
+  }
+
+  void _showFrequencyPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Styles.bgColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
+              child: Text('Frequência', style: Styles.midSizeBold),
+            ),
+            ..._frequencies.map(
+              (frequency) => ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                title: Text(frequency, style: const TextStyle(fontSize: 15)),
+                trailing: _selectedFrequency == frequency
+                    ? const PhosphorIcon(PhosphorIconsBold.check, size: 20)
+                    : null,
+                onTap: () {
+                  setState(() => _selectedFrequency = frequency);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            const Gap(16),
+          ],
+        ),
+      ),
     );
   }
 
@@ -346,64 +373,39 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
             ),
           )
         else ...[
-          TypeAheadField<dynamic>(
-            controller: _docController,
-            builder: (context, controller, focusNode) => TextField(
-              controller: controller,
-              focusNode: focusNode,
-              decoration: InputDecoration(
-                fillColor: const Color(0xFFFFFFFF),
-                filled: true,
-                hintText: 'Buscar documento...',
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
-                ),
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(left: 12.0, right: 6.0),
-                  child: PhosphorIcon(
-                    PhosphorIconsRegular.file,
-                    size: 20,
-                    color: Color(0xFF555555),
+          GestureDetector(
+            onTap: () => _showDocumentPicker(),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.10)),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 6.0),
+                    child: PhosphorIcon(
+                      PhosphorIconsRegular.file,
+                      size: 20,
+                      color: Color(0xFF555555),
+                    ),
                   ),
-                ),
-                prefixIconConstraints: const BoxConstraints(
-                  minWidth: 0,
-                  minHeight: 0,
-                ),
-                border: _inputBorder(),
-                enabledBorder: _inputBorder(),
-                focusedBorder: _inputBorderFocused(),
+                  const Expanded(
+                    child: Text(
+                      'Buscar documento...',
+                      style: TextStyle(fontSize: 14, color: Color(0xFF555555)),
+                    ),
+                  ),
+                  const PhosphorIcon(
+                    PhosphorIconsRegular.plus,
+                    size: 16,
+                    color: Color(0xFF999999),
+                  ),
+                ],
               ),
             ),
-            suggestionsCallback: (search) {
-              return _availableDocuments.where((doc) {
-                final docTitle = (doc['title'] ?? '').toString().toLowerCase();
-                final searchTerm = search.toLowerCase();
-                final alreadySelected = _selectedDocuments.any(
-                  (selected) => selected['id'] == doc['id'],
-                );
-
-                return !alreadySelected && docTitle.contains(searchTerm);
-              }).toList();
-            },
-            emptyBuilder: (context) => const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Nenhum documento encontrado.'),
-            ),
-            itemBuilder: (context, doc) => ListTile(
-              leading: const PhosphorIcon(
-                PhosphorIconsRegular.fileText,
-                color: Color(0xFF555555),
-              ),
-              title: Text(doc['title'] ?? 'Documento sem título'),
-            ),
-            onSelected: (doc) {
-              setState(() {
-                _selectedDocuments.add(doc);
-                _docController.clear();
-              });
-            },
           ),
 
           const Gap(4),
@@ -413,23 +415,24 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
           ),
 
           if (_selectedDocuments.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const Gap(12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: _selectedDocuments.map((doc) {
-                return Chip(
-                  backgroundColor: Colors.black.withOpacity(0.05),
-                  side: BorderSide.none,
-                  label: Text(
-                    doc['title'] ?? 'Documento sem título',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  onDeleted: () => setState(() {
-                    _selectedDocuments.remove(doc);
-                  }),
-                );
-              }).toList(),
+              children: _selectedDocuments
+                  .map(
+                    (doc) => Chip(
+                      backgroundColor: Colors.black.withValues(alpha: 0.05),
+                      side: BorderSide.none,
+                      label: Text(
+                        doc['title'] ?? 'Documento sem título',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      onDeleted: () =>
+                          setState(() => _selectedDocuments.remove(doc)),
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ],
@@ -437,22 +440,166 @@ class _SuggestActivityFormState extends State<SuggestActivityForm> {
     );
   }
 
+  void _showDocumentPicker() {
+    final searchController = TextEditingController();
+    List<dynamic> filtered = _availableDocuments
+        .where((d) => !_selectedDocuments.any((s) => s['id'] == d['id']))
+        .toList();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Styles.bgColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (_, setSheetState) => DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: Column(
+              children: [
+                // Handle
+                const SizedBox(height: 12),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Título + busca
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Documentos', style: Styles.midSizeBold),
+                      const Gap(12),
+                      TextField(
+                        controller: searchController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintText: 'Buscar...',
+                          hintStyle: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF999999),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.only(left: 12, right: 6),
+                            child: PhosphorIcon(
+                              PhosphorIconsRegular.magnifyingGlass,
+                              size: 20,
+                              color: Color(0xFF555555),
+                            ),
+                          ),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: Colors.black.withValues(alpha: 0.10),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: Colors.black.withValues(alpha: 0.10),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Colors.black54),
+                          ),
+                        ),
+                        onChanged: (q) => setSheetState(() {
+                          filtered = _availableDocuments.where((d) {
+                            final title = (d['title'] ?? '')
+                                .toString()
+                                .toLowerCase();
+                            final notSelected = !_selectedDocuments.any(
+                              (s) => s['id'] == d['id'],
+                            );
+                            return notSelected &&
+                                title.contains(q.toLowerCase());
+                          }).toList();
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+                const Gap(8),
+
+                // Lista
+                Expanded(
+                  child: filtered.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'Nenhum documento encontrado.',
+                            style: TextStyle(color: Color(0xFF555555)),
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          itemCount: filtered.length,
+                          itemBuilder: (_, i) {
+                            final doc = filtered[i];
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
+                              leading: const PhosphorIcon(
+                                PhosphorIconsRegular.fileText,
+                                color: Color(0xFF555555),
+                              ),
+                              title: Text(
+                                doc['title'] ?? 'Documento sem título',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                              onTap: () {
+                                setState(() => _selectedDocuments.add(doc));
+                                Navigator.pop(sheetContext);
+                              },
+                            );
+                          },
+                        ),
+                ),
+
+                const Gap(16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _submitActivity,
-        style: Styles.buttonYellow,
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  color: Colors.black,
-                  strokeWidth: 2,
-                ),
-              )
-            : const Text('Salvar', style: Styles.midSizeBold),
+      child: PrimaryButton(
+        onPressed: _submitActivity,
+        title: 'Salvar',
+        isLoading: _isLoading,
       ),
     );
   }

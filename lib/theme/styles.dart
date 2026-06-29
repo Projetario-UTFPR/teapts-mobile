@@ -52,28 +52,9 @@ class Styles {
     fontWeight: FontWeight.bold,
   );
 
-  static final ButtonStyle buttonYellow = FilledButton.styleFrom(
-    backgroundColor: widgetYellow,
-    foregroundColor: widgetBlack,
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    textStyle: Styles.midSizeBold,
-    minimumSize: const Size(120, 40),
-  );
-
-  static final ButtonStyle buttonWhite = FilledButton.styleFrom(
-    backgroundColor: Styles.widgetWhite,
-    foregroundColor: Styles.widgetBlack,
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    side: BorderSide(color: widgetBlack40),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    textStyle: Styles.titlesBold,
-    minimumSize: const Size(120, 24),
-  );
-
   static final OutlineInputBorder _inputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
-    borderSide: BorderSide(color: Colors.black.withOpacity(0.10)),
+    borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.10)),
   );
 
   static final OutlineInputBorder _inputBorderFocused = OutlineInputBorder(
