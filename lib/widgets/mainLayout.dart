@@ -3,6 +3,7 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:front_pi/services/auth_service.dart';
 
 class MainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -39,7 +40,15 @@ class MainLayout extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  showProfilePanel(context);
+                  final userName =
+                      AuthService.authCollection?.account.name ??
+                      AuthService.currentUserName;
+
+                  final isPatient =
+                      AuthService.authCollection?.isPatient ?? false;
+                  final role = isPatient ? 'Paciente' : AuthService.currentRole;
+
+                  showProfilePanel(context, userName, role);
                 },
                 child: Container(
                   decoration: BoxDecoration(

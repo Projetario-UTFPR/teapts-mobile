@@ -19,6 +19,7 @@ dependencies:
   intl: 0.20.2
   url_launcher: ^6.3.2
   dio: ^5.9.2
+  flutter_secure_storage: ^10.3.1
 
 dev_dependencies:
   flutter_test:
@@ -29,6 +30,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/imagens/infinito_laranja.png
+    - assets/imagens/infinito_laranja_mid.png
     - assets/imagens/dog.png
     - assets/imagens/docinho.jpg
     - assets/imagens/florzinha.png

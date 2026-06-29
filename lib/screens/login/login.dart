@@ -156,14 +156,15 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _fazerLogin() async {
-    setState(() => _isLoading = true);
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
+    setState(() => _isLoading = true);
+
     try {
       await AuthService.login(
-        email: _emailController.text,
+        email: _emailController.text.trim(),
         password: _passwordController.text,
         rememberMe: _rememberMe,
       );

@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/widgets/specialism_chip.dart';
 
 Future<void> showProfilePanel(BuildContext context, String name, String role) {
   return showModalBottomSheet<void>(
@@ -47,13 +48,8 @@ class ProfilePanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(name, style: Styles.midSizeBold),
-                      Text(
-                        role,
-                        style: const TextStyle(
-                          color: Color(0xFF555555),
-                          fontSize: 14,
-                        ),
-                      ),
+                      const Gap(4),
+                      SpecialismChip(label: role),
                     ],
                   ),
                 ),
@@ -67,9 +63,8 @@ class ProfilePanel extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Sair da conta',
                 icon: PhosphorIconsRegular.signOut,
-                onPressed: () async {
-                  await AuthService.logout();
-                  if (!context.mounted) return;
+                onPressed: () {
+                  AuthService.logout();
                   Navigator.pop(context);
                   context.go('/login');
                 },

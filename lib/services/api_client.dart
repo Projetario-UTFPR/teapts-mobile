@@ -12,7 +12,7 @@ final Dio api = Dio(
 
 void setupApiClient() {
   api.interceptors.add(
-    QueuedInterceptorsWrapper(
+    InterceptorsWrapper(
       onRequest: (options, handler) {
         if (AuthService.accessToken != null) {
           options.headers['Authorization'] =
@@ -20,18 +20,9 @@ void setupApiClient() {
         }
         return handler.next(options);
       },
-      onError: (DioException e, handler) async {
+      onError: (DioException e, handler) {
         if (e.response?.statusCode == 401) {
-          try {
-            await AuthService.refreshSession();
-            e.requestOptions.headers['Authorization'] =
-                'Bearer ${AuthService.accessToken}';
-
-            final cloneReq = await api.fetch(e.requestOptions);
-            return handler.resolve(cloneReq);
-          } catch (refreshError) {
-            return handler.next(e);
-          }
+          AuthService.logout();
         }
         return handler.next(e);
       },
