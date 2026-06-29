@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:front_pi/models/auth_collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:front_pi/config/app_config.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,12 @@ class AuthService {
 
   static String? accessToken;
   static String? refreshToken;
+  static AuthCollectionDto? authCollection;
+
+  @Deprecated("Use `authCollection` instead")
   static String? accountId;
+
+  @Deprecated("Use `authCollection` instead")
   static String? professionalId;
 
   static List<Map<String, dynamic>> professionalProfiles = [];
@@ -32,18 +38,18 @@ class AuthService {
 
       accessToken = body['accessToken'];
       refreshToken = body['refreshToken'];
-      final authCollection = body['authCollection'];
+      final authCollectionJson = body['authCollection'];
 
-      if (authCollection == null) {
+      if (authCollectionJson == null) {
         throw Exception(
           'Não foi possível carregar os dados da sua conta. Faça login novamente.',
         );
       }
 
-      accountId = authCollection['account']['id'];
+      accountId = authCollectionJson['account']['id'];
 
       professionalProfiles = List<Map<String, dynamic>>.from(
-        authCollection['professionalProfiles'] ?? [],
+        authCollectionJson['professionalProfiles'] ?? [],
       );
 
       if (professionalProfiles.length == 1) {
@@ -51,6 +57,8 @@ class AuthService {
       } else {
         professionalId = null;
       }
+
+      authCollection = AuthCollectionDto.fromJson(authCollectionJson);
 
       authNotifier.value = true;
       return;

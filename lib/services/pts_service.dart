@@ -49,6 +49,18 @@ class PtsService {
     throw Exception('Erro inesperado: ${response.body}');
   }
 
+  static Future<bool> checkSelfHasActivePts() async {
+    final auth = AuthService.authCollection;
+    if (auth == null || !auth.isPatient) return false;
+
+    try {
+      await PtsService.getPts(auth.account.id);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static Future<PTSDto> getPts(String patientId) async {
     final url = Uri.parse('$baseUrl/v1/pts/$patientId');
 

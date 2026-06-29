@@ -28,7 +28,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
-                onTap: onBackTap ?? () => context.pop(),
+                onTap:
+                    onBackTap ??
+                    () => context.canPop()
+                        ? context.pop()
+                        : context.goNamed("home"),
                 child: Container(
                   width: 40,
                   height: 40,
