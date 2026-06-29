@@ -183,7 +183,7 @@ class _LoginState extends State<Login> {
         return;
       }
 
-      context.go('/');
+      context.go('/home');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
