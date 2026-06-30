@@ -3,9 +3,6 @@ import 'package:front_pi/models/pts.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/api_client.dart';
 
-// Instância global simples (ou use um Provider/GetIt)
-final ptsState = PtsStateNotifier();
-
 class PtsService {
   static Future<void> createPts({
     required String professionalId,
