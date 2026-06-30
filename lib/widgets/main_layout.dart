@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
@@ -44,12 +45,16 @@ class MainLayout extends StatelessWidget {
                   final userName =
                       AuthService.authCollection?.account.name ??
                       AuthService.currentUserName;
+                  AuthService.authCollection?.isPatient ?? false;
 
-                  final isPatient =
-                      AuthService.authCollection?.isPatient ?? false;
-                  final role = isPatient ? 'Paciente' : AuthService.currentRole;
-
-                  showProfilePanel(context, userName, role);
+                  showProfilePanel(context, userName, [
+                    if (AuthService.authCollection?.account.role == "admin")
+                      "Administrador",
+                    if (AuthService.isPatient) "Paciente",
+                    ...AuthService.professionalProfiles.map(
+                      (profile) => mapSpecialism(profile["specialism"]),
+                    ),
+                  ]);
                 },
                 child: Container(
                   decoration: BoxDecoration(
