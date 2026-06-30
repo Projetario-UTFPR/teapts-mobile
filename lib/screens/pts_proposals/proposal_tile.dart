@@ -112,7 +112,7 @@ class ProposalTile extends StatelessWidget {
     if (isRejected) {
       return const Center(
         child: Text(
-          'Rejeitada automaticamente',
+          'Rejeitada',
           style: TextStyle(fontSize: 13, color: Color(0xFF999999)),
         ),
       );
