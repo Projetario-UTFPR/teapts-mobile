@@ -15,6 +15,7 @@ class Styles {
   static const Color widgetBlackCarret = Color(0XFF555555);
   static const Color IconLightGray = Color(0X11000000);
   static const Color IconDarkGray = Color(0XFF999999);
+  static const Color gray500 = Color(0xff555555);
   static const Color linkOrange = Color.fromRGBO(255, 148, 0, 1);
   static const cyan500 = Color.fromRGBO(89, 185, 226, 1);
 
@@ -117,7 +118,7 @@ class Styles {
       prefixIcon: prefixIcon != null
           ? Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 6.0),
-              child: Icon(prefixIcon, size: 20, color: const Color(0xFF555555)),
+              child: Icon(prefixIcon, size: 20, color: Styles.gray500),
             )
           : null,
 

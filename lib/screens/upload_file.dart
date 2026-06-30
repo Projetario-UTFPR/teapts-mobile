@@ -5,6 +5,7 @@ import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/document_service.dart';
+import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -220,7 +221,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                         PhosphorIcon(
                           PhosphorIconsRegular.userList,
                           size: 20,
-                          color: const Color(0xFF555555),
+                          color: Styles.gray500,
                         ),
                       ),
                       Text(
@@ -294,7 +295,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                   icon: PhosphorIcon(
                     PhosphorIconsRegular.textT,
                     size: 20,
-                    color: const Color(0xFF555555),
+                    color: Styles.gray500,
                   ),
                 ),
                 validator: (v) =>
@@ -379,7 +380,7 @@ class _UploadDocPageState extends State<UploadDocPage> {
                             PhosphorIcon(
                               _fileIcon(_selectedFile!.extension),
                               size: 28,
-                              color: const Color(0xFF555555),
+                              color: Styles.gray500,
                             ),
                             const SizedBox(width: 12),
                             Expanded(

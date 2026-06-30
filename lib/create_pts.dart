@@ -6,13 +6,13 @@ import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/professional_service.dart';
 import 'package:front_pi/services/pts_service.dart';
+import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/utils/snackbar.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:front_pi/models/patient.dart';
 import 'package:front_pi/services/patient_service.dart';
-
 
 OutlineInputBorder _inputBorder() => OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
@@ -46,7 +46,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
 
   List<PatientDto> _patients = [];
 
-
   List<Map<String, dynamic>> get _professionalProfiles =>
       AuthService.professionalProfiles;
 
@@ -71,7 +70,6 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
     }
   }
 
-
   Future<void> _init() async {
     final profiles = _professionalProfiles;
 
@@ -89,10 +87,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
       _selectedProfessionalId = profiles.first['professionalId'] as String;
     }
 
-    await Future.wait([
-      loadProfessionals(context),
-      loadPatients(context),
-    ]);
+    await Future.wait([loadProfessionals(context), loadPatients(context)]);
 
     if (mounted) setState(() {});
   }
@@ -186,7 +181,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                         PhosphorIcon(
                           PhosphorIconsRegular.userList,
                           size: 20,
-                          color: const Color(0xFF555555),
+                          color: Styles.gray500,
                         ),
                       ),
                       // Removido o SizedBox extra para não empurrar o texto
@@ -253,73 +248,72 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
               _gap(),
 
               _sectionTitle('Paciente'),
-                FormField<PatientDto>(
-                  validator: (_) =>
-                      _selectedPatient == null ? 'Selecione um paciente' : null,
-                  builder: (fieldState) => TypeAheadField<PatientDto>(
-                    controller: _patientController,
-                    builder: (context, controller, focusNode) => TextField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      decoration: InputDecoration(
-                        fillColor: const Color(0xFFFFFFFF),
-                        filled: true,
-                        hintText: 'Selecione o paciente',
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        prefixIcon: _prefixIcon(
-                          const PhosphorIcon(
-                            PhosphorIconsRegular.personSimpleCircle,
-                            size: 20,
-                            color: Color(0xFF555555),
-                          ),
-                        ),
-                        prefixIconConstraints: const BoxConstraints(
-                          minWidth: 0,
-                          minHeight: 0,
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 12.0),
-                          child: PhosphorIcon(
-                            PhosphorIconsRegular.caretDown,
-                            size: 16,
-                            color: const Color(0xFF999999),
-                          ),
-                        ),
-                        suffixIconConstraints: const BoxConstraints(
-                          minWidth: 0,
-                          minHeight: 0,
-                        ),
-                        errorText: fieldState.errorText,
-                        border: _inputBorder(),
-                        enabledBorder: _inputBorder(),
-                        focusedBorder: _inputBorderFocused(),
+              FormField<PatientDto>(
+                validator: (_) =>
+                    _selectedPatient == null ? 'Selecione um paciente' : null,
+                builder: (fieldState) => TypeAheadField<PatientDto>(
+                  controller: _patientController,
+                  builder: (context, controller, focusNode) => TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      fillColor: const Color(0xFFFFFFFF),
+                      filled: true,
+                      hintText: 'Selecione o paciente',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
                       ),
+                      prefixIcon: _prefixIcon(
+                        const PhosphorIcon(
+                          PhosphorIconsRegular.personSimpleCircle,
+                          size: 20,
+                          color: Color(0xFF555555),
+                        ),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: PhosphorIcon(
+                          PhosphorIconsRegular.caretDown,
+                          size: 16,
+                          color: const Color(0xFF999999),
+                        ),
+                      ),
+                      suffixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
+                      ),
+                      errorText: fieldState.errorText,
+                      border: _inputBorder(),
+                      enabledBorder: _inputBorder(),
+                      focusedBorder: _inputBorderFocused(),
                     ),
-                    emptyBuilder: (context) => const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Text("Nenhum paciente encontrado."),
-                    ),
-                    suggestionsCallback: (search) => _patients
-                        .where(
-                          (p) => p.name.toLowerCase().contains(search.toLowerCase()),
-                        )
-                        .toList(),
-                    itemBuilder: (context, p) => ListTile(
-                      title: Text(p.name),
-                      subtitle: Text(p.email),
-                    ),
-                    onSelected: (p) {
-                      setState(() {
-                        _selectedPatient = p;
-                        _patientController.text = p.name;
-                      });
-                      fieldState.didChange(p);
-                    },
                   ),
+                  emptyBuilder: (context) => const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text("Nenhum paciente encontrado."),
+                  ),
+                  suggestionsCallback: (search) => _patients
+                      .where(
+                        (p) =>
+                            p.name.toLowerCase().contains(search.toLowerCase()),
+                      )
+                      .toList(),
+                  itemBuilder: (context, p) =>
+                      ListTile(title: Text(p.name), subtitle: Text(p.email)),
+                  onSelected: (p) {
+                    setState(() {
+                      _selectedPatient = p;
+                      _patientController.text = p.name;
+                    });
+                    fieldState.didChange(p);
+                  },
                 ),
+              ),
 
               _gap(),
 
@@ -346,7 +340,7 @@ class _CreatePtsPageState extends State<CreatePtsPage> {
                       PhosphorIcon(
                         PhosphorIconsRegular.usersFour,
                         size: 20,
-                        color: const Color(0xFF555555),
+                        color: Styles.gray500,
                       ),
                     ),
                     prefixIconConstraints: const BoxConstraints(
