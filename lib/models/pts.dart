@@ -43,7 +43,9 @@ class PTSDto {
           [],
       socialSituation: json['socialSituation']?.toString(),
       status: json['status']?.toString() ?? '',
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
       acceptedAt: json['acceptedAt'] != null
           ? DateTime.tryParse(json['acceptedAt'].toString())
           : null,
@@ -89,7 +91,9 @@ class PatientDto {
     return PatientDto(
       supportContacts:
           (json['supportContacts'] as List<dynamic>?)
-              ?.map((e) => SupportContactDto.fromJson(e as Map<String, dynamic>))
+              ?.map(
+                (e) => SupportContactDto.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );
@@ -161,7 +165,9 @@ class ResponsibleProfessionalDto {
       lastUpdatedAt: json['lastUpdatedAt'] != null
           ? DateTime.tryParse(json['lastUpdatedAt'].toString())
           : null,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
     );
   }
 
@@ -182,12 +188,12 @@ class ResponsibleProfessionalDto {
 class PTSProposalDto {
   final String id;
   final ResponsibleProfessionalDto responsibleProfessional;
-  final List<ProposalTeamMemberDto> teamMembers;
+  final List<ProposalTeamMemberDto> multidisciplinaryTeam;
 
   PTSProposalDto({
     required this.id,
     required this.responsibleProfessional,
-    required this.teamMembers,
+    required this.multidisciplinaryTeam,
   });
 
   String get responsibleName => responsibleProfessional.name;
@@ -200,8 +206,12 @@ class PTSProposalDto {
       responsibleProfessional: ResponsibleProfessionalDto.fromJson(
         (json['responsibleProfessional'] as Map<String, dynamic>?) ?? {},
       ),
-      teamMembers: (json['teamMembers'] as List<dynamic>?)
-              ?.map((e) => ProposalTeamMemberDto.fromJson(e as Map<String, dynamic>))
+      multidisciplinaryTeam:
+          (json['multidisciplinaryTeam'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    ProposalTeamMemberDto.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );
@@ -211,7 +221,9 @@ class PTSProposalDto {
     return {
       'id': id,
       'responsibleProfessional': responsibleProfessional.toJson(),
-      'teamMembers': teamMembers.map((e) => e.toJson()).toList(),
+      'multidisciplinaryTeam': multidisciplinaryTeam
+          .map((e) => e.toJson())
+          .toList(),
     };
   }
 }
@@ -219,19 +231,19 @@ class PTSProposalDto {
 class ProposalTeamMemberDto {
   final String professionalId;
   final String name;
-  final String role;
+  final String specialism;
 
   ProposalTeamMemberDto({
     required this.professionalId,
     required this.name,
-    required this.role,
+    required this.specialism,
   });
 
   factory ProposalTeamMemberDto.fromJson(Map<String, dynamic> json) {
     return ProposalTeamMemberDto(
       professionalId: json['professionalId']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
-      role: json['role']?.toString() ?? '',
+      specialism: json['specialism']?.toString() ?? '',
     );
   }
 
@@ -239,7 +251,7 @@ class ProposalTeamMemberDto {
     return {
       'professionalId': professionalId,
       'name': name,
-      'role': role,
+      'specialism': specialism,
     };
   }
 }

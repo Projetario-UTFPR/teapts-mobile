@@ -7,12 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'screens/login/login.dart';
 import 'screens/login/create_account.dart';
 import 'package:front_pi/services/auth_service.dart';
-import 'package:front_pi/widgets/mainLayout.dart';
+import 'package:front_pi/widgets/main_layout.dart';
 import 'package:front_pi/screens/upload_file.dart';
 import 'package:front_pi/prontuario.dart';
 import 'package:front_pi/screens/social_situation.dart';
 import 'package:front_pi/screens/create_patient_profile.dart';
-import 'package:front_pi/screens/approve_pts.dart';
+import 'package:front_pi/screens/pts_proposals/screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',

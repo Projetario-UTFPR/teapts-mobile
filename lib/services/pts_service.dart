@@ -83,7 +83,7 @@ class PtsService {
     }
   }
 
-  static Future<List<PTSProposalDto>> getProposals(
+  static Future<(List<PTSProposalDto>, int)> getProposals(
     String patientId, {
     int page = 1,
     int limit = 24,
@@ -95,9 +95,11 @@ class PtsService {
       );
 
       final items = response.data['items'] as List;
-      return items
+      final proposals = items
           .map((e) => PTSProposalDto.fromJson(e as Map<String, dynamic>))
           .toList();
+
+      return (proposals, response.data["totalElements"] as int);
     } on DioException catch (e) {
       if (e.response?.statusCode == 403) {
         throw Exception('Usuário não é paciente');
@@ -111,7 +113,7 @@ class PtsService {
     String proposalId,
   ) async {
     try {
-      await api.patch('/v1/pts/proposals/$proposalId/reject');
+      await api.patch('/v1/pts/$proposalId/reject');
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -119,7 +121,7 @@ class PtsService {
 
   static Future<void> acceptProposal(String proposalId) async {
     try {
-      await api.patch('/v1/pts/proposals/$proposalId/accept');
+      await api.patch('/v1/pts/$proposalId/approve');
     } on DioException catch (e) {
       throw _handleError(e);
     }

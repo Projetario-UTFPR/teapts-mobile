@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/models/professional.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:flutter/foundation.dart';
+
+class PtsStateNotifier extends ChangeNotifier {
+  bool _hasActivePts = false;
+  bool get hasActivePts => _hasActivePts;
+
+  static final ptsState = PtsStateNotifier();
+
+  void updateStatus(bool status) {
+    _hasActivePts = status;
+    notifyListeners();
+  }
+}
 
 class MainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -44,12 +58,16 @@ class MainLayout extends StatelessWidget {
                   final userName =
                       AuthService.authCollection?.account.name ??
                       AuthService.currentUserName;
+                  AuthService.authCollection?.isPatient ?? false;
 
-                  final isPatient =
-                      AuthService.authCollection?.isPatient ?? false;
-                  final role = isPatient ? 'Paciente' : AuthService.currentRole;
-
-                  showProfilePanel(context, userName, role);
+                  showProfilePanel(context, userName, [
+                    if (AuthService.authCollection?.account.role == "admin")
+                      "Administrador",
+                    if (AuthService.isPatient) "Paciente",
+                    ...AuthService.professionalProfiles.map(
+                      (profile) => mapSpecialism(profile["specialism"]),
+                    ),
+                  ]);
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -92,18 +110,32 @@ class _BottomNavState extends State<_BottomNav> {
   @override
   void initState() {
     super.initState();
+    PtsStateNotifier.ptsState.addListener(_onPtsChanged);
     _loadPtsStatus();
+  }
+
+  void _onPtsChanged() {
+    if (mounted) {
+      setState(() {
+        _hasActivePts = PtsStateNotifier.ptsState.hasActivePts;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    PtsStateNotifier.ptsState.removeListener(_onPtsChanged);
+    super.dispose();
   }
 
   Future<void> _loadPtsStatus() async {
     setState(() => _isLoading = true);
 
     final result = await PtsService.checkSelfHasActivePts();
+    PtsStateNotifier.ptsState.updateStatus(result);
 
-    setState(() {
-      _hasActivePts = result;
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Widget _container(List<Widget> children) {

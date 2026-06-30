@@ -11,6 +11,7 @@ class PrimaryButton extends StatelessWidget {
 
   final bool isLoading;
   final bool isLinkButton;
+  final bool tryShrink;
 
   const PrimaryButton({
     super.key,
@@ -21,6 +22,7 @@ class PrimaryButton extends StatelessWidget {
     this.isLinkButton = false,
     this.icon,
     this.iconAlignment,
+    this.tryShrink = true,
   });
 
   @override
@@ -41,6 +43,7 @@ class PrimaryButton extends StatelessWidget {
 
     if (isLinkButton) {
       child = Row(
+        mainAxisSize: tryShrink ? MainAxisSize.min : MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           text,
@@ -50,6 +53,7 @@ class PrimaryButton extends StatelessWidget {
     } else {
       final effectiveIconWidget = _buildAnimatedIcon(effectiveIconAlignment);
       child = Row(
+        mainAxisSize: tryShrink ? MainAxisSize.min : MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: effectiveIconAlignment == IconAlignment.start

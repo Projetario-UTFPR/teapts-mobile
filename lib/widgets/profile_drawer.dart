@@ -7,22 +7,26 @@ import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/widgets/specialism_chip.dart';
 
-Future<void> showProfilePanel(BuildContext context, String name, String role) {
+Future<void> showProfilePanel(
+  BuildContext context,
+  String name,
+  List<String> roles,
+) {
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Styles.bgColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (context) => ProfilePanel(name: name, role: role),
+    builder: (context) => ProfilePanel(name: name, roles: roles),
   );
 }
 
 class ProfilePanel extends StatelessWidget {
   final String name;
-  final String role;
+  final List<String> roles;
 
-  const ProfilePanel({super.key, required this.name, required this.role});
+  const ProfilePanel({super.key, required this.name, required this.roles});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +53,14 @@ class ProfilePanel extends StatelessWidget {
                     children: [
                       Text(name, style: Styles.midSizeBold),
                       const Gap(4),
-                      SpecialismChip(label: role),
+                      Wrap(
+                        direction: Axis.horizontal,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ...roles.map((role) => SpecialismChip(label: role)),
+                        ],
+                      ),
                     ],
                   ),
                 ),
