@@ -7,6 +7,7 @@ import 'package:front_pi/screens/pts_proposals/proposal_tile.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/mainAppBar.dart';
+import 'package:front_pi/widgets/main_layout.dart';
 
 class PtsProposalsPage extends StatefulWidget {
   final String patientId;
@@ -62,6 +63,7 @@ class _PtsProposalsPageState extends State<PtsProposalsPage> {
     setState(() => _acceptedId = proposal.id);
     try {
       await PtsService.acceptProposal(proposal.id);
+      PtsStateNotifier.ptsState.updateStatus(true);
       if (!mounted) return;
       Navigator.pop(context); // ← volta para a tela anterior
     } catch (e) {

@@ -6,6 +6,19 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:flutter/foundation.dart';
+
+class PtsStateNotifier extends ChangeNotifier {
+  bool _hasActivePts = false;
+  bool get hasActivePts => _hasActivePts;
+
+  static final ptsState = PtsStateNotifier();
+
+  void updateStatus(bool status) {
+    _hasActivePts = status;
+    notifyListeners();
+  }
+}
 
 class MainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -97,18 +110,32 @@ class _BottomNavState extends State<_BottomNav> {
   @override
   void initState() {
     super.initState();
+    PtsStateNotifier.ptsState.addListener(_onPtsChanged);
     _loadPtsStatus();
+  }
+
+  void _onPtsChanged() {
+    if (mounted) {
+      setState(() {
+        _hasActivePts = PtsStateNotifier.ptsState.hasActivePts;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    PtsStateNotifier.ptsState.removeListener(_onPtsChanged);
+    super.dispose();
   }
 
   Future<void> _loadPtsStatus() async {
     setState(() => _isLoading = true);
 
     final result = await PtsService.checkSelfHasActivePts();
+    PtsStateNotifier.ptsState.updateStatus(result);
 
-    setState(() {
-      _hasActivePts = result;
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Widget _container(List<Widget> children) {
