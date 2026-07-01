@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:gap/gap.dart';
@@ -87,11 +88,11 @@ class _HomePageState extends State<HomePage> {
     final firstName = fullName.split(' ').first;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: Styles.bgColor,
       body: SafeArea(
         child: _isLoadingHome
             ? const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFFC200)),
+                child: CircularProgressIndicator(color: Styles.widgetYellow),
               )
             : SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(vertical: 24),
@@ -102,25 +103,18 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Text(
                         'Bem-vindo, $firstName!',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF313030),
-                        ),
+                        style: Styles.titlesBold,
                       ),
                     ),
                     const Gap(24),
                     if (_isPatient) _buildPatientSection(),
                     if (_isPatient && _isProfessional)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 24,
-                          horizontal: 24,
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(24),
                         child: Divider(
                           height: 1,
                           thickness: 1,
-                          color: Color(0xFFE6E6E6),
+                          color: Colors.black.withValues(alpha: 0.1),
                         ),
                       ),
                     if (_isProfessional) _buildProfessionalSection(),
@@ -129,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.all(32.0),
                         child: Center(
                           child: Text(
-                            'Aguarde um profissional cadastrar sua conta e criar seu pts.',
+                            'Você ainda não está cadastrado(a) como paciente. Aguarde até que seu perfil seja criado.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
@@ -165,7 +159,6 @@ class _HomePageState extends State<HomePage> {
             ),
             const Gap(24),
           ],
-          const Gap(24),
           SizedBox(
             width: double.infinity,
             child: PrimaryButton(
