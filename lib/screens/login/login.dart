@@ -171,18 +171,6 @@ class _LoginState extends State<Login> {
 
       if (!mounted) return;
 
-      final profiles = AuthService.professionalProfiles;
-
-      if (profiles.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Você não possui perfil profissional.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
       context.go('/home');
     } catch (e) {
       if (!mounted) return;
