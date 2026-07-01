@@ -74,11 +74,14 @@ class SitualSociationSection extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    socialSituation,
-                    style: Styles.normalText,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      socialSituation,
+                      style: Styles.normalText,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (overflows) ...[
                     const SizedBox(height: 12),
