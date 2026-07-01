@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
             child: PrimaryButton(
               title: _hasActivePts
                   ? 'Visualizar meu PTS'
-                  : 'Visualizar propostas de PTSs',
+                  : 'Visualizar propostas de PTS',
               onPressed: () {
                 if (_hasActivePts) {
                   context.push('/view-pts/$accountId');
