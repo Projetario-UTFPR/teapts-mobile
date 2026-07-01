@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
+import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
-import 'package:front_pi/widgets/mainAppBar.dart';
+import 'package:front_pi/services/auth_service.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'services/pts_service.dart';
-import 'package:front_pi/screens/create_patient_profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,25 +16,52 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _isLoadingHome = true;
+  bool _isPatient = false;
+  bool _isProfessional = false;
+  bool _hasActivePts = false;
+
   List<Map<String, dynamic>> _patients = [];
   int _page = 1;
   int _totalElements = 0;
-  bool _isLoading = false;
+  bool _isLoadingPatients = false;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadPatients();
+    _initHome();
+  }
+
+  Future<void> _initHome() async {
+    setState(() => _isLoadingHome = true);
+
+    final auth = AuthService.authCollection;
+
+    _isPatient = auth?.isPatient ?? false;
+    _isProfessional = auth?.professionalProfiles.isNotEmpty ?? false;
+
+    try {
+      if (_isPatient) {
+        _hasActivePts = await PtsService.checkSelfHasActivePts();
+      }
+
+      if (_isProfessional) {
+        await _loadPatients();
+      }
+    } catch (e) {
+      debugPrint('Erro ao inicializar a home: $e');
+    } finally {
+      setState(() => _isLoadingHome = false);
+    }
   }
 
   Future<void> _loadPatients({bool loadMore = false}) async {
-    setState(() => _isLoading = true);
+    setState(() => _isLoadingPatients = true);
 
     try {
       final pageToLoad = loadMore ? _page + 1 : 1;
       final response = await PtsService.getMyPatients(page: pageToLoad);
-
       final items = (response['items'] as List).cast<Map<String, dynamic>>();
 
       setState(() {
@@ -49,66 +78,195 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       setState(() => _error = e.toString());
     } finally {
-      setState(() => _isLoading = false);
+      setState(() => _isLoadingPatients = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final hasMore = _patients.length < _totalElements;
+    final fullName = AuthService.authCollection?.account.name ?? 'Usuário';
+    final firstName = fullName.split(' ').first;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: MainAppBar(
-        title: 'Pacientes',
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFC200),
-              shape: BoxShape.circle,
+      backgroundColor: Styles.bgColor,
+      body: SafeArea(
+        child: _isLoadingHome
+            ? const Center(
+                child: CircularProgressIndicator(color: Styles.widgetYellow),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        'Bem-vindo, $firstName!',
+                        style: Styles.titlesBold,
+                      ),
+                    ),
+                    const Gap(24),
+                    if (_isPatient) _buildPatientSection(),
+                    if (_isPatient && _isProfessional)
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Colors.black.withValues(alpha: 0.1),
+                        ),
+                      ),
+                    if (_isProfessional) _buildProfessionalSection(),
+                    if (!_isPatient && !_isProfessional)
+                      const Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Center(
+                          child: Text(
+                            'Você ainda não está cadastrado(a) como paciente. Aguarde até que seu perfil seja criado.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF313030),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildPatientSection() {
+    final accountId = AuthService.authCollection?.account.id ?? '';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!_hasActivePts) ...[
+            const Text(
+              'Você ainda não tem nenhum Projeto Terapêutico Singular (PTS) ativo. Confira as propostas para iniciar o seu plano!',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF313030),
+                height: 1.2,
+              ),
             ),
-            child: IconButton(
-              icon: const Icon(Icons.add, color: Colors.black),
-              onPressed: () => context.push('/create-pts'),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFC200),
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {},
+            const Gap(24),
+          ],
+          SizedBox(
+            width: double.infinity,
+            child: PrimaryButton(
+              title: _hasActivePts
+                  ? 'Visualizar meu PTS'
+                  : 'Visualizar propostas de PTS',
+              onPressed: () {
+                if (_hasActivePts) {
+                  context.push('/view-pts/$accountId');
+                } else {
+                  context.push('/approve-pts/$accountId');
+                }
+              },
             ),
           ),
         ],
       ),
+    );
+  }
 
-      body: _error != null
-          ? Center(child: Text('Erro: $_error'))
-          : _isLoading && _patients.isEmpty
-          ? const Center(child: CircularProgressIndicator(color: Colors.amber))
-          : ListView.separated(
-              padding: const EdgeInsets.all(24),
+  Widget _buildProfessionalSection() {
+    final hasMore = _patients.length < _totalElements;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Pacientes',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF313030),
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFC200),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        PhosphorIconsBold.plus,
+                        color: Colors.black,
+                      ),
+                      onPressed: () => context.push('/create-pts'),
+                    ),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFC200),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        PhosphorIconsBold.magnifyingGlass,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const Gap(24),
+          if (_error != null)
+            Center(
+              child: Text(
+                'Erro: $_error',
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+          else if (_isLoadingPatients && _patients.isEmpty)
+            const Center(
+              child: CircularProgressIndicator(color: Color(0xFFFFC200)),
+            )
+          else if (_patients.isEmpty)
+            const Text(
+              'Nenhum paciente encontrado.',
+              style: TextStyle(color: Color(0xFF313030), fontSize: 16),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: _patients.length + (hasMore ? 1 : 0),
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const Gap(16),
               itemBuilder: (context, index) {
                 if (index == _patients.length) {
                   return SizedBox(
                     width: double.infinity,
                     child: PrimaryButton(
                       title: "Carregar mais",
-                      isLoading: _isLoading,
+                      isLoading: _isLoadingPatients,
                       onPressed: () => _loadPatients(loadMore: true),
                     ),
                   );
                 }
 
                 final patient = _patients[index];
-
                 return CustomRowItem(
                   title: patient['name'] as String,
                   isCircularImage: false,
@@ -125,6 +283,8 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
+        ],
+      ),
     );
   }
 }

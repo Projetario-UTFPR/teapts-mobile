@@ -1,15 +1,16 @@
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:front_pi/services/api_client.dart';
+import 'package:http/http.dart' as http;
 
 class ApiService {
-  static Future<Map<String, dynamic>> post(
-    String path,
-    Map<String, dynamic> body,
-  ) async {
+  static Future<dynamic> post(String path, Map<String, dynamic> body) async {
     try {
       final response = await api.post(path, data: body);
-      return response.data ?? {};
+
+      if (response.data == null || response.data == "") return {};
+
+      return response.data;
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -30,22 +31,15 @@ class ApiService {
     required String contentType,
     required String fileName,
   }) async {
-    try {
-      final cleanDio = Dio();
-      await cleanDio.put(
-        url,
-        data: Stream.fromIterable([bytes]),
-        options: Options(
-          headers: {
-            'Content-Type': contentType,
-            'Content-Disposition': 'inline',
-            'Content-Length': bytes.length.toString(),
-          },
-        ),
-      );
-    } on DioException catch (e) {
-      throw Exception('Falha no upload do arquivo: ${e.response?.statusCode}');
-    }
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': 'inline',
+        'Content-Length': bytes.length.toString(),
+      },
+      body: bytes,
+    );
   }
 
   static Exception _handleError(DioException e) {
