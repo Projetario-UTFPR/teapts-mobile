@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:front_pi/components/alert.dart';
 import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
+import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/widgets/add_activities.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../../../theme/styles.dart';
 import '../../../widgets/custom_row_item.dart';
 import 'package:gap/gap.dart';
 import '../../../services/activity_service.dart';
@@ -105,13 +106,7 @@ class _ActivitiesSectionState extends State<ActivitiesSection> {
             ),
           )
         else if (_activities.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              'Nenhuma atividade sugerida para este PTS.',
-              style: Styles.midSize,
-            ),
-          )
+          Alert(message: 'Nenhuma atividade sugerida para este PTS.')
         else
           ..._activities.map(
             (activity) => CustomRowItem(
@@ -127,23 +122,26 @@ class _ActivitiesSectionState extends State<ActivitiesSection> {
             ),
           ),
 
-        const Gap(8),
-        SizedBox(
-          width: double.infinity,
-          child: PrimaryButton(
-            title: 'Adicionar nova atividade',
-            icon: PhosphorIconsBold.plus,
-            onPressed: () async {
-              final bool? success = await addActivityPanel(
-                context,
-                widget.patientId,
-              );
-              if (success == true) {
-                _loadActivities();
-              }
-            },
+        if (!AuthService.isPatient ||
+            widget.patientId != AuthService.authCollection?.account.id) ...[
+          const Gap(8),
+          SizedBox(
+            width: double.infinity,
+            child: PrimaryButton(
+              title: 'Adicionar nova atividade',
+              icon: PhosphorIconsBold.plus,
+              onPressed: () async {
+                final bool? success = await addActivityPanel(
+                  context,
+                  widget.patientId,
+                );
+                if (success == true) {
+                  _loadActivities();
+                }
+              },
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
