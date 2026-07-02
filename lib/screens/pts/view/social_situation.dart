@@ -49,7 +49,14 @@ class SitualSociationSection extends StatelessWidget {
             color: Styles.widgetBlack,
           ),
           onPressed: () {
-            //TODO: mandar para pagina para editar o conteudo de situação social
+            context.push(
+              '/edit-social-situation/$patientId',
+              extra: {
+                'patientId': patientId,
+                'patientName': patientName,
+                'socialSituation': socialSituation ?? '',
+              },
+            );
           },
           style: IconButton.styleFrom(
             backgroundColor: Styles.widgetYellow,
