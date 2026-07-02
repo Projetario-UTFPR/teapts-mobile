@@ -13,6 +13,7 @@ import 'package:front_pi/prontuario.dart';
 import 'package:front_pi/screens/social_situation.dart';
 import 'package:front_pi/screens/create_patient_profile.dart';
 import 'package:front_pi/screens/pts_proposals/screen.dart';
+import 'package:front_pi/screens/edit_social_situation.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
@@ -110,6 +111,17 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) {
                 final patientId = state.pathParameters['patientId']!;
                 return PtsProposalsPage(patientId: patientId);
+              },
+            ),
+            GoRoute(
+              path: '/edit-social-situation/:id',
+              builder: (context, state) {
+                final extras = state.extra as Map<String, dynamic>? ?? {};
+                return EditSocialSituationPage(
+                  patientId: state.pathParameters['id'] ?? '',
+                  patientName: extras['patientName'] ?? 'Desconhecido',
+                  socialSituation: extras['socialSituation'] ?? '',
+                );
               },
             ),
           ],
