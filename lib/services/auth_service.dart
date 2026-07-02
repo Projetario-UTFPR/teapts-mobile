@@ -96,7 +96,7 @@ class AuthService {
   }
 
   static Future<void> refreshSession() async {
-    final currentRefreshToken =
+    String? currentRefreshToken =
         refreshToken ?? await _storage.read(key: 'refreshToken');
 
     if (currentRefreshToken == null) {
@@ -106,10 +106,13 @@ class AuthService {
       );
     }
 
+    currentRefreshToken = currentRefreshToken.trim();
+
     try {
       final response = await _authDio.patch(
         '/v1/sessions/refresh',
         data: {'refreshToken': currentRefreshToken},
+        options: Options(headers: {'Accept': 'application/json'}),
       );
 
       final body = response.data;
@@ -166,14 +169,17 @@ class AuthService {
   }
 
   static void logout() {
-    accessToken = null;
-    refreshToken = null;
-    accountId = null;
-    professionalId = null;
-    professionalProfiles = [];
-    authCollection = null;
     authNotifier.value = false;
     _storage.deleteAll();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      accessToken = null;
+      refreshToken = null;
+      accountId = null;
+      professionalId = null;
+      professionalProfiles = [];
+      authCollection = null;
+    });
   }
 
   static String _extractErrorMessage(DioException e) {
