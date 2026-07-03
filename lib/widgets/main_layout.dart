@@ -6,7 +6,6 @@ import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/profile_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:flutter/foundation.dart';
 
 class PtsStateNotifier extends ChangeNotifier {
   bool _hasActivePts = false;
@@ -180,7 +179,7 @@ class _BottomNavState extends State<_BottomNav> {
             icon: PhosphorIconsFill.puzzlePiece,
             label: 'PTS',
             isActive:
-                currentLocation.startsWith('/pts-proposals/') ||
+                currentLocation.startsWith('/approve-pts/') ||
                 currentLocation.startsWith("/view-pts/"),
             onTap: () => hasActivePts
                 ? context.push('/view-pts/${authCollection!.account.id}')
