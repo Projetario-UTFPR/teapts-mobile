@@ -141,6 +141,7 @@ class Styles {
     String? Function(String?)? validator,
     TextInputType? keyboardType,
     void Function(String)? onChanged,
+    bool isMultiline = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,15 +151,15 @@ class Styles {
         TextFormField(
           controller: controller,
           obscureText: obscureText,
-          keyboardType: keyboardType,
+          keyboardType: isMultiline ? TextInputType.multiline : keyboardType,
+          maxLines: isMultiline ? null : 1,
+          minLines: isMultiline ? 3 : 1,
           onChanged: onChanged,
           validator: validator,
           decoration: Styles.InputDecoratorDefault(hintText: hint).copyWith(
             suffixIcon: suffixIcon != null
                 ? Padding(
-                    padding: const EdgeInsets.only(
-                      right: 12.0,
-                    ), // <- Ajuste esse número!
+                    padding: const EdgeInsets.only(right: 12.0),
                     child: suffixIcon,
                   )
                 : null,
