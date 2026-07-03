@@ -131,6 +131,7 @@ class _EditSocialSituationPageState extends State<EditSocialSituationPage> {
               label: 'Situação Social',
               hint: 'Digite a nova situação social...',
               controller: _controller,
+              isMultiline: true,
             ),
 
             const Gap(32),
