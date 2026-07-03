@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
 import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/components/expandable-section.dart';
+import 'package:front_pi/screens/pts/view/social_situation_notifier.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 class SitualSociationSection extends StatelessWidget {
   final String? _error;
-  final String? _socialSituation;
   final String patientId;
   final String patientName;
 
   const SitualSociationSection({
     super.key,
-    required String? socialSituation,
     String? error,
     required this.patientId,
     required this.patientName,
-  }) : _socialSituation = socialSituation,
-       _error = error;
+  }) : _error = error;
 
   bool _textExceedsMaxLines(
     String text,
@@ -38,7 +36,7 @@ class SitualSociationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final error = _error;
-    final socialSituation = _socialSituation;
+    final socialSituation = PtsSocialSituationNotifier.instance.socialSituation;
     return ExpandableSection(
       title: 'Situação social',
       actions: [

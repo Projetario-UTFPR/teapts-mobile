@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_pi/components/alert.dart';
 import 'package:front_pi/components/buttons/secondary_button.dart';
 import 'package:front_pi/models/pts.dart';
+import 'package:front_pi/screens/pts/view/social_situation_notifier.dart';
 import 'package:front_pi/services/auth_service.dart';
 import 'package:front_pi/services/pts_service.dart';
 import 'package:front_pi/theme/styles.dart';
@@ -38,6 +39,9 @@ class ViewPtsPageState extends State<ViewPtsPage> {
       final pts = await PtsService.getPts(widget.patientId);
       if (!context.mounted) return;
       setState(() => _pts = pts);
+      PtsSocialSituationNotifier.instance.updateSocialSituation(
+        pts.socialSituation,
+      );
     } catch (e) {
       if (!context.mounted) return;
       setState(() => _error = e.toString());
@@ -88,7 +92,6 @@ class ViewPtsPageState extends State<ViewPtsPage> {
               SitualSociationSection(
                 patientId: widget.patientId,
                 patientName: widget.patientName,
-                socialSituation: pts?.socialSituation,
                 error: _error,
               ),
 

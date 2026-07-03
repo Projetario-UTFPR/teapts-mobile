@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:front_pi/screens/pts/view/social_situation_notifier.dart';
 import 'package:gap/gap.dart';
 import 'package:front_pi/config/app_config.dart';
 import 'package:front_pi/services/auth_service.dart';
@@ -83,6 +84,11 @@ class _EditSocialSituationPageState extends State<EditSocialSituationPage> {
             backgroundColor: Colors.green,
           ),
         );
+
+        PtsSocialSituationNotifier.instance.updateSocialSituation(
+          _controller.text,
+        );
+
         Navigator.of(context).pop();
       }
     } on DioException catch (e) {
