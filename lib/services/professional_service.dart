@@ -8,7 +8,7 @@ class ProfessionalService {
     int? page,
   }) async {
     final Map<String, dynamic> parameters = {};
-    if (ids != null && ids.isNotEmpty) parameters["inIds"] = ids;
+    if (ids != null) parameters["inIds"] = ids.isEmpty ? "" : ids;
     if (page != null) parameters["page"] = page;
 
     try {
