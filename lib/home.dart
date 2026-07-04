@@ -3,6 +3,7 @@ import 'package:front_pi/components/buttons/primary_button.dart';
 import 'package:front_pi/theme/styles.dart';
 import 'package:front_pi/widgets/custom_row_item.dart';
 import 'package:front_pi/services/auth_service.dart';
+import 'package:front_pi/widgets/main_layout.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -19,7 +20,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLoadingHome = true;
   bool _isPatient = false;
   bool _isProfessional = false;
-  bool _hasActivePts = false;
 
   List<Map<String, dynamic>> _patients = [];
   int _page = 1;
@@ -27,10 +27,21 @@ class _HomePageState extends State<HomePage> {
   bool _isLoadingPatients = false;
   String? _error;
 
+  void _onHasActivePtsChanged() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     _initHome();
+    PtsStateNotifier.ptsState.addListener(_onHasActivePtsChanged);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    PtsStateNotifier.ptsState.removeListener(_onHasActivePtsChanged);
   }
 
   Future<void> _initHome() async {
@@ -42,10 +53,6 @@ class _HomePageState extends State<HomePage> {
     _isProfessional = auth?.professionalProfiles.isNotEmpty ?? false;
 
     try {
-      if (_isPatient) {
-        _hasActivePts = await PtsService.checkSelfHasActivePts();
-      }
-
       if (_isProfessional) {
         await _loadPatients();
       }
@@ -147,7 +154,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!_hasActivePts) ...[
+          if (!PtsStateNotifier.ptsState.hasActivePts) ...[
             const Text(
               'Você ainda não tem nenhum Projeto Terapêutico Singular (PTS) ativo. Confira as propostas para iniciar o seu plano!',
               style: TextStyle(
@@ -162,11 +169,11 @@ class _HomePageState extends State<HomePage> {
           SizedBox(
             width: double.infinity,
             child: PrimaryButton(
-              title: _hasActivePts
+              title: PtsStateNotifier.ptsState.hasActivePts
                   ? 'Visualizar meu PTS'
                   : 'Visualizar propostas de PTS',
               onPressed: () {
-                if (_hasActivePts) {
+                if (PtsStateNotifier.ptsState.hasActivePts) {
                   context.push('/view-pts/$accountId');
                 } else {
                   context.push('/approve-pts/$accountId');
